@@ -47,6 +47,10 @@ flowchart TD
 
 Three generated load profiles are included: low, medium, and high. Each run is 900 simulated ticks and writes a snapshot, metrics JSON, and JSONL event stream. The UI can switch between the generated profiles.
 
+## Baseline Comparison
+
+The deterministic medium benchmark includes a planner-off baseline and a local-planner result. Planner-off completes 72 of 84 orders at 288 orders/hour with 120.06 average completion ticks. Local route-window reservation completes 81 of 84 orders at 324 orders/hour with 42.30 average completion ticks. That is +12.5% throughput and -64.8% average completion time while keeping blocked-tile, route-cardinality, collision, and lock-overlap violations at 0.
+
 # Metrics
 
 | Load | Created | Completed | Active | Throughput | Avg completion | Avg lock wait | Utilization | Violations |
