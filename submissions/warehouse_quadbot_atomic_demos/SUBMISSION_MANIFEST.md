@@ -87,7 +87,7 @@ source .venv/bin/activate
 python -m pip install -r requirements.txt
 python examples/build_integrated_demo_data.py
 python examples/run_warehouse_runtime.py --load medium --planner local --ticks 900 --print-summary
-python examples/run_fleet_stress_benchmark.py --hours 6 --scenario-limit 27
+python examples/run_fleet_stress_benchmark.py --hours 6 --scenario-limit 54
 python submissions/warehouse_quadbot_atomic_demos/run_quadbot_atomic_demos.py --scenario shelf_pick_metal
 python -m http.server 8765 --bind 127.0.0.1
 ```

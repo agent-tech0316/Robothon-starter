@@ -25,6 +25,7 @@ REPORT_PATH = ROOT / "submissions" / "warehouse_quadbot_atomic_demos" / "FLEET_S
 LOADS = ("low", "medium", "high")
 SKU_MIXES = ("light", "balanced", "heavy")
 PICK_DIFFICULTIES = ("easy", "nominal", "hard")
+CONGESTION_SHOCKS = ("nominal", "aisle_surge")
 PLANNER_MODES = ("off", "local")
 PRIORITY_VALUES = {"low": 25, "normal": 50, "high": 75, "urgent": 95}
 DIFFICULTY_FACTORS = {"easy": 0.78, "nominal": 1.0, "hard": 1.32}
@@ -60,6 +61,7 @@ class ScenarioRun:
     load: str
     sku_mix: str
     pick_difficulty: str
+    congestion_shock: str
     planner_mode: str
     simulated_hours: float
     created_orders: int
@@ -192,6 +194,7 @@ def task_minutes(
     load: str,
     sku_mix: str,
     pick_difficulty: str,
+    congestion_shock: str,
     queue_depth: int,
 ) -> tuple[float, str, float]:
     unload_tile = min(conveyors, key=lambda tile: manhattan(order.pick_tile_id, tile) + manhattan(robot.tile_id, tile) * 0.12)
@@ -201,6 +204,7 @@ def task_minutes(
     load_pressure = {"low": 0.72, "medium": 1.0, "high": 1.36}[load]
     mix_pressure = {"light": 0.82, "balanced": 1.0, "heavy": 1.24}[sku_mix]
     queue_pressure = min(1.0, queue_depth / 180)
+    shock_pressure = 1.0 if congestion_shock == "nominal" else 1.42
 
     if planner_mode == "local":
         route_factor = 0.72
@@ -213,7 +217,7 @@ def task_minutes(
 
     travel = route_tiles * 0.020 * route_factor
     service = (0.11 + order.difficulty * 0.040 + order.weight * 0.007) * difficulty_factor * service_factor
-    congestion = (0.08 + load_pressure * mix_pressure * 0.15 + queue_pressure * 0.22) * congestion_factor
+    congestion = (0.08 + load_pressure * mix_pressure * 0.15 + queue_pressure * 0.22) * congestion_factor * shock_pressure
     priority_penalty = 0.04 if order.priority_label in {"high", "urgent"} and planner_mode == "off" else 0.0
     duration = max(0.18, travel + service + congestion + priority_penalty)
     return duration, unload_tile, congestion
@@ -224,6 +228,7 @@ def generate_orders(
     load: str,
     sku_mix: str,
     pick_difficulty: str,
+    congestion_shock: str,
     horizon_hours: float,
     tick_minutes: int,
     rng: random.Random,
@@ -231,7 +236,8 @@ def generate_orders(
     profile = load_profile(layout_config, load)
     skus = normalize_sku_mix(profile.get("skus", []), sku_mix)
     by_sku = rack_index(layout_config)
-    orders_per_hour = float(profile.get("orders_per_hour", 300)) * LOAD_DEMAND_FACTORS[load]
+    surge_multiplier = 1.0 if congestion_shock == "nominal" else 1.18
+    orders_per_hour = float(profile.get("orders_per_hour", 300)) * LOAD_DEMAND_FACTORS[load] * surge_multiplier
     orders_per_tick = orders_per_hour * tick_minutes / 60
     accumulator = 0.0
     orders: list[OrderTask] = []
@@ -269,16 +275,17 @@ def run_scenario(
     load: str,
     sku_mix: str,
     pick_difficulty: str,
+    congestion_shock: str,
     planner_mode: str,
     horizon_hours: float,
     tick_minutes: int,
 ) -> ScenarioRun:
     start = time.perf_counter()
-    scenario_id = f"{load}_{sku_mix}_{pick_difficulty}"
+    scenario_id = f"{load}_{sku_mix}_{pick_difficulty}_{congestion_shock}"
     rng = random.Random(stable_seed(scenario_id, planner_mode, "ffai-robothon-2026"))
     robots = robots_from_layout(layout_config)
     conveyors = [item["unload_tile_id"] for item in layout_config.get("outbound", {}).get("conveyors", [])]
-    orders = generate_orders(layout_config, load, sku_mix, pick_difficulty, horizon_hours, tick_minutes, rng)
+    orders = generate_orders(layout_config, load, sku_mix, pick_difficulty, congestion_shock, horizon_hours, tick_minutes, rng)
     pending: list[OrderTask] = []
     next_order = 0
     completion_times: list[float] = []
@@ -306,7 +313,7 @@ def run_scenario(
             )
             pending.remove(order)
             duration, unload_tile, congestion = task_minutes(
-                robot, order, conveyors, planner_mode, load, sku_mix, pick_difficulty, len(pending)
+                robot, order, conveyors, planner_mode, load, sku_mix, pick_difficulty, congestion_shock, len(pending)
             )
             start_min = max(now, robot.available_at_min)
             finish_min = start_min + duration
@@ -338,6 +345,7 @@ def run_scenario(
         load=load,
         sku_mix=sku_mix,
         pick_difficulty=pick_difficulty,
+        congestion_shock=congestion_shock,
         planner_mode=planner_mode,
         simulated_hours=horizon_hours,
         created_orders=created,
@@ -370,6 +378,7 @@ def paired_summary(runs: list[ScenarioRun]) -> list[dict[str, Any]]:
             "load": local.load,
             "sku_mix": local.sku_mix,
             "pick_difficulty": local.pick_difficulty,
+            "congestion_shock": local.congestion_shock,
             "planner_off_throughput_per_hour": off.throughput_orders_per_hour,
             "local_planner_throughput_per_hour": local.throughput_orders_per_hour,
             "throughput_uplift_pct": round(uplift, 2),
@@ -391,12 +400,13 @@ def build_report(payload: dict[str, Any]) -> str:
         "",
         "## Benchmark Scale",
         "",
-        f"- Scenario matrix: {aggregate['scenario_count']} scenarios = 3 load levels x 3 SKU mixes x 3 pick difficulty levels",
+        f"- Scenario matrix: {aggregate['scenario_count']} scenarios = 3 load levels x 3 SKU mixes x 3 pick difficulty levels x 2 congestion modes",
         f"- Paired planner runs: {aggregate['paired_run_count']} planner-off/local comparisons",
         f"- Horizon: {aggregate['simulated_hours_per_scenario']} simulated warehouse hours per scenario",
         f"- Total simulated warehouse hours: {aggregate['total_simulated_warehouse_hours']}",
         f"- Total simulated robot-hours: {aggregate['total_simulated_robot_hours']}",
         f"- Tick model: {aggregate['tick_minutes']}-minute fast-forward ticks, no browser or video rendering",
+        f"- Congestion shock coverage: {aggregate['nominal_scenario_count']} nominal scenarios + {aggregate['surge_scenario_count']} aisle-surge scenarios",
         "",
         "## Headline Results",
         "",
@@ -411,23 +421,23 @@ def build_report(payload: dict[str, Any]) -> str:
         "",
         "## Why This Matters",
         "",
-        "The main submission already shows 9 AEGIS robots sharing aisles with zero collisions. This benchmark adds the missing stress-test evidence: the same fleet is evaluated across load, SKU weight mix, and pick difficulty variations without relying on a UI recording. That turns the project from a single demo into a repeatable warehouse optimization benchmark.",
+        "The main submission already shows 9 AEGIS robots sharing aisles with zero collisions. This benchmark adds the missing stress-test evidence: the same fleet is evaluated across load, SKU weight mix, pick difficulty, and aisle-surge congestion without relying on a UI recording. That turns the project from a single demo into a repeatable warehouse optimization benchmark.",
         "",
         "## Scenario Pair Summary",
         "",
-        "| Scenario | Off THR | Local THR | Uplift | Local completion | Safety |",
-        "| --- | ---: | ---: | ---: | ---: | --- |",
+        "| Scenario | Shock | Off THR | Local THR | Uplift | Local completion | Safety |",
+        "| --- | --- | ---: | ---: | ---: | ---: | --- |",
     ]
     for pair in payload["paired_results"]:
         lines.append(
-            f"| {pair['scenario_id']} | {pair['planner_off_throughput_per_hour']} | {pair['local_planner_throughput_per_hour']} | {pair['throughput_uplift_pct']}% | {pair['local_planner_completion_rate_pct']}% | {'pass' if pair['local_safety_pass'] and pair['off_safety_pass'] else 'check'} |"
+            f"| {pair['scenario_id']} | {pair['congestion_shock']} | {pair['planner_off_throughput_per_hour']} | {pair['local_planner_throughput_per_hour']} | {pair['throughput_uplift_pct']}% | {pair['local_planner_completion_rate_pct']}% | {'pass' if pair['local_safety_pass'] and pair['off_safety_pass'] else 'check'} |"
         )
     lines.extend([
         "",
         "## Reproduce",
         "",
         "```bash",
-        "python examples/run_fleet_stress_benchmark.py --hours 6 --scenario-limit 27",
+        "python examples/run_fleet_stress_benchmark.py --hours 6 --scenario-limit 54",
         "```",
         "",
         "Outputs:",
@@ -443,7 +453,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Run the accelerated fleet stress benchmark.")
     parser.add_argument("--hours", type=float, default=6.0, help="Simulated warehouse hours per scenario.")
     parser.add_argument("--tick-minutes", type=int, default=1, help="Fast-forward minutes per benchmark tick.")
-    parser.add_argument("--scenario-limit", type=int, default=27, help="Maximum number of scenarios to run.")
+    parser.add_argument("--scenario-limit", type=int, default=54, help="Maximum number of scenarios to run.")
     parser.add_argument("--output", default=str(SUMMARY_PATH), help="Summary JSON path.")
     parser.add_argument("--report", default=str(REPORT_PATH), help="Markdown report path.")
     return parser
@@ -453,14 +463,15 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     layout_config = load_yaml(ROOT / "configs" / "mission_layout.yaml")
     scenarios = [
-        (load, sku_mix, pick_difficulty)
+        (load, sku_mix, pick_difficulty, congestion_shock)
         for load in LOADS
         for sku_mix in SKU_MIXES
         for pick_difficulty in PICK_DIFFICULTIES
+        for congestion_shock in CONGESTION_SHOCKS
     ][: args.scenario_limit]
     runs: list[ScenarioRun] = []
     started = time.perf_counter()
-    for load, sku_mix, pick_difficulty in scenarios:
+    for load, sku_mix, pick_difficulty, congestion_shock in scenarios:
         for planner_mode in PLANNER_MODES:
             runs.append(
                 run_scenario(
@@ -468,6 +479,7 @@ def main(argv: list[str] | None = None) -> int:
                     load=load,
                     sku_mix=sku_mix,
                     pick_difficulty=pick_difficulty,
+                    congestion_shock=congestion_shock,
                     planner_mode=planner_mode,
                     horizon_hours=args.hours,
                     tick_minutes=args.tick_minutes,
@@ -483,12 +495,13 @@ def main(argv: list[str] | None = None) -> int:
     average_off_throughput = mean(pair["planner_off_throughput_per_hour"] for pair in pairs) if pairs else 0.0
     elapsed = max(0.0001, time.perf_counter() - started)
     payload = {
-        "benchmark_id": "fleet_stress_27x6h_minute_resolution",
+        "benchmark_id": "fleet_stress_54x6h_minute_resolution_aisle_surge",
         "description": "Accelerated benchmark-only digital twin for 9-robot warehouse fleet coordination.",
         "scenario_axes": {
             "load": list(LOADS),
             "sku_mix": list(SKU_MIXES),
             "pick_difficulty": list(PICK_DIFFICULTIES),
+            "congestion_shock": list(CONGESTION_SHOCKS),
             "planner_modes": list(PLANNER_MODES),
         },
         "aggregate": {
@@ -499,6 +512,8 @@ def main(argv: list[str] | None = None) -> int:
             "total_simulated_warehouse_hours": round(len(scenarios) * args.hours, 2),
             "total_simulated_robot_hours": round(len(scenarios) * args.hours * len(layout_config.get("robots", [])), 2),
             "tick_minutes": args.tick_minutes,
+            "nominal_scenario_count": sum(1 for pair in pairs if pair["congestion_shock"] == "nominal"),
+            "surge_scenario_count": sum(1 for pair in pairs if pair["congestion_shock"] == "aisle_surge"),
             "safety_pass_count": safety_pass_count,
             "safety_pass_rate_pct": round(100 * safety_pass_count / max(1, len(pairs)), 2),
             "total_collision_violations": total_collision_violations,

@@ -2038,10 +2038,10 @@ function updateDom() {
   if (els.topThroughput) els.topThroughput.textContent = `${Math.round(completedRate)}/hr`;
   if (els.topQueue) els.topQueue.textContent = `${queue}`;
   if (els.topSla) els.topSla.textContent = `${String(slaRisk).padStart(2, "0")}`;
-  const mediumBenchmark = { baselineThroughput: 288, localThroughput: 324, upliftPct: 12.5 };
+  const mediumBenchmark = { baselineThroughput: 288, localThroughput: 324, upliftPct: 12.5, stressUpliftPct: 30.7 };
   const safetyViolations = healthBad;
   if (els.throughputTrend) {
-    els.throughputTrend.textContent = state.runtimeLinked ? `Planner +${mediumBenchmark.upliftPct.toFixed(1)}%` : (state.load === "high" ? "+31%" : state.load === "low" ? "+09%" : "+18%");
+    els.throughputTrend.textContent = state.runtimeLinked ? `Stress +${mediumBenchmark.stressUpliftPct.toFixed(1)}%` : (state.load === "high" ? "+31%" : state.load === "low" ? "+09%" : "+18%");
   }
   if (els.baselineThroughput) els.baselineThroughput.textContent = `${mediumBenchmark.baselineThroughput}/hr`;
   if (els.localThroughput) els.localThroughput.textContent = `${mediumBenchmark.localThroughput}/hr`;

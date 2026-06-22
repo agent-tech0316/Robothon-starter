@@ -685,7 +685,7 @@ h2 {
 
 .planner-proof {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
   margin-top: 12px;
 }
@@ -697,9 +697,9 @@ h2 {
     linear-gradient(180deg, rgba(92, 221, 97, 0.09), transparent 50%),
     rgba(5, 10, 13, 0.8);
   color: var(--muted);
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.2;
-  padding: 10px 12px;
+  padding: 9px 10px;
   text-align: center;
   text-transform: uppercase;
   box-shadow: inset -3px -3px 0 rgba(0, 0, 0, 0.28);
@@ -710,7 +710,7 @@ h2 {
   display: block;
   margin-top: 4px;
   color: var(--green);
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 700;
   text-shadow: var(--type-shadow);
 }

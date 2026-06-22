@@ -28,11 +28,12 @@ The runtime uses four-direction movement, atomic source+destination locks, deadl
 - Fleet-level benchmark: 9 robots must share discrete aisles, reserve tiles, avoid deadlocks, handle priority pressure, and improve throughput together.
 - Local planner route-window reservation improves medium throughput by +12.5% versus planner-off while preserving zero movement safety violations.
 - MuJoCo used as physical evidence for atomic skills while fleet planning stays in a scalable tile-level simulator.
+- MuJoCo evidence scorecard makes physical validation inspectable: joints, actuators, sensors, contact counters, payload response, and two-robot handoff scene depth.
 - Runtime snapshots expose robot state, order state, movement locks, rack-blocking, congestion, and KPI metrics directly to the dashboard.
 - AI-judge-friendly static UI and generated artifacts make the project understandable without extra explanation.
 - Dashboard benchmark proof strip exposes the medium planner-off baseline, local-planner result, and zero safety violations in the first KPI panel.
 - Simplified Judge Review Path reduces UI scanning cost by surfacing fleet size, planner uplift, safety, replans, and MuJoCo skill proof in one narrow rail.
-- Accelerated fleet stress benchmark runs 27 six-hour scenarios / 54 paired planner runs / 1,458 simulated robot-hours in about 3.1 seconds, with 100% safety pass rate and +31.72% average planner throughput uplift.
+- Accelerated fleet stress benchmark runs 54 six-hour nominal/aisle-surge scenarios / 108 raw planner runs / 2,916 simulated robot-hours in about 7.7 seconds, with 100% safety pass rate and +30.74% average planner throughput uplift.
 
 # Benchmark Results
 
@@ -46,7 +47,7 @@ Safety violations include blocked tiles, non-cardinal moves, robot collisions, a
 
 # Fleet Stress Benchmark
 
-`python examples/run_fleet_stress_benchmark.py --hours 6 --scenario-limit 27` generates `FLEET_STRESS_BENCHMARK.md` and `outputs/fleet_stress_benchmark_summary.json`. Headline result: 27/27 paired scenarios pass safety checks, 0 collisions, 0 lock overlaps, +31.72% average planner throughput uplift, +93.99% best-case high-load uplift.
+`python examples/run_fleet_stress_benchmark.py --hours 6 --scenario-limit 54` generates `FLEET_STRESS_BENCHMARK.md` and `outputs/fleet_stress_benchmark_summary.json`. Headline result: 54/54 paired scenarios pass safety checks, 0 collisions, 0 lock overlaps, +30.74% average planner throughput uplift, +97.42% best-case high-load uplift.
 
 # Demo Video
 

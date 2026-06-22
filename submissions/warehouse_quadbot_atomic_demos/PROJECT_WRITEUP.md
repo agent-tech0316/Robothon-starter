@@ -14,7 +14,7 @@ Mission -> Workflow -> Skill Graph -> Runtime -> Multi-Agent Warehouse Optimizat
 
 This submission is best read as a warehouse optimization benchmark with MuJoCo-backed robot skills, not as a single action demo. A single relay or handoff proves one local physical event. This project measures whether a shared warehouse stays productive when 9 quadrupeds compete for orders, racks, tile locks, priority, and narrow aisles over long simulated horizons.
 
-The important claim is measurable: planner-off versus local-planner baselines show throughput uplift, wait-time reduction, and zero movement safety violations across generated load profiles and the 27-scenario accelerated stress benchmark.
+The important claim is measurable: planner-off versus local-planner baselines show throughput uplift, wait-time reduction, and zero movement safety violations across generated load profiles and the 54-scenario accelerated stress benchmark.
 
 # Problem Statement
 
@@ -63,9 +63,9 @@ Three generated load profiles are included: low, medium, and high. Each run is 9
 
 ## Accelerated Fleet Stress Benchmark
 
-For long-horizon optimization evidence, the submission also includes a benchmark-only fast-forward runtime. It uses 1-minute ticks to simulate six warehouse hours per scenario without UI rendering. The 27-scenario matrix covers 3 load levels, 3 SKU weight mixes, and 3 pick difficulty levels. Each scenario runs planner-off and local-planner modes, producing 54 paired runs and 1,458 simulated robot-hours in about 3.1 wall-clock seconds.
+For long-horizon optimization evidence, the submission also includes a benchmark-only fast-forward runtime. It uses 1-minute ticks to simulate six warehouse hours per scenario without UI rendering. The 54-scenario matrix covers 3 load levels, 3 SKU weight mixes, 3 pick difficulty levels, and 2 congestion modes. Each scenario runs planner-off and local-planner modes, producing 54 paired comparisons / 108 raw runs and 2,916 simulated robot-hours in about 7.7 wall-clock seconds.
 
-Headline stress result: 100% safety pass rate, 0 collision violations, 0 tile-lock overlap violations, +31.72% average planner throughput uplift, and +93.99% best-case uplift under high-load congestion.
+Headline stress result: 100% safety pass rate, 0 collision violations, 0 tile-lock overlap violations, +30.74% average planner throughput uplift, and +97.42% best-case uplift under high-load congestion.
 
 ## Baseline Comparison
 
@@ -103,7 +103,7 @@ Tracked safety counters: blocked-tile route violations, route cardinality violat
 
 # Results
 
-The current medium profile completes 81 of 84 orders and reaches 324 orders/hour. High load completes 124 of 140 orders and reaches 496 orders/hour while preserving zero collision and zero lock-overlap violations. The accelerated fleet stress benchmark adds 27 six-hour scenarios with 100% safety pass rate and +31.72% average planner throughput uplift. MuJoCo evidence clips include contact counters for package/gripper, package/basket, package/shelf, and handoff interactions.
+The current medium profile completes 81 of 84 orders and reaches 324 orders/hour. High load completes 124 of 140 orders and reaches 496 orders/hour while preserving zero collision and zero lock-overlap violations. The accelerated fleet stress benchmark adds 54 six-hour nominal/aisle-surge scenarios with 100% safety pass rate and +30.74% average planner throughput uplift. MuJoCo evidence clips include contact counters for package/gripper, package/basket, package/shelf, and handoff interactions.
 
 # Current Limitations
 

@@ -16,7 +16,7 @@
           <div class="title-copy runtime-title-copy">
             <span class="kicker">FF Robothon Summer 2026</span>
             <p class="runtime-caption">AgentTech Warehouse Runtime</p>
-            <small>Judge view: fleet coordination, planner uplift, MuJoCo proof</small>
+            <small>Judge view: 54-scenario stress benchmark, planner uplift, MuJoCo proof</small>
           </div>
         </div>
 
@@ -35,7 +35,7 @@
           <section class="panel throughput-panel">
             <div class="panel-title">
               <span>Throughput Benchmark</span>
-              <strong id="throughputTrend">Planner +12.5%</strong>
+              <strong id="throughputTrend">Stress +30.7%</strong>
             </div>
             <div class="benchmark-grid">
               <div class="benchmark-tile primary">
@@ -68,6 +68,7 @@
               <span>Medium Off <b id="baselineThroughput">288/hr</b></span>
               <span>Medium Local <b id="localThroughput">324/hr</b></span>
               <span>Safety Violations <b id="safetyViolations">0</b></span>
+              <span>Stress Matrix <b id="stressMatrix">54x6h</b></span>
             </div>
             <div id="throughputBars" class="throughput-bars" aria-hidden="true">
               <i style="height:42%"></i><i style="height:55%"></i><i style="height:48%"></i><i style="height:63%"></i>
@@ -162,7 +163,7 @@
           <div class="stage-status">
             <div>
               <span class="kicker">Judge Review Path</span>
-              <h2>9 Robots / Shared Aisles / Zero Collisions</h2>
+              <h2>9 Robots / 54 Stress Scenarios / Zero Collisions</h2>
             </div>
             <div class="stage-badges">
               <span id="activeLoadBadge">Medium Load</span>
@@ -226,8 +227,8 @@
           </section>
           <section class="thin-panel warning">
             <span class="thin-label">Uplift</span>
-            <strong>+12.5</strong>
-            <small>throughput percent</small>
+            <strong>+30.7</strong>
+            <small>stress uplift percent</small>
           </section>
           <section class="thin-panel good">
             <span class="thin-label">Safety</span>
