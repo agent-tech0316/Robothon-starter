@@ -112,6 +112,7 @@ Primary metrics:
 - High load reaches 496 orders/hour with 124 of 140 orders completed while keeping all movement safety counters at 0.
 - MuJoCo clips show payload-dependent gait, shelf pickup, basket contact, and heavy-package handoff.
 - The UI binds to generated runtime JSON and animates runtime-linked robot movement without closing open routes or using mock-only phase motion.
+- The first dashboard KPI panel now shows the medium benchmark proof directly: 288/hr planner-off baseline, 324/hr local planner, and 0 movement safety violations.
 
 ## Installation
 

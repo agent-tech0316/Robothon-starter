@@ -25,6 +25,7 @@ The runtime uses four-direction movement, atomic source+destination locks, deadl
 - MuJoCo used as physical evidence for atomic skills while fleet planning stays in a scalable tile-level simulator.
 - Runtime snapshots expose robot state, order state, movement locks, rack-blocking, congestion, and KPI metrics directly to the dashboard.
 - AI-judge-friendly static UI and generated artifacts make the project understandable without extra explanation.
+- Dashboard benchmark proof strip exposes the medium planner-off baseline, local-planner result, and zero safety violations in the first KPI panel.
 
 # Benchmark Results
 
