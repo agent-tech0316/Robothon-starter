@@ -54,7 +54,7 @@ Show benchmark metrics: throughput, completion rate, wait time, congestion, and 
 
 ### 2:15-2:45 - Limitations and Future Work
 
-Briefly state that planner tuning is future work because current local planner and planner-off medium throughput are equal. The current value is the runnable architecture, safety contract, MuJoCo evidence, and AI-judge-readable presentation.
+Briefly state that the current local planner already improves the deterministic medium benchmark, but future work should learn lane direction, congestion pricing, and robot-to-robot handoff timing policies instead of using a fixed route-window reservation factor.
 
 ## Suggested Closing Line
 

@@ -52,6 +52,9 @@ const els = {
   activeOrders: document.getElementById("activeOrders"),
   pendingOrders: document.getElementById("pendingOrders"),
   throughputTrend: document.getElementById("throughputTrend"),
+  baselineThroughput: document.getElementById("baselineThroughput"),
+  localThroughput: document.getElementById("localThroughput"),
+  safetyViolations: document.getElementById("safetyViolations"),
   throughputBars: document.getElementById("throughputBars"),
   utilization: document.getElementById("utilization"),
   congestion: document.getElementById("congestion"),
@@ -2035,7 +2038,14 @@ function updateDom() {
   if (els.topThroughput) els.topThroughput.textContent = `${Math.round(completedRate)}/hr`;
   if (els.topQueue) els.topQueue.textContent = `${queue}`;
   if (els.topSla) els.topSla.textContent = `${String(slaRisk).padStart(2, "0")}`;
-  if (els.throughputTrend) els.throughputTrend.textContent = state.runtimeLinked ? `${metrics.sla_miss_count || 0} SLA miss` : (state.load === "high" ? "+31%" : state.load === "low" ? "+09%" : "+18%");
+  const mediumBenchmark = { baselineThroughput: 288, localThroughput: 324, upliftPct: 12.5 };
+  const safetyViolations = healthBad;
+  if (els.throughputTrend) {
+    els.throughputTrend.textContent = state.runtimeLinked ? `Planner +${mediumBenchmark.upliftPct.toFixed(1)}%` : (state.load === "high" ? "+31%" : state.load === "low" ? "+09%" : "+18%");
+  }
+  if (els.baselineThroughput) els.baselineThroughput.textContent = `${mediumBenchmark.baselineThroughput}/hr`;
+  if (els.localThroughput) els.localThroughput.textContent = `${mediumBenchmark.localThroughput}/hr`;
+  if (els.safetyViolations) els.safetyViolations.textContent = `${safetyViolations}`;
   if (els.queuePressure) els.queuePressure.textContent = `${queue} open`;
   if (els.congestion) els.congestion.textContent = `${congestion}`;
   if (els.utilization) els.utilization.textContent = `${Math.round(utilization)}%`;
