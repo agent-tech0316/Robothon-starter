@@ -24,6 +24,7 @@ Submission support documents:
 - `SUBMISSION_MANIFEST.md`: maps the judge-facing submission to repo-root runtime/config/schema code.
 - `VALIDATION_REPORT.md`: records clean-copy validation and artifact hygiene checks.
 - `DEMO_VIDEO_SCRIPT.md`: capture plan for the final 1-3 minute video.
+- `FLEET_STRESS_BENCHMARK.md`: 27-scenario accelerated fleet stress benchmark.
 - `SUBMISSION_CHECKLIST.md`: final PR readiness checklist.
 
 ## Why This Project Matters
@@ -61,6 +62,29 @@ The benchmark runs a 20 x 14 tile warehouse with 9 robots, rack footprint blocki
 | High | 140 | 124 | 16 | 496/hr | 63.29 ticks | 120.67 ticks | 77.4% | 0 |
 
 Safety violations include blocked-rack route violations, non-cardinal route steps, robot-tile collisions, and tile-lock overlap violations. All are zero in the generated low/medium/high snapshots.
+
+## Accelerated Fleet Stress Benchmark
+
+The project now includes a benchmark-only fast-forward simulator for warehouse-scale testing without browser rendering. It runs 27 six-hour scenarios across load level, SKU weight mix, and pick difficulty, comparing planner-off against the local route-window planner.
+
+| Stress benchmark | Result |
+| --- | ---: |
+| Scenario matrix | 27 scenarios |
+| Paired planner runs | 54 runs |
+| Simulated robot-hours | 1,458 |
+| Safety pass rate | 100% |
+| Collision / lock-overlap violations | 0 / 0 |
+| Average planner throughput uplift | +31.72% |
+| Best planner throughput uplift | +93.99% |
+| Wall-clock runtime | about 3.1 seconds |
+
+Run it with:
+
+```bash
+python examples/run_fleet_stress_benchmark.py --hours 6 --scenario-limit 27
+```
+
+Outputs: `FLEET_STRESS_BENCHMARK.md` and `outputs/fleet_stress_benchmark_summary.json`.
 
 ## Agentic Workflow
 
@@ -127,6 +151,7 @@ Primary metrics:
 - The UI binds to generated runtime JSON and animates runtime-linked robot movement without closing open routes or using mock-only phase motion.
 - The first dashboard KPI panel now shows the medium benchmark proof directly: 288/hr planner-off baseline, 324/hr local planner, and 0 movement safety violations.
 - The UI now includes a simplified Judge Review Path so evaluators can see fleet size, throughput uplift, safety, replans, and MuJoCo-backed skills without decoding the full operations dashboard.
+- The accelerated fleet stress benchmark runs 27 six-hour scenarios in about 3.1 wall-clock seconds, achieving 100% safety pass rate and +31.72% average planner throughput uplift.
 
 ## Installation
 

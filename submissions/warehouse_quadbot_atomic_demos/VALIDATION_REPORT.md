@@ -57,6 +57,32 @@ Medium-load local planner run completed successfully after route-window reservat
 - Collision violations: 0
 - Lock overlap violations: 0
 
+## Fleet Stress Benchmark Validation
+
+The accelerated benchmark-only fleet stress runner was executed successfully:
+
+```bash
+.venv312/bin/python examples/run_fleet_stress_benchmark.py --hours 6 --scenario-limit 27
+```
+
+Result summary:
+
+- Scenario matrix: 27 scenarios
+- Paired planner runs: 54 runs
+- Simulated warehouse hours: 162
+- Simulated robot-hours: 1,458
+- Safety pass rate: 100%
+- Collision violations: 0
+- Tile-lock overlap violations: 0
+- Average planner throughput uplift: +31.72%
+- Best planner throughput uplift: +93.99%
+- Wall-clock runtime: about 3.1 seconds on the local validation machine
+
+Generated artifacts:
+
+- `submissions/warehouse_quadbot_atomic_demos/FLEET_STRESS_BENCHMARK.md`
+- `submissions/warehouse_quadbot_atomic_demos/outputs/fleet_stress_benchmark_summary.json`
+
 ## Artifact Hygiene
 
 Passed checks:

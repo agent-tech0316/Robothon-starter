@@ -55,6 +55,12 @@ In plain terms, the agentic loop is: new orders arrive, the scheduler ranks them
 
 Three generated load profiles are included: low, medium, and high. Each run is 900 simulated ticks and writes a snapshot, metrics JSON, and JSONL event stream. The UI can switch between the generated profiles.
 
+## Accelerated Fleet Stress Benchmark
+
+For long-horizon optimization evidence, the submission also includes a benchmark-only fast-forward runtime. It uses 1-minute ticks to simulate six warehouse hours per scenario without UI rendering. The 27-scenario matrix covers 3 load levels, 3 SKU weight mixes, and 3 pick difficulty levels. Each scenario runs planner-off and local-planner modes, producing 54 paired runs and 1,458 simulated robot-hours in about 3.1 wall-clock seconds.
+
+Headline stress result: 100% safety pass rate, 0 collision violations, 0 tile-lock overlap violations, +31.72% average planner throughput uplift, and +93.99% best-case uplift under high-load congestion.
+
 ## Baseline Comparison
 
 The deterministic medium benchmark includes a planner-off baseline and a local-planner result. Planner-off completes 72 of 84 orders at 288 orders/hour with 120.06 average completion ticks. Local route-window reservation completes 81 of 84 orders at 324 orders/hour with 42.30 average completion ticks. That is +12.5% throughput and -64.8% average completion time while keeping blocked-tile, route-cardinality, collision, and lock-overlap violations at 0.
@@ -91,7 +97,7 @@ Tracked safety counters: blocked-tile route violations, route cardinality violat
 
 # Results
 
-The current medium profile completes 81 of 84 orders and reaches 324 orders/hour. High load completes 124 of 140 orders and reaches 496 orders/hour while preserving zero collision and zero lock-overlap violations. MuJoCo evidence clips include contact counters for package/gripper, package/basket, package/shelf, and handoff interactions.
+The current medium profile completes 81 of 84 orders and reaches 324 orders/hour. High load completes 124 of 140 orders and reaches 496 orders/hour while preserving zero collision and zero lock-overlap violations. The accelerated fleet stress benchmark adds 27 six-hour scenarios with 100% safety pass rate and +31.72% average planner throughput uplift. MuJoCo evidence clips include contact counters for package/gripper, package/basket, package/shelf, and handoff interactions.
 
 # Current Limitations
 

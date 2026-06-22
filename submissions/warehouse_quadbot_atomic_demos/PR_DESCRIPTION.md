@@ -30,6 +30,7 @@ The runtime uses four-direction movement, atomic source+destination locks, deadl
 - AI-judge-friendly static UI and generated artifacts make the project understandable without extra explanation.
 - Dashboard benchmark proof strip exposes the medium planner-off baseline, local-planner result, and zero safety violations in the first KPI panel.
 - Simplified Judge Review Path reduces UI scanning cost by surfacing fleet size, planner uplift, safety, replans, and MuJoCo skill proof in one narrow rail.
+- Accelerated fleet stress benchmark runs 27 six-hour scenarios / 54 paired planner runs / 1,458 simulated robot-hours in about 3.1 seconds, with 100% safety pass rate and +31.72% average planner throughput uplift.
 
 # Benchmark Results
 
@@ -40,6 +41,10 @@ The runtime uses four-direction movement, atomic source+destination locks, deadl
 | High | 124 / 140 | 496/hr | 120.67 ticks | 0 |
 
 Safety violations include blocked tiles, non-cardinal moves, robot collisions, and lock overlaps.
+
+# Fleet Stress Benchmark
+
+`python examples/run_fleet_stress_benchmark.py --hours 6 --scenario-limit 27` generates `FLEET_STRESS_BENCHMARK.md` and `outputs/fleet_stress_benchmark_summary.json`. Headline result: 27/27 paired scenarios pass safety checks, 0 collisions, 0 lock overlaps, +31.72% average planner throughput uplift, +93.99% best-case high-load uplift.
 
 # Demo Video
 

@@ -23,6 +23,7 @@ Runtime and benchmark code:
 - `warehouse_runtime/`
 - `examples/build_integrated_demo_data.py`
 - `examples/run_warehouse_runtime.py`
+- `examples/run_fleet_stress_benchmark.py`
 - `tests/test_runtime_smoke.py`
 
 Configuration and schemas:
@@ -73,6 +74,8 @@ Generated benchmark outputs used by the UI:
 - `submissions/warehouse_quadbot_atomic_demos/outputs/runtime_events_low.jsonl`
 - `submissions/warehouse_quadbot_atomic_demos/outputs/runtime_events_medium.jsonl`
 - `submissions/warehouse_quadbot_atomic_demos/outputs/runtime_events_high.jsonl`
+- `submissions/warehouse_quadbot_atomic_demos/outputs/fleet_stress_benchmark_summary.json`
+- `submissions/warehouse_quadbot_atomic_demos/FLEET_STRESS_BENCHMARK.md`
 
 ## Default Run Path
 
@@ -84,6 +87,7 @@ source .venv/bin/activate
 python -m pip install -r requirements.txt
 python examples/build_integrated_demo_data.py
 python examples/run_warehouse_runtime.py --load medium --planner local --ticks 900 --print-summary
+python examples/run_fleet_stress_benchmark.py --hours 6 --scenario-limit 27
 python submissions/warehouse_quadbot_atomic_demos/run_quadbot_atomic_demos.py --scenario shelf_pick_metal
 python -m http.server 8765 --bind 127.0.0.1
 ```
@@ -98,11 +102,6 @@ http://127.0.0.1:8765/submissions/warehouse_quadbot_atomic_demos/ui/index.html
 
 No external service is required for default judging. Optional OpenAI planner mode exists, but default reproducibility uses the local planner and requires no API key.
 
-## Remaining Placeholder
+## Final Artifact Status
 
-The only intentionally unfinished item is the final 1-3 minute demo video link or file reference. Once available, update:
-
-- `submissions/warehouse_quadbot_atomic_demos/README.md`
-- `submissions/warehouse_quadbot_atomic_demos/PR_DESCRIPTION.md`
-- `submissions/warehouse_quadbot_atomic_demos/demo.mp4`
-- `submissions/warehouse_quadbot_atomic_demos/SUBMISSION_CHECKLIST.md`
+The final demo video is included as `submissions/warehouse_quadbot_atomic_demos/demo.mp4`. The accelerated fleet benchmark outputs are also included and can be regenerated with the default run path above.
