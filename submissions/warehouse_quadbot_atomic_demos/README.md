@@ -43,9 +43,9 @@ The benchmark runs a 20 x 14 tile warehouse with 9 robots, rack footprint blocki
 
 | Load | Created | Completed | Active | Throughput | Avg completion | Avg lock wait | Robot util. | Safety violations |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Low | 27 | 24 | 3 | 96/hr | 80.21 ticks | 9.78 ticks | 28.8% | 0 |
-| Medium | 84 | 72 | 12 | 288/hr | 120.06 ticks | 82.44 ticks | 84.5% | 0 |
-| High | 140 | 68 | 72 | 272/hr | 140.53 ticks | 85.78 ticks | 85.0% | 0 |
+| Low | 27 | 25 | 2 | 100/hr | 36.36 ticks | 3.44 ticks | 13.4% | 0 |
+| Medium | 84 | 81 | 3 | 324/hr | 42.30 ticks | 41.78 ticks | 48.4% | 0 |
+| High | 140 | 124 | 16 | 496/hr | 63.29 ticks | 120.67 ticks | 77.4% | 0 |
 
 Safety violations include blocked-rack route violations, non-cardinal route steps, robot-tile collisions, and tile-lock overlap violations. All are zero in the generated low/medium/high snapshots.
 
@@ -63,14 +63,14 @@ flowchart LR
 
 ## Baseline Comparison
 
-The current deterministic 900-tick medium-load comparison shows the same throughput for `--planner off` and `--planner local`; the local planner still records planner checks and exposes the contract for future AI planning. The measurable value in this version is the runtime safety contract and presentation pipeline rather than a tuned throughput uplift.
+The current deterministic 900-tick medium-load comparison now shows a measurable local-planner uplift. `--planner local` enables route-window reservation: robots keep the same source+destination tile lock contract, but cleared short corridors let them move continuously instead of pausing for a full control cycle after every tile.
 
-| Mode | Completed | Throughput | Planner checks | Collision violations | Lock overlap violations |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| Planner off | 72 / 84 | 288/hr | 0 | 0 | 0 |
-| Local planner | 72 / 84 | 288/hr | 2 | 0 | 0 |
+| Mode | Completed | Throughput | Avg completion | Avg lock wait | Planner checks | Collision violations |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Planner off | 72 / 84 | 288/hr | 120.06 ticks | 82.44 ticks | 0 | 0 |
+| Local planner | 81 / 84 | 324/hr | 42.30 ticks | 41.78 ticks | 2 | 0 |
 
-This is listed as a current limitation and a future optimization target.
+That is a +12.5% throughput increase, a 64.8% reduction in average completion time, and a 49.3% reduction in average lock wait on the medium profile, while keeping blocked-tile, cardinality, collision, and lock-overlap violations at 0.
 
 ## Environment
 
@@ -78,6 +78,7 @@ This is listed as a current limitation and a future optimization target.
 - N/S/E/W movement only, no diagonal moves
 - Rack footprint tiles are hard obstacles
 - Robots reserve current tile + destination tile before moving
+- Local planner route-window reservation keeps cleared robots moving continuously through short corridors
 - SKU classes: cardboard/light, wood/medium, metal/heavy
 - Load profiles: low, medium, high
 - Outbound service tiles and conveyor zones
@@ -107,8 +108,8 @@ Primary metrics:
 
 ## Results
 
-- Medium load reaches 288 orders/hour with 72 of 84 orders completed in 900 simulated seconds.
-- High load stress test keeps all movement safety counters at 0 while exposing queue pressure and congestion.
+- Medium load reaches 324 orders/hour with 81 of 84 orders completed in 900 simulated seconds after local planner route-window reservation.
+- High load reaches 496 orders/hour with 124 of 140 orders completed while keeping all movement safety counters at 0.
 - MuJoCo clips show payload-dependent gait, shelf pickup, basket contact, and heavy-package handoff.
 - The UI binds to generated runtime JSON and animates runtime-linked robot movement without closing open routes or using mock-only phase motion.
 
@@ -205,13 +206,12 @@ submissions/warehouse_quadbot_atomic_demos/
 
 ## Limitations
 
-- The current planner-off and local-planner 900-tick medium benchmark have equal throughput; planner tuning remains future work.
 - MuJoCo validates atomic actions and contact evidence, but the warehouse runtime is a tile-level simulator, not a full continuous physics simulation of all fleet movement.
 - Optional OpenAI planner mode requires judge-provided `OPENAI_API_KEY` and `OPENAI_MODEL`; default judging path uses local planner mode.
 
 ## Future Improvements
 
-- Tune AI planner policy to improve throughput versus planner-off baseline.
+- Extend route-window reservation into a richer AI planner that learns lane direction and handoff timing policies.
 - Add live backend streaming instead of static JSON snapshots.
 - Expand benchmark scenarios with randomized orders and multiple warehouse layouts.
 - Add stronger packaging automation for PR submission and artifact validation.

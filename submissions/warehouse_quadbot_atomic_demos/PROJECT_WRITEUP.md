@@ -51,9 +51,9 @@ Three generated load profiles are included: low, medium, and high. Each run is 9
 
 | Load | Created | Completed | Active | Throughput | Avg completion | Avg lock wait | Utilization | Violations |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Low | 27 | 24 | 3 | 96/hr | 80.21 | 9.78 | 28.8% | 0 |
-| Medium | 84 | 72 | 12 | 288/hr | 120.06 | 82.44 | 84.5% | 0 |
-| High | 140 | 68 | 72 | 272/hr | 140.53 | 85.78 | 85.0% | 0 |
+| Low | 27 | 25 | 2 | 100/hr | 36.36 | 3.44 | 13.4% | 0 |
+| Medium | 84 | 81 | 3 | 324/hr | 42.30 | 41.78 | 48.4% | 0 |
+| High | 140 | 124 | 16 | 496/hr | 63.29 | 120.67 | 77.4% | 0 |
 
 Tracked safety counters: blocked-tile route violations, route cardinality violations, robot collisions, and lock overlap violations.
 
@@ -79,18 +79,18 @@ Tracked safety counters: blocked-tile route violations, route cardinality violat
 
 # Results
 
-The current medium profile completes 72 of 84 orders and reaches 288 orders/hour. High load produces congestion pressure while preserving zero collision and zero lock-overlap violations. MuJoCo evidence clips include contact counters for package/gripper, package/basket, package/shelf, and handoff interactions.
+The current medium profile completes 81 of 84 orders and reaches 324 orders/hour. High load completes 124 of 140 orders and reaches 496 orders/hour while preserving zero collision and zero lock-overlap violations. MuJoCo evidence clips include contact counters for package/gripper, package/basket, package/shelf, and handoff interactions.
 
 # Current Limitations
 
 - Final 1-3 minute demo video is included as `demo.mp4`.
-- Planner-off and local-planner medium benchmarks currently produce equal throughput in the deterministic 900-tick scenario.
+- Route-window reservation improves planner throughput, but the next step is learning lane direction and handoff timing policies instead of using a fixed reservation factor.
 - Full fleet movement is tile-simulated; MuJoCo is used for atomic skill validation rather than continuous simulation of every warehouse robot.
 - Optional OpenAI planner mode is not required for default judging and depends on external API credentials.
 
 # Future Work
 
-- Tune the AI planner to outperform the planner-off baseline.
+- Learn lane direction, handoff timing, and congestion pricing policies from multiple benchmark seeds.
 - Add randomized benchmark seeds and multiple warehouse layouts.
 - Stream live runtime events to the dashboard.
 - Add more detailed MuJoCo contact validation for full shelf-to-basket manipulation.

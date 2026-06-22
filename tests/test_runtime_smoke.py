@@ -74,3 +74,31 @@ def test_routes_are_cardinal_and_robot_collisions_are_prevented() -> None:
         points = robot["route"]
         for a, b in zip(points, points[1:]):
             assert abs(a[0] - b[0]) + abs(a[1] - b[1]) == 1
+
+def test_local_planner_route_window_improves_medium_throughput() -> None:
+    off_runtime = WarehouseRuntime(
+        load_yaml("configs/runtime.yaml"),
+        load_yaml("configs/scheduler_policy.yaml"),
+        load_yaml("configs/mission_layout.yaml"),
+        RuntimeOptions(load="medium", planner_mode="off", max_ticks=900),
+    )
+    local_runtime = WarehouseRuntime(
+        load_yaml("configs/runtime.yaml"),
+        load_yaml("configs/scheduler_policy.yaml"),
+        load_yaml("configs/mission_layout.yaml"),
+        RuntimeOptions(load="medium", planner_mode="local", max_ticks=900),
+    )
+
+    off_runtime.run(900)
+    local_runtime.run(900)
+    off_metrics = off_runtime.metrics_report()
+    local_metrics = local_runtime.metrics_report()
+
+    assert local_metrics["completed_orders"] > off_metrics["completed_orders"]
+    assert local_metrics["throughput_orders_per_simulated_hour"] > off_metrics["throughput_orders_per_simulated_hour"]
+    assert local_metrics["average_completion_ticks"] < off_metrics["average_completion_ticks"]
+    assert local_metrics["route_blocked_tile_violations"] == 0
+    assert local_metrics["route_cardinality_violations"] == 0
+    assert local_metrics["collision_violations"] == 0
+    assert local_metrics["lock_overlap_violations"] == 0
+

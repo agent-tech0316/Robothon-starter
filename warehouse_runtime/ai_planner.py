@@ -34,7 +34,7 @@ def local_planner_decision(summary: dict[str, Any]) -> PlannerDecision:
             handoff_enabled=False,
             zone_bias="buffer",
             priority_boost=18.0,
-            latest_decision="Local planner prioritizes deadlock recovery and buffer reroutes.",
+            latest_decision="Local planner prioritizes deadlock recovery, buffer reroutes, and short route-window reservation.",
         )
     if load == "high" or active > 40:
         return PlannerDecision(
@@ -43,7 +43,7 @@ def local_planner_decision(summary: dict[str, Any]) -> PlannerDecision:
             handoff_enabled=True,
             zone_bias="outbound",
             priority_boost=12.0,
-            latest_decision="Local planner enables surge routing with optional handoff buffers.",
+            latest_decision="Local planner enables surge routing plus route-window reservation for continuous tile flow.",
         )
     if waiting > 3:
         return PlannerDecision(
@@ -52,7 +52,7 @@ def local_planner_decision(summary: dict[str, Any]) -> PlannerDecision:
             handoff_enabled=False,
             zone_bias="wide_aisle",
             priority_boost=8.0,
-            latest_decision="Local planner reroutes around waiting robots and balances aisles.",
+            latest_decision="Local planner reroutes around waiting robots and reserves short route windows to decongest aisles.",
         )
     return PlannerDecision(
         planner_mode="local",
@@ -60,7 +60,7 @@ def local_planner_decision(summary: dict[str, Any]) -> PlannerDecision:
         handoff_enabled=False,
         zone_bias="nearest_pick",
         priority_boost=5.0,
-        latest_decision="Local planner keeps balanced direct fulfillment routes.",
+        latest_decision="Local planner keeps balanced direct fulfillment routes with short route-window reservation.",
     )
 
 

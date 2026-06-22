@@ -77,6 +77,12 @@ robots[].lock_tiles
 
 For a valid run, all movement violation counters must be `0`.
 
+## Local Planner Route-Window Reservation
+
+`--planner local` now changes runtime behavior, not only the operator-facing decision text. The local planner applies short route-window reservation: robots still acquire atomic source+destination tile locks and still move only N/S/E/W, but a cleared route window reduces per-tile dwell time so robots can continue through short corridors instead of stopping for a full control cycle after every tile.
+
+In the deterministic 900-tick medium benchmark this improves throughput from 72/84 completed orders with `--planner off` to 81/84 with `--planner local`, while keeping blocked-tile, cardinality, collision, and lock-overlap violations at 0.
+
 ## Time Scale
 
 The simulator tick is one simulated second. UI playback may show `1x`, `10x`, or

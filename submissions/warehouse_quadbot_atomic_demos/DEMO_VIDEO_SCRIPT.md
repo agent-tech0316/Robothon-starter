@@ -50,7 +50,7 @@ Show the included contact sheet or MP4 clips for payload walking, shelf pickup, 
 
 ### 1:50-2:15 - KPI Outcome
 
-Show benchmark metrics: throughput, completion rate, wait time, congestion, and zero safety violations. Highlight the medium result: 72 of 84 completed, 288 orders/hour, 0 collisions and 0 lock overlaps.
+Show benchmark metrics: throughput, completion rate, wait time, congestion, and zero safety violations. Highlight the medium result: 81 of 84 completed, 324 orders/hour, +12.5% over planner-off, 0 collisions and 0 lock overlaps.
 
 ### 2:15-2:45 - Limitations and Future Work
 

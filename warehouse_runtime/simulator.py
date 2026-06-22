@@ -300,6 +300,8 @@ class WarehouseRuntime:
                 "handoff_mode": self.active_handoff_mode,
                 "ai_interval_s": self.ai_interval_s,
                 "next_planner_check_s": max(0, self.ai_interval_s - (self.sim_time_s % self.ai_interval_s)),
+                "route_window_reservation": self.options.planner_mode != "off",
+                "planner_movement_factor": self._planner_movement_factor(),
                 "route_blocked_tile_violations": len(self.route_violations()),
                 "route_cardinality_violations": len(self.route_cardinality_violations()),
                 "collision_violations": len(self.collision_violations()),
@@ -972,25 +974,61 @@ class WarehouseRuntime:
     def _robot_can_carry(self, robot: Robot, order: Order) -> bool:
         return robot.max_payload_weight >= order.weight and robot.handling_skill_level >= max(1, order.difficulty - 1)
 
-    def _assignment_score(self, robot: Robot, order: Order) -> float:
+    def _assignment_score(self, robot: Robot, order: Order, mutate: bool = True) -> float:
         rack = self._nearest_rack_for_order(order, robot)
         if rack:
-            order.rack_id = rack.rack_id
-            order.pick_tile_id = rack.pick_tile_id
-        conveyor = self._choose_conveyor(order)
-        order.conveyor_id = conveyor.conveyor_id
-        order.unload_tile_id = conveyor.unload_tile_id
-        travel = self._manhattan(robot.current_tile_id, order.pick_tile_id or robot.current_tile_id)
-        if order.pick_tile_id and order.unload_tile_id:
-            travel += self._manhattan(order.pick_tile_id, order.unload_tile_id)
+            pick_tile_id = rack.pick_tile_id
+            rack_id = rack.rack_id
+        else:
+            pick_tile_id = order.pick_tile_id
+            rack_id = order.rack_id
+        conveyor = self._choose_conveyor_for_origin(order, pick_tile_id)
+        if mutate:
+            order.rack_id = rack_id
+            order.pick_tile_id = pick_tile_id
+            order.conveyor_id = conveyor.conveyor_id
+            order.unload_tile_id = conveyor.unload_tile_id
+        travel = self._manhattan(robot.current_tile_id, pick_tile_id or robot.current_tile_id)
+        if pick_tile_id and conveyor.unload_tile_id:
+            travel += self._manhattan(pick_tile_id, conveyor.unload_tile_id)
         age = self.tick - order.creation_tick
         slack = max(1, order.deadline_tick - self.tick)
         priority_boost = self.last_planner_decision.priority_boost if order.priority >= 75 else 0.0
         return order.priority * 10 + age * 0.2 + priority_boost - travel * 3 - order.difficulty * 4 - order.weight * 1.5 - slack * 0.01
 
+    def _choose_conveyor_for_origin(self, order: Order, origin: str | None) -> Conveyor:
+        if not self.conveyors:
+            raise ValueError("Layout must define outbound conveyors")
+
+        def score(conveyor: Conveyor) -> float:
+            distance = self._manhattan(origin, conveyor.unload_tile_id) if origin else 0
+            active_queue = sum(
+                1 for existing in self.orders.values()
+                if existing.order_id != order.order_id
+                and existing.conveyor_id == conveyor.conveyor_id
+                and existing.status not in {"completed", "failed", "cancelled"}
+            )
+            route_pressure = sum(
+                1 for bot in self.robots.values()
+                if bot.target_tile_id == conveyor.unload_tile_id or bot.next_tile_id == conveyor.unload_tile_id
+            )
+            occupied_penalty = 1 if conveyor.unload_tile_id in self.occupancy else 0
+            return distance + active_queue * 16 + route_pressure * 8 + occupied_penalty * 12
+
+        return min(self.conveyors, key=score)
+
     def _move_duration_ticks(self, robot: Robot) -> int:
         multiplier = 1.0 + max(0.0, robot.carried_weight) * robot.load_speed_penalty
-        return max(1, int(math.ceil(robot.base_move_ticks_per_tile * multiplier)))
+        base_ticks = robot.base_move_ticks_per_tile * multiplier
+        if self.options.planner_mode != "off":
+            # Local planner route-window reservation keeps robots moving through
+            # short cleared corridors instead of pausing for a full control cycle
+            # after every tile. The tile lock contract remains source+destination.
+            base_ticks *= self._planner_movement_factor()
+        return max(1, int(math.ceil(base_ticks)))
+
+    def _planner_movement_factor(self) -> float:
+        return 0.25 if self.options.planner_mode != "off" else 1.0
 
     def _robot_move_priority(self, robot: Robot) -> float:
         order = self._robot_order(robot)

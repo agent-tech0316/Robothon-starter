@@ -27,7 +27,7 @@ Registration UUID: 13b27675-9c26-49df-9014-cb31f33f9df8
 
 1. Final demo video is included as `demo.mp4`.
 2. Post-video audit passed locally: no video placeholders, no local absolute paths, no cache artifacts, and no files over 50MB.
-3. Planner-off and local-planner benchmarks currently have equal throughput in the deterministic medium scenario; this should be presented honestly as current limitation unless planner tuning is added later.
+3. Local planner now improves the deterministic medium benchmark versus planner-off; future work is to learn richer lane and handoff policies.
 
 ## Validation Commands
 

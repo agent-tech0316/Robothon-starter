@@ -21,6 +21,7 @@ The runtime uses four-direction movement, atomic source+destination locks, deadl
 # Key Innovations
 
 - Warehouse optimization framed as a mission/workflow/skill-graph runtime rather than low-level robot control.
+- Local planner route-window reservation improves medium throughput by +12.5% versus planner-off while preserving zero movement safety violations.
 - MuJoCo used as physical evidence for atomic skills while fleet planning stays in a scalable tile-level simulator.
 - Runtime snapshots expose robot state, order state, movement locks, rack-blocking, congestion, and KPI metrics directly to the dashboard.
 - AI-judge-friendly static UI and generated artifacts make the project understandable without extra explanation.
@@ -29,9 +30,9 @@ The runtime uses four-direction movement, atomic source+destination locks, deadl
 
 | Load | Completed / Created | Throughput | Avg lock wait | Safety violations |
 | --- | ---: | ---: | ---: | ---: |
-| Low | 24 / 27 | 96/hr | 9.78 ticks | 0 |
-| Medium | 72 / 84 | 288/hr | 82.44 ticks | 0 |
-| High | 68 / 140 | 272/hr | 85.78 ticks | 0 |
+| Low | 25 / 27 | 100/hr | 3.44 ticks | 0 |
+| Medium | 81 / 84 | 324/hr | 41.78 ticks | 0 |
+| High | 124 / 140 | 496/hr | 120.67 ticks | 0 |
 
 Safety violations include blocked tiles, non-cardinal moves, robot collisions, and lock overlaps.
 
