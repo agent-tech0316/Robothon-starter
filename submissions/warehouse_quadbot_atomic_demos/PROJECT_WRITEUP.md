@@ -14,6 +14,12 @@ Mission -> Workflow -> Skill Graph -> Runtime -> Multi-Agent Warehouse Optimizat
 
 Warehouse throughput depends on more than one robot successfully moving a parcel. A practical system must coordinate many robots, reserve space, avoid rack collisions, handle congestion, prioritize orders, and still prove that low-level robot actions are physically plausible. This submission targets that full stack while keeping MuJoCo focused on physical validation.
 
+# System-Level Difficulty
+
+The hard part is not only whether one robot can pick one parcel. The hard part is whether many robots can make simultaneous decisions inside the same constrained warehouse. Every assignment consumes a robot, every route consumes future tiles, every wait increases order age, and every shortcut can create congestion for another robot.
+
+This makes the benchmark closer to warehouse traffic control than to a single manipulation clip. The runtime must keep four things true at the same time: orders keep completing, urgent work is not starved, robots do not collide or overlap locks, and the system still improves throughput under load.
+
 # Robot Platform
 
 The robot platform is the Faraday Future AEGIS quadruped using `assets/Aegis/urdf/Aegis_mujoco.urdf`. The warehouse version adds a BASE_LINK-mounted basket and a Futurist-derived front manipulator based on the FF Futurist right-arm chain and STL meshes.
@@ -42,6 +48,8 @@ flowchart TD
   E --> K[Deadlock / denied move recovery]
   K --> D
 ```
+
+In plain terms, the agentic loop is: new orders arrive, the scheduler ranks them, a robot is chosen, the route reserves shared tiles, blocked moves trigger waiting or recovery, and the benchmark updates throughput and congestion. The planner is therefore judged by system behavior, not by a single isolated motion.
 
 # Benchmark Design
 

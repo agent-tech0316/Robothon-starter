@@ -37,6 +37,19 @@ This submission demonstrates that bridge:
 - Orders, shelves, robots, movement locks, congestion, and completion metrics are tracked by the runtime.
 - A mission-control UI explains the result to AI judges without requiring extra context.
 
+## Why Fleet Coordination Is Hard
+
+A single robot action proves one body can perform one skill. This benchmark asks whether a team of robots can share the same warehouse without blocking each other, starving urgent orders, or creating unsafe moves. Each robot decision changes the traffic pattern for every other robot.
+
+| Single-action demo | Fleet-level warehouse benchmark |
+| --- | --- |
+| One robot, one object, one local controller | 9 robots, many orders, shared aisles, shared tile locks |
+| Success means the object was grasped or moved | Success means throughput rises while wait time and safety violations stay low |
+| The main risk is local physics failure | The main risks are congestion, deadlock, priority inversion, and route conflicts |
+| Evidence is a short physical clip | Evidence is planner-off vs planner-on metrics plus MuJoCo atomic-skill validation |
+
+The judge-facing takeaway is simple: one robot moving is a skill; many robots sharing narrow aisles is traffic control. This project measures that system-level intelligence with completion rate, throughput, wait time, congestion events, and zero movement safety violations.
+
 ## Benchmark Overview
 
 The benchmark runs a 20 x 14 tile warehouse with 9 robots, rack footprint blocking, depot/service/outbound tiles, three SKU weight classes, and three load profiles.

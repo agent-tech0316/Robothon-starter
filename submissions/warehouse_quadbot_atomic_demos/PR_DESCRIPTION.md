@@ -4,6 +4,8 @@ Registration UUID: 13b27675-9c26-49df-9014-cb31f33f9df8
 
 Agentic Warehouse Quadbot Fulfillment Simulator is Agentech's FFAI Robothon 2026 entry. It demonstrates a multi-agent warehouse order fulfillment simulator that connects mission, workflow, skill graph, runtime scheduling, KPI benchmarking, MuJoCo physical action evidence, and a mission-control UI.
 
+The core challenge is fleet-level coordination: one robot can move a parcel, but many robots sharing narrow aisles create traffic, priority conflicts, deadlock risk, and tile-lock contention. This submission evaluates whether the whole warehouse keeps moving safely and efficiently under load.
+
 # Robot Platform
 
 Faraday Future AEGIS quadruped, with a BASE_LINK-mounted basket and a Futurist-right-arm-derived front manipulator. MuJoCo evidence clips validate walking, payload carrying, shelf pickup, basket contact, and robot-to-robot handoff.
@@ -21,6 +23,7 @@ The runtime uses four-direction movement, atomic source+destination locks, deadl
 # Key Innovations
 
 - Warehouse optimization framed as a mission/workflow/skill-graph runtime rather than low-level robot control.
+- Fleet-level benchmark: 9 robots must share discrete aisles, reserve tiles, avoid deadlocks, handle priority pressure, and improve throughput together.
 - Local planner route-window reservation improves medium throughput by +12.5% versus planner-off while preserving zero movement safety violations.
 - MuJoCo used as physical evidence for atomic skills while fleet planning stays in a scalable tile-level simulator.
 - Runtime snapshots expose robot state, order state, movement locks, rack-blocking, congestion, and KPI metrics directly to the dashboard.
