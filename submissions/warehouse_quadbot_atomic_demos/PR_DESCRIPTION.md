@@ -29,6 +29,7 @@ The runtime uses four-direction movement, atomic source+destination locks, deadl
 - Runtime snapshots expose robot state, order state, movement locks, rack-blocking, congestion, and KPI metrics directly to the dashboard.
 - AI-judge-friendly static UI and generated artifacts make the project understandable without extra explanation.
 - Dashboard benchmark proof strip exposes the medium planner-off baseline, local-planner result, and zero safety violations in the first KPI panel.
+- Simplified Judge Review Path reduces UI scanning cost by surfacing fleet size, planner uplift, safety, replans, and MuJoCo skill proof in one narrow rail.
 
 # Benchmark Results
 
@@ -43,6 +44,8 @@ Safety violations include blocked tiles, non-cardinal moves, robot collisions, a
 # Demo Video
 
 Final 1-3 minute demo video: `submissions/warehouse_quadbot_atomic_demos/demo.mp4`
+
+The final video is already trimmed to 1:05.97 and follows a fast review path: identity, 9-robot warehouse runtime, locks/replans, KPI proof, and MuJoCo evidence.
 
 Included evidence clips:
 

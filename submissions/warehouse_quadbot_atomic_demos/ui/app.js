@@ -2063,7 +2063,7 @@ function updateDom() {
   if (els.zoneHealth) els.zoneHealth.textContent = healthBad ? "Check" : (congestion ? "Busy" : "Clear");
   if (els.skuMix) els.skuMix.textContent = state.load === "high" ? "Heavy Mix" : state.load === "low" ? "Light Mix" : "Live Mix";
   if (els.contractState) els.contractState.textContent = state.runtimeLinked && !healthBad ? "Ready" : "Fallback";
-  if (els.runtimeControlState) els.runtimeControlState.textContent = state.running ? "Linked" : "Paused";
+  if (els.runtimeControlState) els.runtimeControlState.textContent = state.running ? "Ready" : "Paused";
   if (els.runtimeSnapshotPort) els.runtimeSnapshotPort.textContent = state.runtimeLinked ? `${state.load}.json` : "mock";
   if (els.robotsPort) els.robotsPort.textContent = String(state.robots.length).padStart(2, "0");
   if (els.ordersPort) els.ordersPort.textContent = String(activeOrders).padStart(2, "0");

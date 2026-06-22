@@ -26,33 +26,47 @@ Optional MuJoCo evidence refresh:
 python submissions/warehouse_quadbot_atomic_demos/run_quadbot_atomic_demos.py --scenario shelf_pick_metal
 ```
 
-## Shot List
+## Final 65-Second Review Path
 
-### 0:00-0:15 - Startup and Project Identity
+The submitted `demo.mp4` is intentionally short. The judge-facing pacing is:
+
+| Time | What to notice |
+| --- | --- |
+| 0:00-0:08 | Project identity and dashboard startup |
+| 0:08-0:22 | 9 AEGIS quadrupeds sharing discrete warehouse aisles |
+| 0:22-0:36 | Runtime route locks, orders, replans, and congestion recovery |
+| 0:36-0:50 | KPI proof: 324/hr local planner, +12.5% over planner-off, 0 movement safety violations |
+| 0:50-1:05 | MuJoCo atomic-skill evidence for walking, pickup, basket loading, and handoff |
+
+## Original Capture Plan
+
+The longer outline below is retained as provenance, but the final video is already trimmed to 1:05.97 for faster judging.
+
+### Startup and Project Identity
 
 Show the terminal command and browser loading the dashboard. Mention the project name: Agentic Warehouse Quadbot Fulfillment Simulator.
 
-### 0:15-0:35 - Environment and Robot Platform
+### Environment and Robot Platform
 
 Show the warehouse tile grid, rack obstacles, AEGIS quadruped robots, basket/manipulator concept, load selector, and KPI panels.
 
-### 0:35-0:65 - Runtime Execution
+### Runtime Execution
 
 Switch between low, medium, and high load. Show robots moving on discrete tiles, active orders, tile locks, replans, and congestion indicators.
 
-### 0:65-1:25 - Agentic Workflow
+### Agentic Workflow
 
 Explain the stack: Mission -> Workflow -> Skill Graph -> Runtime -> Scheduler -> Tile Locks -> Benchmark Metrics. Show the UI panels that expose order assignment, robot states, and planner decisions.
 
-### 1:25-1:50 - MuJoCo Physical Evidence
+### MuJoCo Physical Evidence
 
 Show the included contact sheet or MP4 clips for payload walking, shelf pickup, basket loading, and handoff. Emphasize that MuJoCo validates atomic physical actions while the fleet optimizer runs at tile level.
 
-### 1:50-2:15 - KPI Outcome
+### KPI Outcome
 
 Show benchmark metrics: throughput, completion rate, wait time, congestion, and zero safety violations. Highlight the medium result: 81 of 84 completed, 324 orders/hour, +12.5% over planner-off, 0 collisions and 0 lock overlaps.
 
-### 2:15-2:45 - Limitations and Future Work
+### Limitations and Future Work
 
 Briefly state that the current local planner already improves the deterministic medium benchmark, but future work should learn lane direction, congestion pricing, and robot-to-robot handoff timing policies instead of using a fixed route-window reservation factor.
 

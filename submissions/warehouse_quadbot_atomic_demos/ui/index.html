@@ -16,7 +16,7 @@
           <div class="title-copy runtime-title-copy">
             <span class="kicker">FF Robothon Summer 2026</span>
             <p class="runtime-caption">AgentTech Warehouse Runtime</p>
-            <small>Mission Control / Operations Center / Warehouse Management System</small>
+            <small>Judge view: fleet coordination, planner uplift, MuJoCo proof</small>
           </div>
         </div>
 
@@ -161,8 +161,8 @@
         <section class="stage-panel" aria-label="Warehouse runtime stage">
           <div class="stage-status">
             <div>
-              <span class="kicker">Isometric Runtime Map</span>
-              <h2>Multi-Agent Warehouse Optimization</h2>
+              <span class="kicker">Judge Review Path</span>
+              <h2>9 Robots / Shared Aisles / Zero Collisions</h2>
             </div>
             <div class="stage-badges">
               <span id="activeLoadBadge">Medium Load</span>
@@ -173,10 +173,10 @@
 
           <div class="canvas-wrap">
             <div class="map-toolbar" aria-label="Map overlays">
-              <button class="tool-toggle active" type="button">Occupancy</button>
+              <button class="tool-toggle active" type="button">Robots</button>
               <button class="tool-toggle active" type="button">Routes</button>
               <button class="tool-toggle active" type="button">Orders</button>
-              <button class="tool-toggle warning active" type="button">Congestion</button>
+              <button class="tool-toggle warning active" type="button">Locks</button>
             </div>
             <canvas id="warehouseCanvas" aria-label="Animated isometric warehouse map"></canvas>
           </div>
@@ -218,41 +218,41 @@
           </section>
         </aside>
 
-        <aside class="thin-rail" aria-label="Program detail rail">
+        <aside class="thin-rail" aria-label="Judge review path">
           <section class="thin-panel">
-            <span class="thin-label">SIM</span>
-            <strong>04K</strong>
-            <small>3840x2160</small>
-          </section>
-          <section class="thin-panel">
-            <span class="thin-label">TPS</span>
-            <strong>60</strong>
-            <small>target</small>
-          </section>
-          <section class="thin-panel">
-            <span class="thin-label">ORD</span>
-            <strong id="thinPending">096</strong>
-            <small>pending</small>
+            <span class="thin-label">Fleet</span>
+            <strong>9</strong>
+            <small>robots share aisles</small>
           </section>
           <section class="thin-panel warning">
-            <span class="thin-label">RPL</span>
+            <span class="thin-label">Uplift</span>
+            <strong>+12.5</strong>
+            <small>throughput percent</small>
+          </section>
+          <section class="thin-panel good">
+            <span class="thin-label">Safety</span>
+            <strong>0</strong>
+            <small>movement violations</small>
+          </section>
+          <section class="thin-panel">
+            <span class="thin-label">Orders</span>
+            <strong id="thinPending">096</strong>
+            <small>pending queue</small>
+          </section>
+          <section class="thin-panel warning">
+            <span class="thin-label">Replans</span>
             <strong id="thinReplans">07</strong>
-            <small>replans</small>
-          </section>
-          <section class="thin-panel danger">
-            <span class="thin-label">DLK</span>
-            <strong id="thinDeadlocks">02</strong>
-            <small>deadlocks</small>
+            <small><b id="thinDeadlocks">02</b> deadlocks recovered</small>
           </section>
           <section class="thin-panel">
-            <span class="thin-label">SKL</span>
+            <span class="thin-label">Skills</span>
             <strong id="thinSkills">12</strong>
-            <small>active</small>
+            <small>MuJoCo-backed</small>
           </section>
-          <section class="thin-panel">
-            <span class="thin-label">RUN</span>
+          <section class="thin-panel good">
+            <span class="thin-label">Planner</span>
             <strong id="thinRun">ON</strong>
-            <small>planner</small>
+            <small>route-window mode</small>
           </section>
         </aside>
 
@@ -302,38 +302,38 @@
 
         <section class="console-panel sim-control-panel">
           <div class="panel-title compact">
-            <span>Runtime Control</span>
-            <strong id="runtimeControlState">Linked</strong>
+            <span>Review Controls</span>
+            <strong id="runtimeControlState">Ready</strong>
           </div>
           <div class="control-board">
             <div class="control-bank">
-              <span class="cluster-label">Load</span>
+              <span class="cluster-label">1 Load</span>
               <button class="segmented" data-load="low" type="button">Low</button>
               <button class="segmented active" data-load="medium" type="button">Medium</button>
               <button class="segmented" data-load="high" type="button">High</button>
             </div>
             <div class="control-bank">
-              <span class="cluster-label">Speed</span>
+              <span class="cluster-label">2 Speed</span>
               <button class="segmented active" data-speed="10" type="button">10x</button>
               <button class="segmented" data-speed="60" type="button">60x</button>
             </div>
             <div class="command-bank">
               <button id="pauseBtn" class="command primary icon-pause" type="button">Pause</button>
-              <button id="tickBtn" class="command icon-step" type="button">Next Tick</button>
-              <button id="resetBtn" class="command icon-reset" type="button">Reset</button>
+              <button id="tickBtn" class="command icon-step" type="button">Step</button>
+              <button id="resetBtn" class="command icon-reset" type="button">Reset View</button>
             </div>
           </div>
           <div class="runtime-interface-strip" aria-label="Runtime interface readiness">
-            <span>runtime_snapshot <b id="runtimeSnapshotPort">mock</b></span>
-            <span>robot_state <b id="robotsPort">ready</b></span>
-            <span>orders <b id="ordersPort">ready</b></span>
-            <span>tile_locks <b id="locksPort">ready</b></span>
+            <span>Runtime JSON <b id="runtimeSnapshotPort">mock</b></span>
+            <span>9 robots <b id="robotsPort">ready</b></span>
+            <span>Orders <b id="ordersPort">ready</b></span>
+            <span>Tile locks <b id="locksPort">ready</b></span>
           </div>
         </section>
         </footer>
       </main>
     </div>
 
-    <script src="./app.js?v=runtime-motion-v6"></script>
+    <script src="./app.js?v=judge-path-v1"></script>
   </body>
 </html>

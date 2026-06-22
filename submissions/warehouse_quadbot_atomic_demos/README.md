@@ -8,7 +8,7 @@ This is not a low-level robot teleoperation project. MuJoCo is used as the physi
 
 Final 1-3 minute demo video: [`demo.mp4`](demo.mp4).
 
-The final demo video is included directly in this submission as `demo.mp4` (1:05.97, 720p H.264/AAC, 9.8 MB). Existing evidence clips are also included and can be reviewed separately:
+The final demo video is included directly in this submission as `demo.mp4` (1:05.97, 720p H.264/AAC, 9.8 MB). It is paced as a short review path: project identity, 9 robots sharing aisles, route locks/replans, KPI proof, and MuJoCo action evidence. Existing evidence clips are also included and can be reviewed separately:
 
 - MuJoCo contact sheet: `outputs/physics_evidence/physics_evidence_contact_sheet.png`
 - Atomic action preview sheet: `outputs/preview_contact_sheet.png`
@@ -126,6 +126,7 @@ Primary metrics:
 - MuJoCo clips show payload-dependent gait, shelf pickup, basket contact, and heavy-package handoff.
 - The UI binds to generated runtime JSON and animates runtime-linked robot movement without closing open routes or using mock-only phase motion.
 - The first dashboard KPI panel now shows the medium benchmark proof directly: 288/hr planner-off baseline, 324/hr local planner, and 0 movement safety violations.
+- The UI now includes a simplified Judge Review Path so evaluators can see fleet size, throughput uplift, safety, replans, and MuJoCo-backed skills without decoding the full operations dashboard.
 
 ## Installation
 
