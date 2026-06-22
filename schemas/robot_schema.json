@@ -1,0 +1,215 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentech.local/schemas/warehouse/robot_schema.json",
+  "title": "Outbound Warehouse Robot State",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "robot_id",
+    "run_id",
+    "robot_type_id",
+    "current_tile",
+    "status",
+    "carried_weight",
+    "movement_model",
+    "lock_model",
+    "last_updated_tick"
+  ],
+  "properties": {
+    "robot_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "robot_type_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "current_tile": {
+      "$ref": "#/$defs/tile_ref"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "idle",
+        "ready",
+        "assigned",
+        "planning_route",
+        "navigating",
+        "moving",
+        "waiting_for_tile_lock",
+        "waiting_for_pick_point",
+        "picking",
+        "carrying",
+        "waiting_for_handoff",
+        "handoff_sending",
+        "handoff_receiving",
+        "navigating_to_conveyor",
+        "unloading",
+        "releasing_package",
+        "blocked",
+        "error",
+        "offline"
+      ]
+    },
+    "movement_model": {
+      "type": "string",
+      "const": "four_direction_grid",
+      "description": "Robots may only move to N/S/E/W neighboring tiles."
+    },
+    "lock_model": {
+      "type": "string",
+      "const": "current_and_next_tile",
+      "description": "Robot must lock its current tile and its next tile before movement."
+    },
+    "assigned_order_id": {
+      "type": ["string", "null"]
+    },
+    "assigned_task_id": {
+      "type": ["string", "null"]
+    },
+    "active_route_id": {
+      "type": ["string", "null"]
+    },
+    "target_tile": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/tile_ref"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "next_tile": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/tile_ref"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The adjacent tile the robot is trying to lock and enter."
+    },
+    "current_lock_id": {
+      "type": ["string", "null"]
+    },
+    "next_lock_id": {
+      "type": ["string", "null"]
+    },
+    "heading": {
+      "type": ["string", "null"],
+      "enum": ["N", "S", "E", "W", null],
+      "description": "Cardinal grid direction used for visual facing and movement. No diagonal headings."
+    },
+    "move_progress": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Progress within the current tile-to-tile step for visualization interpolation."
+    },
+    "carried_package_id": {
+      "type": ["string", "null"]
+    },
+    "carried_sku_id": {
+      "type": ["string", "null"]
+    },
+    "carried_weight": {
+      "type": "number",
+      "minimum": 0
+    },
+    "max_payload_weight": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "battery_pct": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "maximum": 100
+    },
+    "speed_profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "base_move_ticks_per_tile": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "load_speed_penalty": {
+          "type": "number",
+          "minimum": 0
+        },
+        "turn_penalty_ticks": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "handling_profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "pick_skill_level": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "handoff_skill_level": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unload_skill_level": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "available_at_tick": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "last_updated_tick": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "wait_reason": {
+      "type": ["string", "null"],
+      "enum": [
+        "tile_locked",
+        "pick_point_busy",
+        "handoff_partner_not_adjacent",
+        "conveyor_busy",
+        "deadlock_risk",
+        null
+      ]
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "tile_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tile_id", "x", "y"],
+      "properties": {
+        "tile_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "x": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "y": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

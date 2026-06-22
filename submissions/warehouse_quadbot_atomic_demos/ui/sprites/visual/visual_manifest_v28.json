@@ -1,0 +1,788 @@
+{
+  "version": 28,
+  "category": "visual",
+  "sprite_scale": 2,
+  "base_tile": {
+    "source_sprite": "128x128 final PNG cell for floor tiles with transparent padding",
+    "visible_diamond": "128x64",
+    "logical_model_tile": "64x48 art inside a 64x64 square canvas before nearest-neighbor 2x export",
+    "robot_png": "128x128 final PNG with transparent padding"
+  },
+  "sprites": [
+    {
+      "name": "depot_zone_2x2",
+      "rect": {
+        "x": 8,
+        "y": 8,
+        "w": 288,
+        "h": 288
+      },
+      "art_size": {
+        "w": 288,
+        "h": 224
+      },
+      "anchor": {
+        "x": 144,
+        "y": 196
+      },
+      "footprint": "2x2 tiles",
+      "note": "Idle robot parking zone with four parking pads."
+    },
+    {
+      "name": "computer_terminal_1x1_e_frame_00",
+      "rect": {
+        "x": 304,
+        "y": 8,
+        "w": 256,
+        "h": 256
+      },
+      "art_size": {
+        "w": 256,
+        "h": 256
+      },
+      "anchor": {
+        "x": 128,
+        "y": 200
+      },
+      "footprint": "1x1 tile",
+      "note": "Animated dark isometric Macintosh-inspired warehouse order server, E orientation, RGB LED/status frame 00, no keyboard or mouse."
+    },
+    {
+      "name": "computer_terminal_1x1_e_frame_01",
+      "rect": {
+        "x": 568,
+        "y": 8,
+        "w": 256,
+        "h": 256
+      },
+      "art_size": {
+        "w": 256,
+        "h": 256
+      },
+      "anchor": {
+        "x": 128,
+        "y": 200
+      },
+      "footprint": "1x1 tile",
+      "note": "Animated dark isometric Macintosh-inspired warehouse order server, E orientation, RGB LED/status frame 01, no keyboard or mouse."
+    },
+    {
+      "name": "computer_terminal_1x1_e_frame_02",
+      "rect": {
+        "x": 832,
+        "y": 8,
+        "w": 256,
+        "h": 256
+      },
+      "art_size": {
+        "w": 256,
+        "h": 256
+      },
+      "anchor": {
+        "x": 128,
+        "y": 200
+      },
+      "footprint": "1x1 tile",
+      "note": "Animated dark isometric Macintosh-inspired warehouse order server, E orientation, RGB LED/status frame 02, no keyboard or mouse."
+    },
+    {
+      "name": "computer_terminal_1x1_e_frame_03",
+      "rect": {
+        "x": 1096,
+        "y": 8,
+        "w": 256,
+        "h": 256
+      },
+      "art_size": {
+        "w": 256,
+        "h": 256
+      },
+      "anchor": {
+        "x": 128,
+        "y": 200
+      },
+      "footprint": "1x1 tile",
+      "note": "Animated dark isometric Macintosh-inspired warehouse order server, E orientation, RGB LED/status frame 03, no keyboard or mouse."
+    },
+    {
+      "name": "computer_terminal_1x1_s_frame_00",
+      "rect": {
+        "x": 1360,
+        "y": 8,
+        "w": 256,
+        "h": 256
+      },
+      "art_size": {
+        "w": 256,
+        "h": 256
+      },
+      "anchor": {
+        "x": 128,
+        "y": 200
+      },
+      "footprint": "1x1 tile",
+      "note": "Animated dark isometric Macintosh-inspired warehouse order server, S orientation, RGB LED/status frame 00, no keyboard or mouse."
+    },
+    {
+      "name": "computer_terminal_1x1_s_frame_01",
+      "rect": {
+        "x": 1624,
+        "y": 8,
+        "w": 256,
+        "h": 256
+      },
+      "art_size": {
+        "w": 256,
+        "h": 256
+      },
+      "anchor": {
+        "x": 128,
+        "y": 200
+      },
+      "footprint": "1x1 tile",
+      "note": "Animated dark isometric Macintosh-inspired warehouse order server, S orientation, RGB LED/status frame 01, no keyboard or mouse."
+    },
+    {
+      "name": "computer_terminal_1x1_s_frame_02",
+      "rect": {
+        "x": 8,
+        "y": 304,
+        "w": 256,
+        "h": 256
+      },
+      "art_size": {
+        "w": 256,
+        "h": 256
+      },
+      "anchor": {
+        "x": 128,
+        "y": 200
+      },
+      "footprint": "1x1 tile",
+      "note": "Animated dark isometric Macintosh-inspired warehouse order server, S orientation, RGB LED/status frame 02, no keyboard or mouse."
+    },
+    {
+      "name": "computer_terminal_1x1_s_frame_03",
+      "rect": {
+        "x": 272,
+        "y": 304,
+        "w": 256,
+        "h": 256
+      },
+      "art_size": {
+        "w": 256,
+        "h": 256
+      },
+      "anchor": {
+        "x": 128,
+        "y": 200
+      },
+      "footprint": "1x1 tile",
+      "note": "Animated dark isometric Macintosh-inspired warehouse order server, S orientation, RGB LED/status frame 03, no keyboard or mouse."
+    },
+    {
+      "name": "computer_terminal_1x1_w_frame_00",
+      "rect": {
+        "x": 536,
+        "y": 304,
+        "w": 256,
+        "h": 256
+      },
+      "art_size": {
+        "w": 256,
+        "h": 256
+      },
+      "anchor": {
+        "x": 128,
+        "y": 200
+      },
+      "footprint": "1x1 tile",
+      "note": "Animated dark isometric Macintosh-inspired warehouse order server, W orientation, RGB LED/status frame 00, no keyboard or mouse."
+    },
+    {
+      "name": "computer_terminal_1x1_w_frame_01",
+      "rect": {
+        "x": 800,
+        "y": 304,
+        "w": 256,
+        "h": 256
+      },
+      "art_size": {
+        "w": 256,
+        "h": 256
+      },
+      "anchor": {
+        "x": 128,
+        "y": 200
+      },
+      "footprint": "1x1 tile",
+      "note": "Animated dark isometric Macintosh-inspired warehouse order server, W orientation, RGB LED/status frame 01, no keyboard or mouse."
+    },
+    {
+      "name": "computer_terminal_1x1_w_frame_02",
+      "rect": {
+        "x": 1064,
+        "y": 304,
+        "w": 256,
+        "h": 256
+      },
+      "art_size": {
+        "w": 256,
+        "h": 256
+      },
+      "anchor": {
+        "x": 128,
+        "y": 200
+      },
+      "footprint": "1x1 tile",
+      "note": "Animated dark isometric Macintosh-inspired warehouse order server, W orientation, RGB LED/status frame 02, no keyboard or mouse."
+    },
+    {
+      "name": "computer_terminal_1x1_w_frame_03",
+      "rect": {
+        "x": 1328,
+        "y": 304,
+        "w": 256,
+        "h": 256
+      },
+      "art_size": {
+        "w": 256,
+        "h": 256
+      },
+      "anchor": {
+        "x": 128,
+        "y": 200
+      },
+      "footprint": "1x1 tile",
+      "note": "Animated dark isometric Macintosh-inspired warehouse order server, W orientation, RGB LED/status frame 03, no keyboard or mouse."
+    },
+    {
+      "name": "computer_terminal_1x1_n_frame_00",
+      "rect": {
+        "x": 1592,
+        "y": 304,
+        "w": 256,
+        "h": 256
+      },
+      "art_size": {
+        "w": 256,
+        "h": 256
+      },
+      "anchor": {
+        "x": 128,
+        "y": 200
+      },
+      "footprint": "1x1 tile",
+      "note": "Animated dark isometric Macintosh-inspired warehouse order server, N orientation, RGB LED/status frame 00, no keyboard or mouse."
+    },
+    {
+      "name": "computer_terminal_1x1_n_frame_01",
+      "rect": {
+        "x": 8,
+        "y": 568,
+        "w": 256,
+        "h": 256
+      },
+      "art_size": {
+        "w": 256,
+        "h": 256
+      },
+      "anchor": {
+        "x": 128,
+        "y": 200
+      },
+      "footprint": "1x1 tile",
+      "note": "Animated dark isometric Macintosh-inspired warehouse order server, N orientation, RGB LED/status frame 01, no keyboard or mouse."
+    },
+    {
+      "name": "computer_terminal_1x1_n_frame_02",
+      "rect": {
+        "x": 272,
+        "y": 568,
+        "w": 256,
+        "h": 256
+      },
+      "art_size": {
+        "w": 256,
+        "h": 256
+      },
+      "anchor": {
+        "x": 128,
+        "y": 200
+      },
+      "footprint": "1x1 tile",
+      "note": "Animated dark isometric Macintosh-inspired warehouse order server, N orientation, RGB LED/status frame 02, no keyboard or mouse."
+    },
+    {
+      "name": "computer_terminal_1x1_n_frame_03",
+      "rect": {
+        "x": 536,
+        "y": 568,
+        "w": 256,
+        "h": 256
+      },
+      "art_size": {
+        "w": 256,
+        "h": 256
+      },
+      "anchor": {
+        "x": 128,
+        "y": 200
+      },
+      "footprint": "1x1 tile",
+      "note": "Animated dark isometric Macintosh-inspired warehouse order server, N orientation, RGB LED/status frame 03, no keyboard or mouse."
+    },
+    {
+      "name": "exit_gate_conveyor_3x1_e_frame_00",
+      "rect": {
+        "x": 800,
+        "y": 568,
+        "w": 512,
+        "h": 512
+      },
+      "art_size": {
+        "w": 512,
+        "h": 384
+      },
+      "anchor": {
+        "x": 256,
+        "y": 356
+      },
+      "footprint": "3x1 tiles",
+      "note": "Animated E roll-up exit gate with moving conveyor belt, parcel motion, and sectional door slats, frame 00."
+    },
+    {
+      "name": "exit_gate_conveyor_3x1_e_frame_01",
+      "rect": {
+        "x": 1320,
+        "y": 568,
+        "w": 512,
+        "h": 512
+      },
+      "art_size": {
+        "w": 512,
+        "h": 384
+      },
+      "anchor": {
+        "x": 256,
+        "y": 356
+      },
+      "footprint": "3x1 tiles",
+      "note": "Animated E roll-up exit gate with moving conveyor belt, parcel motion, and sectional door slats, frame 01."
+    },
+    {
+      "name": "exit_gate_conveyor_3x1_e_frame_02",
+      "rect": {
+        "x": 8,
+        "y": 1088,
+        "w": 512,
+        "h": 512
+      },
+      "art_size": {
+        "w": 512,
+        "h": 384
+      },
+      "anchor": {
+        "x": 256,
+        "y": 356
+      },
+      "footprint": "3x1 tiles",
+      "note": "Animated E roll-up exit gate with moving conveyor belt, parcel motion, and sectional door slats, frame 02."
+    },
+    {
+      "name": "exit_gate_conveyor_3x1_e_frame_03",
+      "rect": {
+        "x": 528,
+        "y": 1088,
+        "w": 512,
+        "h": 512
+      },
+      "art_size": {
+        "w": 512,
+        "h": 384
+      },
+      "anchor": {
+        "x": 256,
+        "y": 356
+      },
+      "footprint": "3x1 tiles",
+      "note": "Animated E roll-up exit gate with moving conveyor belt, parcel motion, and sectional door slats, frame 03."
+    },
+    {
+      "name": "exit_gate_conveyor_3x1_s_frame_00",
+      "rect": {
+        "x": 1048,
+        "y": 1088,
+        "w": 512,
+        "h": 512
+      },
+      "art_size": {
+        "w": 512,
+        "h": 384
+      },
+      "anchor": {
+        "x": 256,
+        "y": 356
+      },
+      "footprint": "3x1 tiles",
+      "note": "Animated S roll-up exit gate with moving conveyor belt, parcel motion, and sectional door slats, frame 00."
+    },
+    {
+      "name": "exit_gate_conveyor_3x1_s_frame_01",
+      "rect": {
+        "x": 8,
+        "y": 1608,
+        "w": 512,
+        "h": 512
+      },
+      "art_size": {
+        "w": 512,
+        "h": 384
+      },
+      "anchor": {
+        "x": 256,
+        "y": 356
+      },
+      "footprint": "3x1 tiles",
+      "note": "Animated S roll-up exit gate with moving conveyor belt, parcel motion, and sectional door slats, frame 01."
+    },
+    {
+      "name": "exit_gate_conveyor_3x1_s_frame_02",
+      "rect": {
+        "x": 528,
+        "y": 1608,
+        "w": 512,
+        "h": 512
+      },
+      "art_size": {
+        "w": 512,
+        "h": 384
+      },
+      "anchor": {
+        "x": 256,
+        "y": 356
+      },
+      "footprint": "3x1 tiles",
+      "note": "Animated S roll-up exit gate with moving conveyor belt, parcel motion, and sectional door slats, frame 02."
+    },
+    {
+      "name": "exit_gate_conveyor_3x1_s_frame_03",
+      "rect": {
+        "x": 1048,
+        "y": 1608,
+        "w": 512,
+        "h": 512
+      },
+      "art_size": {
+        "w": 512,
+        "h": 384
+      },
+      "anchor": {
+        "x": 256,
+        "y": 356
+      },
+      "footprint": "3x1 tiles",
+      "note": "Animated S roll-up exit gate with moving conveyor belt, parcel motion, and sectional door slats, frame 03."
+    },
+    {
+      "name": "exit_gate_conveyor_3x1_w_frame_00",
+      "rect": {
+        "x": 8,
+        "y": 2128,
+        "w": 512,
+        "h": 512
+      },
+      "art_size": {
+        "w": 512,
+        "h": 384
+      },
+      "anchor": {
+        "x": 256,
+        "y": 356
+      },
+      "footprint": "3x1 tiles",
+      "note": "Animated W roll-up exit gate with moving conveyor belt, parcel motion, and sectional door slats, frame 00."
+    },
+    {
+      "name": "exit_gate_conveyor_3x1_w_frame_01",
+      "rect": {
+        "x": 528,
+        "y": 2128,
+        "w": 512,
+        "h": 512
+      },
+      "art_size": {
+        "w": 512,
+        "h": 384
+      },
+      "anchor": {
+        "x": 256,
+        "y": 356
+      },
+      "footprint": "3x1 tiles",
+      "note": "Animated W roll-up exit gate with moving conveyor belt, parcel motion, and sectional door slats, frame 01."
+    },
+    {
+      "name": "exit_gate_conveyor_3x1_w_frame_02",
+      "rect": {
+        "x": 1048,
+        "y": 2128,
+        "w": 512,
+        "h": 512
+      },
+      "art_size": {
+        "w": 512,
+        "h": 384
+      },
+      "anchor": {
+        "x": 256,
+        "y": 356
+      },
+      "footprint": "3x1 tiles",
+      "note": "Animated W roll-up exit gate with moving conveyor belt, parcel motion, and sectional door slats, frame 02."
+    },
+    {
+      "name": "exit_gate_conveyor_3x1_w_frame_03",
+      "rect": {
+        "x": 8,
+        "y": 2648,
+        "w": 512,
+        "h": 512
+      },
+      "art_size": {
+        "w": 512,
+        "h": 384
+      },
+      "anchor": {
+        "x": 256,
+        "y": 356
+      },
+      "footprint": "3x1 tiles",
+      "note": "Animated W roll-up exit gate with moving conveyor belt, parcel motion, and sectional door slats, frame 03."
+    },
+    {
+      "name": "exit_gate_conveyor_3x1_n_frame_00",
+      "rect": {
+        "x": 528,
+        "y": 2648,
+        "w": 512,
+        "h": 512
+      },
+      "art_size": {
+        "w": 512,
+        "h": 384
+      },
+      "anchor": {
+        "x": 256,
+        "y": 356
+      },
+      "footprint": "3x1 tiles",
+      "note": "Animated N roll-up exit gate with moving conveyor belt, parcel motion, and sectional door slats, frame 00."
+    },
+    {
+      "name": "exit_gate_conveyor_3x1_n_frame_01",
+      "rect": {
+        "x": 1048,
+        "y": 2648,
+        "w": 512,
+        "h": 512
+      },
+      "art_size": {
+        "w": 512,
+        "h": 384
+      },
+      "anchor": {
+        "x": 256,
+        "y": 356
+      },
+      "footprint": "3x1 tiles",
+      "note": "Animated N roll-up exit gate with moving conveyor belt, parcel motion, and sectional door slats, frame 01."
+    },
+    {
+      "name": "exit_gate_conveyor_3x1_n_frame_02",
+      "rect": {
+        "x": 8,
+        "y": 3168,
+        "w": 512,
+        "h": 512
+      },
+      "art_size": {
+        "w": 512,
+        "h": 384
+      },
+      "anchor": {
+        "x": 256,
+        "y": 356
+      },
+      "footprint": "3x1 tiles",
+      "note": "Animated N roll-up exit gate with moving conveyor belt, parcel motion, and sectional door slats, frame 02."
+    },
+    {
+      "name": "exit_gate_conveyor_3x1_n_frame_03",
+      "rect": {
+        "x": 528,
+        "y": 3168,
+        "w": 512,
+        "h": 512
+      },
+      "art_size": {
+        "w": 512,
+        "h": 384
+      },
+      "anchor": {
+        "x": 256,
+        "y": 356
+      },
+      "footprint": "3x1 tiles",
+      "note": "Animated N roll-up exit gate with moving conveyor belt, parcel motion, and sectional door slats, frame 03."
+    },
+    {
+      "name": "warehouse_wall_segment_ne_h3m",
+      "rect": {
+        "x": 1048,
+        "y": 3168,
+        "w": 352,
+        "h": 352
+      },
+      "art_size": {
+        "w": 320,
+        "h": 352
+      },
+      "anchor": {
+        "x": 176,
+        "y": 300
+      },
+      "footprint": "1x1 rear wall edge",
+      "note": "Rear warehouse wall segment, NE back-side orientation, approx 3m tall if one tile is 1.5m."
+    },
+    {
+      "name": "warehouse_wall_segment_ne_h6m",
+      "rect": {
+        "x": 1408,
+        "y": 3168,
+        "w": 528,
+        "h": 528
+      },
+      "art_size": {
+        "w": 384,
+        "h": 528
+      },
+      "anchor": {
+        "x": 264,
+        "y": 476
+      },
+      "footprint": "1x1 rear wall edge",
+      "note": "Rear warehouse wall segment, NE back-side orientation, approx 6m tall if one tile is 1.5m."
+    },
+    {
+      "name": "warehouse_wall_segment_nw_h3m",
+      "rect": {
+        "x": 8,
+        "y": 3704,
+        "w": 352,
+        "h": 352
+      },
+      "art_size": {
+        "w": 320,
+        "h": 352
+      },
+      "anchor": {
+        "x": 176,
+        "y": 300
+      },
+      "footprint": "1x1 rear wall edge",
+      "note": "Rear warehouse wall segment, NW back-side orientation, approx 3m tall if one tile is 1.5m."
+    },
+    {
+      "name": "warehouse_wall_segment_nw_h6m",
+      "rect": {
+        "x": 368,
+        "y": 3704,
+        "w": 528,
+        "h": 528
+      },
+      "art_size": {
+        "w": 384,
+        "h": 528
+      },
+      "anchor": {
+        "x": 264,
+        "y": 476
+      },
+      "footprint": "1x1 rear wall edge",
+      "note": "Rear warehouse wall segment, NW back-side orientation, approx 6m tall if one tile is 1.5m."
+    },
+    {
+      "name": "warehouse_wall_corner_back_h3m",
+      "rect": {
+        "x": 904,
+        "y": 3704,
+        "w": 384,
+        "h": 384
+      },
+      "art_size": {
+        "w": 384,
+        "h": 384
+      },
+      "anchor": {
+        "x": 192,
+        "y": 328
+      },
+      "footprint": "rear wall corner",
+      "note": "Back warehouse wall corner joining NE and NW wall runs, approx 3m tall."
+    },
+    {
+      "name": "warehouse_wall_corner_back_h6m",
+      "rect": {
+        "x": 1296,
+        "y": 3704,
+        "w": 576,
+        "h": 576
+      },
+      "art_size": {
+        "w": 512,
+        "h": 576
+      },
+      "anchor": {
+        "x": 288,
+        "y": 520
+      },
+      "footprint": "rear wall corner",
+      "note": "Back warehouse wall corner joining NE and NW wall runs, approx 6m tall."
+    }
+  ],
+  "visual_animation_groups": {
+    "computer_terminal_1x1": {
+      "directions": [
+        "e",
+        "s",
+        "w",
+        "n"
+      ],
+      "frames": 4,
+      "pattern": "computer_terminal_1x1_{e|s|w|n}_frame_{00..03}",
+      "meaning": "Macintosh-inspired order server CRT/status blink."
+    },
+    "exit_gate_conveyor_3x1": {
+      "directions": [
+        "e",
+        "s",
+        "w",
+        "n"
+      ],
+      "frames": 4,
+      "pattern": "exit_gate_conveyor_3x1_{e|s|w|n}_frame_{00..03}",
+      "meaning": "Cardinal east/south/west/north roll-up exit gate with moving conveyor belt and parcels."
+    }
+  },
+  "visual_wall_modules": {
+    "tile_scale": "1 tile is treated as roughly 1.5m x 1.5m in-world.",
+    "heights": {
+      "h3m": "one wall level, approx 3m",
+      "h6m": "two wall levels, approx 6m"
+    },
+    "segments": "warehouse_wall_segment_{ne|nw}_h{3|6}m",
+    "corners": "warehouse_wall_corner_back_h{3|6}m",
+    "rendering_rule": "Use only on the rear two warehouse sides; omit or hide front walls like a Sims-style cutaway."
+  }
+}

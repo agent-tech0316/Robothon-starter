@@ -1,0 +1,180 @@
+<mujoco model="warehouse_quadbot_physics_evidence">
+  <compiler angle="radian"/>
+
+  <option timestep="0.005"/>
+
+  <visual>
+    <global offwidth="960" offheight="540"/>
+  </visual>
+
+  <worldbody>
+    <geom name="floor" size="0 0 0.05" type="plane" friction="0.9 0.05 0.02" rgba="0.045 0.05 0.057 1"/>
+    <geom name="tile_shelf" size="0.42 0.34 0.006" pos="-0.52 0 0.006" type="box" contype="0" conaffinity="0" rgba="0.07 0.1 0.125 1"/>
+    <geom name="tile_robot" size="0.42 0.34 0.006" pos="0.18 0 0.006" type="box" contype="0" conaffinity="0" rgba="0.08 0.125 0.11 1"/>
+    <geom name="tile_handoff" size="0.42 0.34 0.006" pos="0.88 0 0.006" type="box" contype="0" conaffinity="0" rgba="0.115 0.095 0.07 1"/>
+    <geom name="shelf_post_0" size="0.025 0.025 0.32" pos="-0.74 -0.18 0.32" type="box" friction="0.8 0.05 0.02" rgba="0.13 0.17 0.2 1"/>
+    <geom name="shelf_post_1" size="0.025 0.025 0.32" pos="-0.74 0.18 0.32" type="box" friction="0.8 0.05 0.02" rgba="0.13 0.17 0.2 1"/>
+    <geom name="shelf_post_2" size="0.025 0.025 0.32" pos="-0.3 -0.18 0.32" type="box" friction="0.8 0.05 0.02" rgba="0.13 0.17 0.2 1"/>
+    <geom name="shelf_post_3" size="0.025 0.025 0.32" pos="-0.3 0.18 0.32" type="box" friction="0.8 0.05 0.02" rgba="0.13 0.17 0.2 1"/>
+    <geom name="shelf_deck_0" size="0.27 0.22 0.025" pos="-0.52 0 0.2" type="box" friction="0.8 0.05 0.02" rgba="0.24 0.29 0.33 1"/>
+    <geom name="shelf_deck_1" size="0.27 0.22 0.025" pos="-0.52 0 0.42" type="box" friction="0.8 0.05 0.02" rgba="0.24 0.29 0.33 1"/>
+    <geom name="shelf_deck_2" size="0.27 0.22 0.025" pos="-0.52 0 0.64" type="box" friction="0.8 0.05 0.02" rgba="0.24 0.29 0.33 1"/>
+    <light pos="-1 -2 3.5" dir="0.222277 0.400099 -0.889108" diffuse="0.95 0.95 0.92"/>
+    <light pos="1.5 1 2.2" dir="-0.365148 -0.182574 -0.912871" diffuse="0.45 0.55 0.7"/>
+    <body name="package" pos="-0.52 0 0.51">
+      <joint name="package_freejoint" type="free"/>
+      <geom name="package_geom" size="0.095 0.07 0.05" type="box" friction="1 0.08 0.03" mass="0.8" rgba="0.74 0.45 0.2 1"/>
+      <geom name="package_tape_visual" size="0.014 0.0714 0.004" pos="0 0 0.053" type="box" contype="0" conaffinity="0" rgba="0.92 0.82 0.56 1"/>
+      <site name="package_site" pos="0 0 0" size="0.016" rgba="1 0.85 0.1 0.9"/>
+    </body>
+    <body name="a_torso" pos="0 0 0.38">
+      <joint name="a_floating_base" type="free"/>
+      <geom name="a_torso_shell" size="0.31 0.15 0.075" type="box" mass="8" rgba="0.86 0.91 0.96 1"/>
+      <geom name="a_spine_dark" size="0.24 0.1 0.018" pos="0 0 0.083" type="box" mass="0.3" rgba="0.05 0.065 0.08 1"/>
+      <geom name="a_basket_floor" size="0.18 0.12 0.016" pos="-0.04 0 0.145" type="box" friction="0.95 0.05 0.02" mass="0.2" rgba="0.02 0.08 0.1 1"/>
+      <geom name="a_basket_left_rail" size="0.19 0.012 0.06" pos="-0.04 0.132 0.205" type="box" friction="0.95 0.05 0.02" mass="0.08" rgba="0 0.48 0.62 1"/>
+      <geom name="a_basket_right_rail" size="0.19 0.012 0.06" pos="-0.04 -0.132 0.205" type="box" friction="0.95 0.05 0.02" mass="0.08" rgba="0 0.48 0.62 1"/>
+      <geom name="a_basket_front_rail" size="0.012 0.12 0.06" pos="0.155 0 0.205" type="box" friction="0.95 0.05 0.02" mass="0.08" rgba="0 0.48 0.62 1"/>
+      <geom name="a_basket_back_rail" size="0.012 0.12 0.06" pos="-0.235 0 0.205" type="box" friction="0.95 0.05 0.02" mass="0.08" rgba="0 0.48 0.62 1"/>
+      <site name="a_basket_payload_site" pos="-0.04 0 0.218" size="0.018" rgba="0.1 0.9 0.8 0.8"/>
+      <site name="a_basket_touch_site" pos="-0.04 0 0.17" size="0.18" rgba="0 0.8 1 0.08"/>
+      <body name="a_fl_hip_roll_body" pos="0.23 0.13 -0.035">
+        <joint name="a_fl_hip_roll" pos="0 0 0" axis="1 0 0" limited="true" range="-0.00959931 0.00959931" damping="0.25"/>
+        <geom name="a_fl_hip_motor" size="0.045" mass="0.25" rgba="0.95 0.47 0.12 1"/>
+        <body name="a_fl_upper_body" pos="0 0 -0.015">
+          <joint name="a_fl_hip_pitch" pos="0 0 0" axis="0 1 0" limited="true" range="-0.0191986 0.0218166" damping="0.25"/>
+          <geom name="a_fl_upper_link" size="0.025 0.0785016" pos="0.0125 0 -0.0775" quat="0.996805 0 -0.0798714 0" type="capsule" mass="0.45" rgba="0.2 0.24 0.3 1"/>
+          <body name="a_fl_lower_body" pos="0.025 0 -0.155">
+            <joint name="a_fl_knee_pitch" pos="0 0 0" axis="0 1 0" limited="true" range="-0.0340339 -0.00436332" damping="0.22"/>
+            <geom name="a_fl_lower_link" size="0.022 0.0831039" pos="-0.01 0 -0.0825" quat="0.998182 0 0.0602753 0" type="capsule" mass="0.35" rgba="0.13 0.16 0.21 1"/>
+            <body name="a_fl_foot_body" pos="-0.02 0 -0.172">
+              <geom name="a_fl_foot" size="0.055 0.03 0.018" type="box" friction="1.1 0.08 0.03" mass="0.2" rgba="0.035 0.04 0.045 1"/>
+            </body>
+          </body>
+        </body>
+      </body>
+      <body name="a_fr_hip_roll_body" pos="0.23 -0.13 -0.035">
+        <joint name="a_fr_hip_roll" pos="0 0 0" axis="1 0 0" limited="true" range="-0.00959931 0.00959931" damping="0.25"/>
+        <geom name="a_fr_hip_motor" size="0.045" mass="0.25" rgba="0.95 0.47 0.12 1"/>
+        <body name="a_fr_upper_body" pos="0 0 -0.015">
+          <joint name="a_fr_hip_pitch" pos="0 0 0" axis="0 1 0" limited="true" range="-0.0191986 0.0218166" damping="0.25"/>
+          <geom name="a_fr_upper_link" size="0.025 0.0785016" pos="0.0125 0 -0.0775" quat="0.996805 0 -0.0798714 0" type="capsule" mass="0.45" rgba="0.2 0.24 0.3 1"/>
+          <body name="a_fr_lower_body" pos="0.025 0 -0.155">
+            <joint name="a_fr_knee_pitch" pos="0 0 0" axis="0 1 0" limited="true" range="-0.0340339 -0.00436332" damping="0.22"/>
+            <geom name="a_fr_lower_link" size="0.022 0.0831039" pos="-0.01 0 -0.0825" quat="0.998182 0 0.0602753 0" type="capsule" mass="0.35" rgba="0.13 0.16 0.21 1"/>
+            <body name="a_fr_foot_body" pos="-0.02 0 -0.172">
+              <geom name="a_fr_foot" size="0.055 0.03 0.018" type="box" friction="1.1 0.08 0.03" mass="0.2" rgba="0.035 0.04 0.045 1"/>
+            </body>
+          </body>
+        </body>
+      </body>
+      <body name="a_rl_hip_roll_body" pos="-0.23 0.13 -0.035">
+        <joint name="a_rl_hip_roll" pos="0 0 0" axis="1 0 0" limited="true" range="-0.00959931 0.00959931" damping="0.25"/>
+        <geom name="a_rl_hip_motor" size="0.045" mass="0.25" rgba="0.95 0.47 0.12 1"/>
+        <body name="a_rl_upper_body" pos="0 0 -0.015">
+          <joint name="a_rl_hip_pitch" pos="0 0 0" axis="0 1 0" limited="true" range="-0.0191986 0.0218166" damping="0.25"/>
+          <geom name="a_rl_upper_link" size="0.025 0.0785016" pos="0.0125 0 -0.0775" quat="0.996805 0 -0.0798714 0" type="capsule" mass="0.45" rgba="0.2 0.24 0.3 1"/>
+          <body name="a_rl_lower_body" pos="0.025 0 -0.155">
+            <joint name="a_rl_knee_pitch" pos="0 0 0" axis="0 1 0" limited="true" range="-0.0340339 -0.00436332" damping="0.22"/>
+            <geom name="a_rl_lower_link" size="0.022 0.0831039" pos="-0.01 0 -0.0825" quat="0.998182 0 0.0602753 0" type="capsule" mass="0.35" rgba="0.13 0.16 0.21 1"/>
+            <body name="a_rl_foot_body" pos="-0.02 0 -0.172">
+              <geom name="a_rl_foot" size="0.055 0.03 0.018" type="box" friction="1.1 0.08 0.03" mass="0.2" rgba="0.035 0.04 0.045 1"/>
+            </body>
+          </body>
+        </body>
+      </body>
+      <body name="a_rr_hip_roll_body" pos="-0.23 -0.13 -0.035">
+        <joint name="a_rr_hip_roll" pos="0 0 0" axis="1 0 0" limited="true" range="-0.00959931 0.00959931" damping="0.25"/>
+        <geom name="a_rr_hip_motor" size="0.045" mass="0.25" rgba="0.95 0.47 0.12 1"/>
+        <body name="a_rr_upper_body" pos="0 0 -0.015">
+          <joint name="a_rr_hip_pitch" pos="0 0 0" axis="0 1 0" limited="true" range="-0.0191986 0.0218166" damping="0.25"/>
+          <geom name="a_rr_upper_link" size="0.025 0.0785016" pos="0.0125 0 -0.0775" quat="0.996805 0 -0.0798714 0" type="capsule" mass="0.45" rgba="0.2 0.24 0.3 1"/>
+          <body name="a_rr_lower_body" pos="0.025 0 -0.155">
+            <joint name="a_rr_knee_pitch" pos="0 0 0" axis="0 1 0" limited="true" range="-0.0340339 -0.00436332" damping="0.22"/>
+            <geom name="a_rr_lower_link" size="0.022 0.0831039" pos="-0.01 0 -0.0825" quat="0.998182 0 0.0602753 0" type="capsule" mass="0.35" rgba="0.13 0.16 0.21 1"/>
+            <body name="a_rr_foot_body" pos="-0.02 0 -0.172">
+              <geom name="a_rr_foot" size="0.055 0.03 0.018" type="box" friction="1.1 0.08 0.03" mass="0.2" rgba="0.035 0.04 0.045 1"/>
+            </body>
+          </body>
+        </body>
+      </body>
+      <body name="a_arm_base" pos="0.22 0 0.125">
+        <joint name="a_arm_base_yaw" pos="0 0 0" axis="0 0 1" limited="true" range="-0.0471239 0.0471239" damping="0.35"/>
+        <geom name="a_arm_base_column" size="0.045 0.08" pos="0 0 0.04" type="cylinder" mass="0.35" rgba="0.08 0.1 0.12 1"/>
+        <body name="a_arm_shoulder" pos="0.035 0 0.095">
+          <joint name="a_arm_shoulder_pitch" pos="0 0 0" axis="0 1 0" limited="true" range="-0.0287979 0.0218166" damping="0.35"/>
+          <geom name="a_arm_upper_link" size="0.024 0.117686" pos="0.115 0 0.025" quat="0.627523 0 -0.778598 0" type="capsule" mass="0.45" rgba="0.98 0.62 0.13 1"/>
+          <body name="a_arm_elbow" pos="0.23 0 0.05">
+            <joint name="a_arm_elbow_pitch" pos="0 0 0" axis="0 1 0" limited="true" range="-0.0322886 0.0287979" damping="0.35"/>
+            <geom name="a_arm_forearm_link" size="0.022 0.106888" pos="0.105 0 -0.02" quat="0.770426 0 -0.63753 0" type="capsule" mass="0.36" rgba="1 0.75 0.2 1"/>
+            <body name="a_arm_wrist_pitch_body" pos="0.21 0 -0.04">
+              <joint name="a_arm_wrist_pitch" pos="0 0 0" axis="0 1 0" limited="true" range="-0.0279253 0.0279253" damping="0.25"/>
+              <geom name="a_arm_wrist_pitch_housing" size="0.03 0.03" pos="0.02 0 0" type="cylinder" mass="0.12" rgba="0.13 0.15 0.17 1"/>
+              <body name="a_arm_wrist_roll_body" pos="0.055 0 0">
+                <joint name="a_arm_wrist_roll" pos="0 0 0" axis="1 0 0" limited="true" range="-0.0541052 0.0541052" damping="0.2"/>
+                <geom name="a_arm_wrist_roll_housing" size="0.03" mass="0.1" rgba="0.1 0.12 0.14 1"/>
+                <body name="a_arm_tool_yaw_body" pos="0.045 0 0">
+                  <joint name="a_arm_tool_yaw" pos="0 0 0" axis="0 0 1" limited="true" range="-0.0488692 0.0488692" damping="0.2"/>
+                  <geom name="a_gripper_palm" size="0.034 0.055 0.025" pos="0.035 0 0" type="box" friction="0.9 0.05 0.02" mass="0.22" rgba="0.065 0.075 0.085 1"/>
+                  <site name="a_gripper_site" pos="0.09 0 0" size="0.018" rgba="0 0.45 1 0.9"/>
+                  <body name="a_gripper_left_body" pos="0.092 0.082 0">
+                    <joint name="a_gripper_left_slide" pos="0 0 0" axis="0 -1 0" type="slide" limited="true" range="0 0.045" damping="0.12"/>
+                    <geom name="a_gripper_left_finger" size="0.065 0.01 0.021" pos="0.03 0 0" type="box" friction="1.3 0.08 0.03" mass="0.08" rgba="0.03 0.035 0.04 1"/>
+                    <geom name="a_gripper_left_pad" size="0.025 0.006 0.025" pos="0.07 -0.002 0" type="box" friction="1.6 0.1 0.04" mass="0.02" rgba="0.12 0.13 0.13 1"/>
+                    <site name="a_gripper_left_touch_site" pos="0.07 -0.004 0" size="0.035" rgba="0 0.6 1 0.08"/>
+                  </body>
+                  <body name="a_gripper_right_body" pos="0.092 -0.082 0">
+                    <joint name="a_gripper_right_slide" pos="0 0 0" axis="0 1 0" type="slide" limited="true" range="0 0.045" damping="0.12"/>
+                    <geom name="a_gripper_right_finger" size="0.065 0.01 0.021" pos="0.03 0 0" type="box" friction="1.3 0.08 0.03" mass="0.08" rgba="0.03 0.035 0.04 1"/>
+                    <geom name="a_gripper_right_pad" size="0.025 0.006 0.025" pos="0.07 0.002 0" type="box" friction="1.6 0.1 0.04" mass="0.02" rgba="0.12 0.13 0.13 1"/>
+                    <site name="a_gripper_right_touch_site" pos="0.07 0.004 0" size="0.035" rgba="0 0.6 1 0.08"/>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <general name="a_fl_hip_roll_motor" joint="a_fl_hip_roll" ctrllimited="true" ctrlrange="-0.55 0.55" biastype="affine" gainprm="140" biasprm="0 -140 -12"/>
+    <general name="a_fl_hip_pitch_motor" joint="a_fl_hip_pitch" ctrllimited="true" ctrlrange="-1.1 1.25" biastype="affine" gainprm="140" biasprm="0 -140 -12"/>
+    <general name="a_fl_knee_pitch_motor" joint="a_fl_knee_pitch" ctrllimited="true" ctrlrange="-1.95 -0.25" biastype="affine" gainprm="140" biasprm="0 -140 -12"/>
+    <general name="a_fr_hip_roll_motor" joint="a_fr_hip_roll" ctrllimited="true" ctrlrange="-0.55 0.55" biastype="affine" gainprm="140" biasprm="0 -140 -12"/>
+    <general name="a_fr_hip_pitch_motor" joint="a_fr_hip_pitch" ctrllimited="true" ctrlrange="-1.1 1.25" biastype="affine" gainprm="140" biasprm="0 -140 -12"/>
+    <general name="a_fr_knee_pitch_motor" joint="a_fr_knee_pitch" ctrllimited="true" ctrlrange="-1.95 -0.25" biastype="affine" gainprm="140" biasprm="0 -140 -12"/>
+    <general name="a_rl_hip_roll_motor" joint="a_rl_hip_roll" ctrllimited="true" ctrlrange="-0.55 0.55" biastype="affine" gainprm="140" biasprm="0 -140 -12"/>
+    <general name="a_rl_hip_pitch_motor" joint="a_rl_hip_pitch" ctrllimited="true" ctrlrange="-1.1 1.25" biastype="affine" gainprm="140" biasprm="0 -140 -12"/>
+    <general name="a_rl_knee_pitch_motor" joint="a_rl_knee_pitch" ctrllimited="true" ctrlrange="-1.95 -0.25" biastype="affine" gainprm="140" biasprm="0 -140 -12"/>
+    <general name="a_rr_hip_roll_motor" joint="a_rr_hip_roll" ctrllimited="true" ctrlrange="-0.55 0.55" biastype="affine" gainprm="140" biasprm="0 -140 -12"/>
+    <general name="a_rr_hip_pitch_motor" joint="a_rr_hip_pitch" ctrllimited="true" ctrlrange="-1.1 1.25" biastype="affine" gainprm="140" biasprm="0 -140 -12"/>
+    <general name="a_rr_knee_pitch_motor" joint="a_rr_knee_pitch" ctrllimited="true" ctrlrange="-1.95 -0.25" biastype="affine" gainprm="140" biasprm="0 -140 -12"/>
+    <general name="a_arm_base_yaw_motor" joint="a_arm_base_yaw" ctrllimited="true" ctrlrange="-2.7 2.7" biastype="affine" gainprm="180" biasprm="0 -180 -10"/>
+    <general name="a_arm_shoulder_pitch_motor" joint="a_arm_shoulder_pitch" ctrllimited="true" ctrlrange="-1.65 1.25" biastype="affine" gainprm="180" biasprm="0 -180 -10"/>
+    <general name="a_arm_elbow_pitch_motor" joint="a_arm_elbow_pitch" ctrllimited="true" ctrlrange="-1.85 1.65" biastype="affine" gainprm="180" biasprm="0 -180 -10"/>
+    <general name="a_arm_wrist_pitch_motor" joint="a_arm_wrist_pitch" ctrllimited="true" ctrlrange="-1.6 1.6" biastype="affine" gainprm="180" biasprm="0 -180 -10"/>
+    <general name="a_arm_wrist_roll_motor" joint="a_arm_wrist_roll" ctrllimited="true" ctrlrange="-3.1 3.1" biastype="affine" gainprm="180" biasprm="0 -180 -10"/>
+    <general name="a_arm_tool_yaw_motor" joint="a_arm_tool_yaw" ctrllimited="true" ctrlrange="-2.8 2.8" biastype="affine" gainprm="180" biasprm="0 -180 -10"/>
+    <general name="a_gripper_left_slide_motor" joint="a_gripper_left_slide" ctrllimited="true" ctrlrange="0 0.045" biastype="affine" gainprm="180" biasprm="0 -180 -10"/>
+    <general name="a_gripper_right_slide_motor" joint="a_gripper_right_slide" ctrllimited="true" ctrlrange="0 0.045" biastype="affine" gainprm="180" biasprm="0 -180 -10"/>
+  </actuator>
+
+  <sensor>
+    <jointpos joint="a_arm_base_yaw" name="a_arm_base_yaw_pos"/>
+    <jointpos joint="a_arm_shoulder_pitch" name="a_arm_shoulder_pitch_pos"/>
+    <jointpos joint="a_arm_elbow_pitch" name="a_arm_elbow_pitch_pos"/>
+    <jointpos joint="a_arm_wrist_pitch" name="a_arm_wrist_pitch_pos"/>
+    <jointpos joint="a_arm_wrist_roll" name="a_arm_wrist_roll_pos"/>
+    <jointpos joint="a_arm_tool_yaw" name="a_arm_tool_yaw_pos"/>
+    <jointpos joint="a_gripper_left_slide" name="a_gripper_left_slide_pos"/>
+    <jointpos joint="a_gripper_right_slide" name="a_gripper_right_slide_pos"/>
+    <framepos objtype="site" objname="a_gripper_site" name="a_gripper_framepos"/>
+    <framepos objtype="site" objname="a_basket_payload_site" name="a_basket_framepos"/>
+    <touch site="a_gripper_left_touch_site" name="a_left_finger_touch"/>
+    <touch site="a_gripper_right_touch_site" name="a_right_finger_touch"/>
+    <touch site="a_basket_touch_site" name="a_basket_touch"/>
+    <framepos objtype="site" objname="package_site" name="package_framepos"/>
+  </sensor>
+</mujoco>

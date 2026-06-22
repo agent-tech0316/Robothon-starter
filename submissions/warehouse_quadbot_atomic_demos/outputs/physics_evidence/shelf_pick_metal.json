@@ -1,0 +1,348 @@
+{
+  "name": "shelf_pick_metal",
+  "kind": "shelf_pick",
+  "description": "Short shelf pickup: heavy package, longest loading.",
+  "video": "outputs/physics_evidence/shelf_pick_metal.mp4",
+  "scene_xml": "outputs/physics_evidence/generated_mjcf/shelf_pick_metal_scene.xml",
+  "duration_s": 2.4,
+  "fps": 24,
+  "payload": {
+    "key": "metal",
+    "label": "heavy metal case",
+    "mass_kg": 4.0,
+    "loading_time_s": 1.35,
+    "gait_speed_mps": 0.25,
+    "leg_compression_m": 0.085,
+    "grip_close_s": 0.46
+  },
+  "mujoco_depth": {
+    "quadruped_leg_joints": 12,
+    "arm_dof_per_robot": 6,
+    "gripper_slide_joints_per_robot": 2,
+    "collision_pairs_tracked": [
+      "gripper_package",
+      "package_basket",
+      "package_shelf",
+      "package_receiver_gripper",
+      "total_contacts"
+    ],
+    "sensors": [
+      "arm jointpos",
+      "gripper framepos",
+      "basket framepos",
+      "left/right finger touch",
+      "basket touch",
+      "package framepos"
+    ],
+    "actuators": "position actuators on leg, arm, wrist, tool, and gripper joints"
+  },
+  "contact_totals": {
+    "gripper_package": 455,
+    "package_basket": 10,
+    "package_shelf": 38,
+    "package_receiver_gripper": 0,
+    "total_contacts": 2057
+  },
+  "samples": [
+    {
+      "time_s": 0.0,
+      "robot_a": [
+        0.12,
+        0.0,
+        0.3
+      ],
+      "package": [
+        -0.52,
+        0.0,
+        0.495
+      ],
+      "contacts": {
+        "gripper_package": 0,
+        "package_basket": 0,
+        "package_shelf": 0,
+        "package_receiver_gripper": 0,
+        "total_contacts": 31
+      }
+    },
+    {
+      "time_s": 0.167,
+      "robot_a": [
+        0.12,
+        0.0,
+        0.303
+      ],
+      "package": [
+        -0.52,
+        0.0,
+        0.495
+      ],
+      "contacts": {
+        "gripper_package": 0,
+        "package_basket": 0,
+        "package_shelf": 0,
+        "package_receiver_gripper": 0,
+        "total_contacts": 31
+      }
+    },
+    {
+      "time_s": 0.333,
+      "robot_a": [
+        0.12,
+        0.0,
+        0.304
+      ],
+      "package": [
+        -0.52,
+        0.0,
+        0.495
+      ],
+      "contacts": {
+        "gripper_package": 0,
+        "package_basket": 0,
+        "package_shelf": 0,
+        "package_receiver_gripper": 0,
+        "total_contacts": 31
+      }
+    },
+    {
+      "time_s": 0.5,
+      "robot_a": [
+        0.12,
+        0.0,
+        0.3024
+      ],
+      "package": [
+        -0.5308,
+        -0.0014,
+        0.4974
+      ],
+      "contacts": {
+        "gripper_package": 0,
+        "package_basket": 0,
+        "package_shelf": 0,
+        "package_receiver_gripper": 0,
+        "total_contacts": 31
+      }
+    },
+    {
+      "time_s": 0.667,
+      "robot_a": [
+        0.12,
+        0.0,
+        0.2992
+      ],
+      "package": [
+        -0.5562,
+        -0.0046,
+        0.5024
+      ],
+      "contacts": {
+        "gripper_package": 0,
+        "package_basket": 0,
+        "package_shelf": 0,
+        "package_receiver_gripper": 0,
+        "total_contacts": 31
+      }
+    },
+    {
+      "time_s": 0.833,
+      "robot_a": [
+        0.12,
+        0.0,
+        0.2965
+      ],
+      "package": [
+        -0.7647,
+        -0.0313,
+        0.5423
+      ],
+      "contacts": {
+        "gripper_package": 17,
+        "package_basket": 0,
+        "package_shelf": 0,
+        "package_receiver_gripper": 0,
+        "total_contacts": 41
+      }
+    },
+    {
+      "time_s": 1.0,
+      "robot_a": [
+        0.12,
+        0.0,
+        0.2962
+      ],
+      "package": [
+        -0.7647,
+        -0.0313,
+        0.5442
+      ],
+      "contacts": {
+        "gripper_package": 18,
+        "package_basket": 0,
+        "package_shelf": 0,
+        "package_receiver_gripper": 0,
+        "total_contacts": 42
+      }
+    },
+    {
+      "time_s": 1.167,
+      "robot_a": [
+        0.12,
+        0.0,
+        0.2984
+      ],
+      "package": [
+        -0.7647,
+        -0.0313,
+        0.5571
+      ],
+      "contacts": {
+        "gripper_package": 17,
+        "package_basket": 0,
+        "package_shelf": 0,
+        "package_receiver_gripper": 0,
+        "total_contacts": 41
+      }
+    },
+    {
+      "time_s": 1.333,
+      "robot_a": [
+        0.12,
+        0.0,
+        0.3016
+      ],
+      "package": [
+        -0.765,
+        -0.0235,
+        0.5734
+      ],
+      "contacts": {
+        "gripper_package": 15,
+        "package_basket": 0,
+        "package_shelf": 2,
+        "package_receiver_gripper": 0,
+        "total_contacts": 41
+      }
+    },
+    {
+      "time_s": 1.5,
+      "robot_a": [
+        0.12,
+        0.0,
+        0.3038
+      ],
+      "package": [
+        -0.7653,
+        -0.0139,
+        0.5841
+      ],
+      "contacts": {
+        "gripper_package": 12,
+        "package_basket": 0,
+        "package_shelf": 2,
+        "package_receiver_gripper": 0,
+        "total_contacts": 38
+      }
+    },
+    {
+      "time_s": 1.667,
+      "robot_a": [
+        0.12,
+        0.0,
+        0.3035
+      ],
+      "package": [
+        -0.7647,
+        0.0313,
+        0.5843
+      ],
+      "contacts": {
+        "gripper_package": 13,
+        "package_basket": 0,
+        "package_shelf": 2,
+        "package_receiver_gripper": 0,
+        "total_contacts": 39
+      }
+    },
+    {
+      "time_s": 1.833,
+      "robot_a": [
+        0.12,
+        0.0,
+        0.3008
+      ],
+      "package": [
+        -0.7647,
+        0.0313,
+        0.5816
+      ],
+      "contacts": {
+        "gripper_package": 13,
+        "package_basket": 0,
+        "package_shelf": 2,
+        "package_receiver_gripper": 0,
+        "total_contacts": 39
+      }
+    },
+    {
+      "time_s": 2.0,
+      "robot_a": [
+        0.12,
+        0.0,
+        0.2976
+      ],
+      "package": [
+        -0.7647,
+        0.0313,
+        0.5784
+      ],
+      "contacts": {
+        "gripper_package": 13,
+        "package_basket": 0,
+        "package_shelf": 2,
+        "package_receiver_gripper": 0,
+        "total_contacts": 39
+      }
+    },
+    {
+      "time_s": 2.167,
+      "robot_a": [
+        0.12,
+        0.0,
+        0.296
+      ],
+      "package": [
+        -0.3791,
+        0.0183,
+        0.5277
+      ],
+      "contacts": {
+        "gripper_package": 0,
+        "package_basket": 0,
+        "package_shelf": 0,
+        "package_receiver_gripper": 0,
+        "total_contacts": 26
+      }
+    },
+    {
+      "time_s": 2.333,
+      "robot_a": [
+        0.12,
+        0.0,
+        0.297
+      ],
+      "package": [
+        0.1532,
+        0.0002,
+        0.5093
+      ],
+      "contacts": {
+        "gripper_package": 0,
+        "package_basket": 2,
+        "package_shelf": 0,
+        "package_receiver_gripper": 0,
+        "total_contacts": 26
+      }
+    }
+  ]
+}

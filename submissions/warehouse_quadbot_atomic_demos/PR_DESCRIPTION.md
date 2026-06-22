@@ -1,0 +1,70 @@
+Registration UUID: 13b27675-9c26-49df-9014-cb31f33f9df8
+
+# Project Summary
+
+Agentic Warehouse Quadbot Fulfillment Simulator is Agentech's FFAI Robothon 2026 entry. It demonstrates a multi-agent warehouse order fulfillment simulator that connects mission, workflow, skill graph, runtime scheduling, KPI benchmarking, MuJoCo physical action evidence, and a mission-control UI.
+
+# Robot Platform
+
+Faraday Future AEGIS quadruped, with a BASE_LINK-mounted basket and a Futurist-right-arm-derived front manipulator. MuJoCo evidence clips validate walking, payload carrying, shelf pickup, basket contact, and robot-to-robot handoff.
+
+# Task Goal
+
+Fulfill warehouse outbound orders with multiple quadruped robots on a discrete tile grid while managing congestion, tile reservations, rack obstacles, SKU weight/difficulty, and throughput.
+
+# Agentic Workflow Design
+
+Mission -> Workflow -> Skill Graph -> Runtime -> Scheduler -> Tile Locks -> Benchmark Metrics -> UI + MuJoCo Evidence
+
+The runtime uses four-direction movement, atomic source+destination locks, deadlock recovery, and generated low/medium/high load profiles.
+
+# Key Innovations
+
+- Warehouse optimization framed as a mission/workflow/skill-graph runtime rather than low-level robot control.
+- MuJoCo used as physical evidence for atomic skills while fleet planning stays in a scalable tile-level simulator.
+- Runtime snapshots expose robot state, order state, movement locks, rack-blocking, congestion, and KPI metrics directly to the dashboard.
+- AI-judge-friendly static UI and generated artifacts make the project understandable without extra explanation.
+
+# Benchmark Results
+
+| Load | Completed / Created | Throughput | Avg lock wait | Safety violations |
+| --- | ---: | ---: | ---: | ---: |
+| Low | 24 / 27 | 96/hr | 9.78 ticks | 0 |
+| Medium | 72 / 84 | 288/hr | 82.44 ticks | 0 |
+| High | 68 / 140 | 272/hr | 85.78 ticks | 0 |
+
+Safety violations include blocked tiles, non-cardinal moves, robot collisions, and lock overlaps.
+
+# Demo Video
+
+Final 1-3 minute demo video: `submissions/warehouse_quadbot_atomic_demos/demo.mp4`
+
+Included evidence clips:
+
+- `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/*.mp4`
+- `submissions/warehouse_quadbot_atomic_demos/outputs/*.mp4`
+- `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/physics_evidence_contact_sheet.png`
+
+# Run Instructions
+
+```bash
+python3.12 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python examples/build_integrated_demo_data.py
+python examples/run_warehouse_runtime.py --load medium --planner local --ticks 900 --print-summary
+python -m http.server 8765 --bind 127.0.0.1
+```
+
+Open:
+
+```text
+http://127.0.0.1:8765/submissions/warehouse_quadbot_atomic_demos/ui/index.html
+```
+
+
+# Validation Status
+
+Clean-copy validation passed with Python 3.12: dependency install, runtime data generation, medium benchmark run, pytest smoke tests, MuJoCo shelf-pick smoke generation, and HTTP resource checks for UI/runtime/video artifacts.
+
+Final demo video is included as `submissions/warehouse_quadbot_atomic_demos/demo.mp4`; post-video audit passed locally.

@@ -1,0 +1,77 @@
+scheduler:
+  policy_id: priority_weighted_earliest_finish
+  objective: maximize_throughput
+  assignment_interval_ticks: 1
+  allow_reassignment_before_pick: true
+  allow_reassignment_after_pick: false
+
+scoring:
+  priority_weight: 10.0
+  urgency_weight: 8.0
+  travel_time_weight: 3.0
+  handling_difficulty_weight: 2.0
+  weight_penalty_weight: 1.5
+  congestion_weight: 4.0
+  lock_wait_weight: 5.0
+  robot_balance_weight: 1.0
+
+order_policy:
+  priority_range: [0, 100]
+  priority_aging:
+    enabled: true
+    boost_per_100_ticks: 1.0
+    max_boost: 20.0
+  deadline_policy:
+    use_slack_score: true
+    hard_fail_on_deadline_miss: false
+
+robot_policy:
+  assignment_modes:
+    single_robot: nearest_capable_robot
+    multi_robot: priority_weighted_earliest_finish
+  payload_check: required
+  skill_compatibility_check: required
+  prefer_idle_robots: true
+
+routing:
+  planner: astar_time_aware
+  base_edge_cost: 1.0
+  turn_penalty_ticks: 0
+  loaded_weight_penalty_per_kg: 0.05
+  congestion_penalty: 2.0
+  reserved_tile_penalty: 5.0
+  blocked_tile_cost: inf
+  no_head_on_swap: true
+  replan:
+    enabled: true
+    after_lock_denials: 3
+    after_wait_ticks: 8
+    avoid_recent_blocked_tiles_for_ticks: 20
+
+lock_arbitration:
+  priority_order:
+    - deadlock_recovery
+    - higher_order_priority
+    - lower_slack
+    - loaded_robot
+    - longer_wait_time
+    - lower_robot_id
+  atomic_source_destination_acquire: true
+  release_on_failed_acquire: true
+
+deadlock_recovery:
+  enabled: true
+  wait_graph_cycle_detection: true
+  suspect_after_wait_ticks: 10
+  confirm_after_wait_ticks: 20
+  recovery_escalation_ticks: 15
+  max_recovery_attempts_per_cycle: 4
+  strategies:
+    - yield_lower_priority
+    - backoff_to_buffer_tile
+    - reroute_around_blockage
+    - evacuate_corridor
+  victim_selection:
+    prefer_unloaded_robot: true
+    prefer_lower_priority_order: true
+    prefer_shortest_backoff_route: true

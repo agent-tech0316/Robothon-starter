@@ -1,3 +1,6 @@
+# Python 3.12 recommended for prebuilt MuJoCo wheels
 mujoco
 numpy
 imageio[ffmpeg]
+PyYAML>=6.0
+pytest

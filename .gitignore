@@ -3,3 +3,7 @@ __pycache__/
 *.pyc
 .DS_Store
 .env
+.venv/
+.venv312/
+!submissions/warehouse_quadbot_atomic_demos/outputs/
+!submissions/warehouse_quadbot_atomic_demos/outputs/**

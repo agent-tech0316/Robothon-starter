@@ -1,0 +1,95 @@
+{
+  "version": 28,
+  "category": "LED",
+  "sprite_scale": 2,
+  "base_tile": {
+    "source_sprite": "128x128 final PNG cell for floor tiles with transparent padding",
+    "visible_diamond": "128x64",
+    "logical_model_tile": "64x48 art inside a 64x64 square canvas before nearest-neighbor 2x export",
+    "robot_png": "128x128 final PNG with transparent padding"
+  },
+  "sprites": [
+    {
+      "name": "led_edge_pick_orange",
+      "rect": {
+        "x": 8,
+        "y": 8,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 96
+      },
+      "anchor": {
+        "x": 64,
+        "y": 92
+      },
+      "footprint": "transparent 1x1 tile edge overlay",
+      "note": "Orange tile-edge highlight for selected rack picking zones only."
+    },
+    {
+      "name": "led_edge_delivery_green",
+      "rect": {
+        "x": 144,
+        "y": 8,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 96
+      },
+      "anchor": {
+        "x": 64,
+        "y": 92
+      },
+      "footprint": "transparent 1x1 tile edge overlay",
+      "note": "Green permanent tile-edge highlight for delivery/truck drop-off zones."
+    },
+    {
+      "name": "led_edge_robot_route_cyan",
+      "rect": {
+        "x": 280,
+        "y": 8,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 96
+      },
+      "anchor": {
+        "x": 64,
+        "y": 92
+      },
+      "footprint": "transparent 1x1 tile edge overlay",
+      "note": "Cyan tile-edge highlight for selected robot current tile and next navigation target."
+    },
+    {
+      "name": "led_edge_congestion_red",
+      "rect": {
+        "x": 416,
+        "y": 8,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 96
+      },
+      "anchor": {
+        "x": 64,
+        "y": 92
+      },
+      "footprint": "transparent 1x1 tile edge overlay",
+      "note": "Red temporary tile-edge highlight for active congestion zones."
+    }
+  ],
+  "led_edge_meanings": {
+    "led_edge_pick_orange": "Orange edge only; shown for rack picking tiles only when that rack is selected.",
+    "led_edge_delivery_green": "Green edge only; persistent delivery/truck drop-off zone marker.",
+    "led_edge_robot_route_cyan": "Cyan edge only; selected robot current tile and next navigation target.",
+    "led_edge_congestion_red": "Red edge only; temporary active congestion zone marker until the blockage is resolved."
+  }
+}

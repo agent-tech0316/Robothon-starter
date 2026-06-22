@@ -1,0 +1,433 @@
+{
+  "project": "Warehouse Quadbot Atomic Demos",
+  "scenario": "arm_showcase",
+  "scenario_kind": "arm_showcase",
+  "robot": "AEGIS quadruped with BASE_LINK-mounted basket and Futurist-right-arm-derived manipulator",
+  "model": "assets/Aegis/urdf/Aegis_mujoco.urdf",
+  "video": "submissions/warehouse_quadbot_atomic_demos/outputs/arm_showcase.mp4",
+  "trajectory": "submissions/warehouse_quadbot_atomic_demos/outputs/arm_showcase_trajectory.json",
+  "duration_s": 2.2,
+  "fps": 30,
+  "payload": null,
+  "box_styles": {
+    "cardboard": {
+      "label": "normal cardboard",
+      "rgba": [
+        0.72,
+        0.43,
+        0.2,
+        1.0
+      ],
+      "mass": 0.8,
+      "loading_time_s": 1.2,
+      "grip_close_s": 0.24,
+      "walk_speed_mps": 0.55,
+      "leg_compression_m": 0.01,
+      "difficulty": "easy"
+    },
+    "wood": {
+      "label": "medium wood",
+      "rgba": [
+        0.5,
+        0.28,
+        0.11,
+        1.0
+      ],
+      "mass": 2.0,
+      "loading_time_s": 1.55,
+      "grip_close_s": 0.34,
+      "walk_speed_mps": 0.43,
+      "leg_compression_m": 0.03,
+      "difficulty": "medium"
+    },
+    "metal": {
+      "label": "heavy metal",
+      "rgba": [
+        0.55,
+        0.6,
+        0.64,
+        1.0
+      ],
+      "mass": 4.0,
+      "loading_time_s": 2.05,
+      "grip_close_s": 0.46,
+      "walk_speed_mps": 0.31,
+      "leg_compression_m": 0.055,
+      "difficulty": "hard"
+    }
+  },
+  "tile_size_m": 1.0,
+  "mujoco_depth": {
+    "quadruped_leg_joints": 12,
+    "arm_dof_per_robot": 7,
+    "gripper_slide_joints_per_robot": 2,
+    "collision_geoms": [
+      "package box",
+      "left/right gripper fingers and pads",
+      "cargo basket floor and rails",
+      "pickup shelf decks"
+    ],
+    "sensors": [
+      "leg joint position",
+      "Futurist right-arm joint position",
+      "gripper frame position",
+      "basket frame position",
+      "left/right finger touch",
+      "basket touch"
+    ],
+    "actuators": "position actuators on AEGIS leg joints, seven Futurist-derived arm joints, and two finger slide joints"
+  },
+  "contact_totals": {
+    "gripper_box": 0,
+    "receiver_gripper_box": 0,
+    "box_basket": 128,
+    "box_shelf": 0,
+    "arm_basket": 0,
+    "total_contacts": 2011
+  },
+  "physics_note": "Package, shelf, basket, and gripper use MuJoCo collision geoms. During grasp and carry phases the package follows the wrist pose with matching orientation, then releases into the basket. This is still a scripted atomic-skill demo, not a full closed-loop grasp controller.",
+  "success": true,
+  "trajectory_samples": [
+    {
+      "time_s": 0.0,
+      "sender_base": [
+        0.25,
+        0.0,
+        0.34
+      ],
+      "contacts": {
+        "gripper_box": 0,
+        "receiver_gripper_box": 0,
+        "box_basket": 0,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "total_contacts": 34
+      },
+      "cardboard_pos": [
+        -0.85,
+        -0.18,
+        0.12
+      ],
+      "wood_pos": [
+        0.17,
+        0.0,
+        0.63
+      ],
+      "metal_pos": [
+        -0.85,
+        0.18,
+        0.12
+      ]
+    },
+    {
+      "time_s": 0.2,
+      "sender_base": [
+        0.25,
+        0.0,
+        0.34292
+      ],
+      "contacts": {
+        "gripper_box": 0,
+        "receiver_gripper_box": 0,
+        "box_basket": 4,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "total_contacts": 31
+      },
+      "cardboard_pos": [
+        -0.85,
+        -0.18,
+        0.12
+      ],
+      "wood_pos": [
+        0.17,
+        0.0,
+        0.63
+      ],
+      "metal_pos": [
+        -0.85,
+        0.18,
+        0.12
+      ]
+    },
+    {
+      "time_s": 0.4,
+      "sender_base": [
+        0.25,
+        0.0,
+        0.34399
+      ],
+      "contacts": {
+        "gripper_box": 0,
+        "receiver_gripper_box": 0,
+        "box_basket": 4,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "total_contacts": 31
+      },
+      "cardboard_pos": [
+        -0.85,
+        -0.18,
+        0.12
+      ],
+      "wood_pos": [
+        0.17,
+        0.0,
+        0.63
+      ],
+      "metal_pos": [
+        -0.85,
+        0.18,
+        0.12
+      ]
+    },
+    {
+      "time_s": 0.6,
+      "sender_base": [
+        0.25,
+        0.0,
+        0.34255
+      ],
+      "contacts": {
+        "gripper_box": 0,
+        "receiver_gripper_box": 0,
+        "box_basket": 4,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "total_contacts": 31
+      },
+      "cardboard_pos": [
+        -0.85,
+        -0.18,
+        0.12
+      ],
+      "wood_pos": [
+        0.17,
+        0.0,
+        0.63
+      ],
+      "metal_pos": [
+        -0.85,
+        0.18,
+        0.12
+      ]
+    },
+    {
+      "time_s": 0.8,
+      "sender_base": [
+        0.25,
+        0.0,
+        0.3395
+      ],
+      "contacts": {
+        "gripper_box": 0,
+        "receiver_gripper_box": 0,
+        "box_basket": 0,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "total_contacts": 29
+      },
+      "cardboard_pos": [
+        -0.85,
+        -0.18,
+        0.12
+      ],
+      "wood_pos": [
+        0.17,
+        0.0,
+        0.63
+      ],
+      "metal_pos": [
+        -0.85,
+        0.18,
+        0.12
+      ]
+    },
+    {
+      "time_s": 1.0,
+      "sender_base": [
+        0.25,
+        0.0,
+        0.33676
+      ],
+      "contacts": {
+        "gripper_box": 0,
+        "receiver_gripper_box": 0,
+        "box_basket": 0,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "total_contacts": 32
+      },
+      "cardboard_pos": [
+        -0.85,
+        -0.18,
+        0.12
+      ],
+      "wood_pos": [
+        0.17,
+        0.0,
+        0.63
+      ],
+      "metal_pos": [
+        -0.85,
+        0.18,
+        0.12
+      ]
+    },
+    {
+      "time_s": 1.2,
+      "sender_base": [
+        0.25,
+        0.0,
+        0.33607
+      ],
+      "contacts": {
+        "gripper_box": 0,
+        "receiver_gripper_box": 0,
+        "box_basket": 0,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "total_contacts": 26
+      },
+      "cardboard_pos": [
+        -0.85,
+        -0.18,
+        0.12
+      ],
+      "wood_pos": [
+        0.17,
+        0.0,
+        0.63
+      ],
+      "metal_pos": [
+        -0.85,
+        0.18,
+        0.12
+      ]
+    },
+    {
+      "time_s": 1.4,
+      "sender_base": [
+        0.25,
+        0.0,
+        0.33786
+      ],
+      "contacts": {
+        "gripper_box": 0,
+        "receiver_gripper_box": 0,
+        "box_basket": 0,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "total_contacts": 28
+      },
+      "cardboard_pos": [
+        -0.85,
+        -0.18,
+        0.12
+      ],
+      "wood_pos": [
+        0.17,
+        0.0,
+        0.63
+      ],
+      "metal_pos": [
+        -0.85,
+        0.18,
+        0.12
+      ]
+    },
+    {
+      "time_s": 1.6,
+      "sender_base": [
+        0.25,
+        0.0,
+        0.34099
+      ],
+      "contacts": {
+        "gripper_box": 0,
+        "receiver_gripper_box": 0,
+        "box_basket": 0,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "total_contacts": 28
+      },
+      "cardboard_pos": [
+        -0.85,
+        -0.18,
+        0.12
+      ],
+      "wood_pos": [
+        0.17,
+        0.0,
+        0.63
+      ],
+      "metal_pos": [
+        -0.85,
+        0.18,
+        0.12
+      ]
+    },
+    {
+      "time_s": 1.8,
+      "sender_base": [
+        0.25,
+        0.0,
+        0.34351
+      ],
+      "contacts": {
+        "gripper_box": 0,
+        "receiver_gripper_box": 0,
+        "box_basket": 4,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "total_contacts": 31
+      },
+      "cardboard_pos": [
+        -0.85,
+        -0.18,
+        0.12
+      ],
+      "wood_pos": [
+        0.17,
+        0.0,
+        0.63
+      ],
+      "metal_pos": [
+        -0.85,
+        0.18,
+        0.12
+      ]
+    },
+    {
+      "time_s": 2.0,
+      "sender_base": [
+        0.25,
+        0.0,
+        0.3438
+      ],
+      "contacts": {
+        "gripper_box": 0,
+        "receiver_gripper_box": 0,
+        "box_basket": 4,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "total_contacts": 32
+      },
+      "cardboard_pos": [
+        -0.85,
+        -0.18,
+        0.12
+      ],
+      "wood_pos": [
+        0.17,
+        0.0,
+        0.63
+      ],
+      "metal_pos": [
+        -0.85,
+        0.18,
+        0.12
+      ]
+    }
+  ]
+}

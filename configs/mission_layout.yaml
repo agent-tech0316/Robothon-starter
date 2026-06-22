@@ -1,0 +1,135 @@
+mission_layout:
+  layout_id: warehouse_layout_v1_nine_robot
+  description: Runtime-ready outbound-only warehouse layout for the FF hackathon simulator.
+
+warehouse:
+  width_tiles: 20
+  height_tiles: 14
+  tile_size_m: 1.0
+  movement_model: four_direction_grid
+  lock_model: current_and_next_tile
+
+zones:
+  - zone_id: depot
+    type: robot_depot
+    tiles: [T_00_13, T_01_13, T_02_13, T_03_13, T_04_13, T_05_13, T_06_13, T_07_13, T_08_13]
+  - zone_id: pick_aisle_A
+    type: pick_aisle
+    tiles: [T_03_02, T_03_03, T_03_04, T_03_05, T_03_06, T_03_07, T_03_08, T_03_09]
+  - zone_id: pick_aisle_B
+    type: pick_aisle
+    tiles: [T_08_02, T_08_03, T_08_04, T_08_05, T_08_06, T_08_07, T_08_08, T_08_09]
+  - zone_id: pick_aisle_C
+    type: pick_aisle
+    tiles: [T_13_02, T_13_03, T_13_04, T_13_05, T_13_06, T_13_07, T_13_08, T_13_09]
+  - zone_id: outbound
+    type: outbound
+    tiles: [T_17_13, T_18_13, T_19_13]
+  - zone_id: buffer
+    type: deadlock_buffer
+    tiles: [T_05_00, T_06_00, T_10_00, T_11_00, T_15_00, T_16_00, T_05_12, T_10_12, T_15_12]
+
+tiles:
+  generation: rectangular_grid
+  id_format: T_{x:02d}_{y:02d}
+  traversable_default: true
+  blocked_tiles:
+    - T_04_02
+    - T_04_03
+    - T_04_04
+    - T_04_05
+    - T_04_06
+    - T_04_07
+    - T_04_08
+    - T_04_09
+    - T_09_02
+    - T_09_03
+    - T_09_04
+    - T_09_05
+    - T_09_06
+    - T_09_07
+    - T_09_08
+    - T_09_09
+    - T_14_02
+    - T_14_03
+    - T_14_04
+    - T_14_05
+    - T_14_06
+    - T_14_07
+    - T_14_08
+    - T_14_09
+
+rack_modules:
+  - {module_id: A1, x: 4, y: 2, w: 1, d: 3, length: 3, direction: ne, material: cardboard, fill: full, footprint_tiles: [T_04_02, T_04_03, T_04_04], pick_tiles: [T_03_02, T_03_03, T_03_04]}
+  - {module_id: A2, x: 4, y: 5, w: 1, d: 3, length: 3, direction: ne, material: wood, fill: half, footprint_tiles: [T_04_05, T_04_06, T_04_07], pick_tiles: [T_03_05, T_03_06, T_03_07]}
+  - {module_id: A3, x: 4, y: 8, w: 1, d: 2, length: 2, direction: ne, material: cardboard, fill: full, footprint_tiles: [T_04_08, T_04_09], pick_tiles: [T_03_08, T_03_09]}
+  - {module_id: B1, x: 9, y: 2, w: 1, d: 3, length: 3, direction: ne, material: metal, fill: half, footprint_tiles: [T_09_02, T_09_03, T_09_04], pick_tiles: [T_08_02, T_08_03, T_08_04]}
+  - {module_id: B2, x: 9, y: 5, w: 1, d: 3, length: 3, direction: ne, material: wood, fill: full, footprint_tiles: [T_09_05, T_09_06, T_09_07], pick_tiles: [T_08_05, T_08_06, T_08_07]}
+  - {module_id: B3, x: 9, y: 8, w: 1, d: 2, length: 2, direction: ne, material: cardboard, fill: almost_none, footprint_tiles: [T_09_08, T_09_09], pick_tiles: [T_08_08, T_08_09]}
+  - {module_id: C1, x: 14, y: 2, w: 1, d: 3, length: 3, direction: ne, material: cardboard, fill: full, footprint_tiles: [T_14_02, T_14_03, T_14_04], pick_tiles: [T_13_02, T_13_03, T_13_04]}
+  - {module_id: C2, x: 14, y: 5, w: 1, d: 3, length: 3, direction: ne, material: metal, fill: half, footprint_tiles: [T_14_05, T_14_06, T_14_07], pick_tiles: [T_13_05, T_13_06, T_13_07]}
+  - {module_id: C3, x: 14, y: 8, w: 1, d: 2, length: 2, direction: ne, material: wood, fill: empty, footprint_tiles: [T_14_08, T_14_09], pick_tiles: [T_13_08, T_13_09]}
+
+racks:
+  - {rack_id: rack_A_01, sku_id: SKU_CARD_SMALL, pick_tile_id: T_03_02, storage_tile_id: T_04_02, quantity: 1000000}
+  - {rack_id: rack_A_02, sku_id: SKU_WOOD_MED, pick_tile_id: T_03_03, storage_tile_id: T_04_03, quantity: 1000000}
+  - {rack_id: rack_A_03, sku_id: SKU_METAL_HEAVY, pick_tile_id: T_03_04, storage_tile_id: T_04_04, quantity: 1000000}
+  - {rack_id: rack_A_04, sku_id: SKU_FRAGILE_LIGHT, pick_tile_id: T_03_05, storage_tile_id: T_04_05, quantity: 1000000}
+  - {rack_id: rack_A_05, sku_id: SKU_BULK_FOAM, pick_tile_id: T_03_06, storage_tile_id: T_04_06, quantity: 1000000}
+  - {rack_id: rack_A_06, sku_id: SKU_TOOLKIT, pick_tile_id: T_03_07, storage_tile_id: T_04_07, quantity: 1000000}
+  - {rack_id: rack_A_07, sku_id: SKU_CARD_SMALL, pick_tile_id: T_03_08, storage_tile_id: T_04_08, quantity: 1000000}
+  - {rack_id: rack_A_08, sku_id: SKU_WOOD_MED, pick_tile_id: T_03_09, storage_tile_id: T_04_09, quantity: 1000000}
+  - {rack_id: rack_B_01, sku_id: SKU_METAL_HEAVY, pick_tile_id: T_08_02, storage_tile_id: T_09_02, quantity: 1000000}
+  - {rack_id: rack_B_02, sku_id: SKU_FRAGILE_LIGHT, pick_tile_id: T_08_03, storage_tile_id: T_09_03, quantity: 1000000}
+  - {rack_id: rack_B_03, sku_id: SKU_MEDICAL_BIN, pick_tile_id: T_08_04, storage_tile_id: T_09_04, quantity: 1000000}
+  - {rack_id: rack_B_04, sku_id: SKU_WOOD_MED, pick_tile_id: T_08_05, storage_tile_id: T_09_05, quantity: 1000000}
+  - {rack_id: rack_B_05, sku_id: SKU_CARD_SMALL, pick_tile_id: T_08_06, storage_tile_id: T_09_06, quantity: 1000000}
+  - {rack_id: rack_B_06, sku_id: SKU_TOOLKIT, pick_tile_id: T_08_07, storage_tile_id: T_09_07, quantity: 1000000}
+  - {rack_id: rack_B_07, sku_id: SKU_BULK_FOAM, pick_tile_id: T_08_08, storage_tile_id: T_09_08, quantity: 1000000}
+  - {rack_id: rack_B_08, sku_id: SKU_MEDICAL_BIN, pick_tile_id: T_08_09, storage_tile_id: T_09_09, quantity: 1000000}
+  - {rack_id: rack_C_01, sku_id: SKU_FRAGILE_LIGHT, pick_tile_id: T_13_02, storage_tile_id: T_14_02, quantity: 1000000}
+  - {rack_id: rack_C_02, sku_id: SKU_CARD_SMALL, pick_tile_id: T_13_03, storage_tile_id: T_14_03, quantity: 1000000}
+  - {rack_id: rack_C_03, sku_id: SKU_WOOD_MED, pick_tile_id: T_13_04, storage_tile_id: T_14_04, quantity: 1000000}
+  - {rack_id: rack_C_04, sku_id: SKU_METAL_HEAVY, pick_tile_id: T_13_05, storage_tile_id: T_14_05, quantity: 1000000}
+  - {rack_id: rack_C_05, sku_id: SKU_TOOLKIT, pick_tile_id: T_13_06, storage_tile_id: T_14_06, quantity: 1000000}
+  - {rack_id: rack_C_06, sku_id: SKU_BULK_FOAM, pick_tile_id: T_13_07, storage_tile_id: T_14_07, quantity: 1000000}
+  - {rack_id: rack_C_07, sku_id: SKU_MEDICAL_BIN, pick_tile_id: T_13_08, storage_tile_id: T_14_08, quantity: 1000000}
+  - {rack_id: rack_C_08, sku_id: SKU_CARD_SMALL, pick_tile_id: T_13_09, storage_tile_id: T_14_09, quantity: 1000000}
+
+outbound:
+  conveyors:
+    - {conveyor_id: CONV_EAST_01, unload_tile_id: T_17_13, direction: E, capacity_packages: 6}
+    - {conveyor_id: CONV_EAST_02, unload_tile_id: T_18_13, direction: E, capacity_packages: 6}
+    - {conveyor_id: CONV_EAST_03, unload_tile_id: T_19_13, direction: E, capacity_packages: 6}
+
+robots:
+  - {robot_id: Q-01, robot_type_id: quadbot_standard, start_tile_id: T_00_13, max_payload_weight: 6.0, handling_skill_level: 3, base_move_ticks_per_tile: 2, load_speed_penalty: 0.08, role: runner}
+  - {robot_id: Q-02, robot_type_id: quadbot_standard, start_tile_id: T_01_13, max_payload_weight: 6.0, handling_skill_level: 3, base_move_ticks_per_tile: 2, load_speed_penalty: 0.08, role: runner}
+  - {robot_id: Q-03, robot_type_id: quadbot_heavy, start_tile_id: T_02_13, max_payload_weight: 10.0, handling_skill_level: 3, base_move_ticks_per_tile: 2, load_speed_penalty: 0.10, role: runner}
+  - {robot_id: Q-04, robot_type_id: quadbot_standard, start_tile_id: T_03_13, max_payload_weight: 6.0, handling_skill_level: 4, base_move_ticks_per_tile: 2, load_speed_penalty: 0.08, role: picker}
+  - {robot_id: Q-05, robot_type_id: quadbot_standard, start_tile_id: T_04_13, max_payload_weight: 6.0, handling_skill_level: 4, base_move_ticks_per_tile: 2, load_speed_penalty: 0.08, role: picker}
+  - {robot_id: Q-06, robot_type_id: quadbot_heavy, start_tile_id: T_05_13, max_payload_weight: 10.0, handling_skill_level: 3, base_move_ticks_per_tile: 2, load_speed_penalty: 0.10, role: runner}
+  - {robot_id: Q-07, robot_type_id: quadbot_standard, start_tile_id: T_06_13, max_payload_weight: 6.0, handling_skill_level: 4, base_move_ticks_per_tile: 2, load_speed_penalty: 0.08, role: picker}
+  - {robot_id: Q-08, robot_type_id: quadbot_standard, start_tile_id: T_07_13, max_payload_weight: 6.0, handling_skill_level: 3, base_move_ticks_per_tile: 2, load_speed_penalty: 0.08, role: runner}
+  - {robot_id: Q-09, robot_type_id: quadbot_heavy, start_tile_id: T_08_13, max_payload_weight: 10.0, handling_skill_level: 3, base_move_ticks_per_tile: 2, load_speed_penalty: 0.10, role: runner}
+
+order_profiles:
+  - profile_id: low_load
+    orders_per_hour: 120
+    skus: &sku_mix
+      - {sku_id: SKU_CARD_SMALL, weight: 0.8, difficulty: 1, probability: 0.24}
+      - {sku_id: SKU_WOOD_MED, weight: 2.0, difficulty: 2, probability: 0.22}
+      - {sku_id: SKU_METAL_HEAVY, weight: 7.5, difficulty: 3, probability: 0.12}
+      - {sku_id: SKU_FRAGILE_LIGHT, weight: 1.2, difficulty: 4, probability: 0.12}
+      - {sku_id: SKU_BULK_FOAM, weight: 4.0, difficulty: 2, probability: 0.12}
+      - {sku_id: SKU_TOOLKIT, weight: 5.5, difficulty: 3, probability: 0.10}
+      - {sku_id: SKU_MEDICAL_BIN, weight: 2.5, difficulty: 4, probability: 0.08}
+    priority_distribution: {low: 0.50, normal: 0.35, high: 0.12, urgent: 0.03}
+  - profile_id: medium_load
+    orders_per_hour: 300
+    skus: *sku_mix
+    priority_distribution: {low: 0.38, normal: 0.40, high: 0.17, urgent: 0.05}
+  - profile_id: high_load
+    orders_per_hour: 540
+    skus: *sku_mix
+    priority_distribution: {low: 0.24, normal: 0.38, high: 0.28, urgent: 0.10}

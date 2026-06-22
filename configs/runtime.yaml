@@ -1,0 +1,74 @@
+runtime:
+  name: warehouse_order_fulfillment_simulator
+  version: 0.2.0
+  deterministic: true
+  random_seed: 20260620
+  tick:
+    duration_ms: 1000
+    max_ticks: 7200
+  mode:
+    robot_mode: multi_robot
+    drain_orders_after_generation: true
+
+simulation:
+  tick_duration_s: 1
+  time_scales: [1, 10, 60]
+  default_time_scale: 1
+  realtime_optional: true
+
+planner:
+  default_mode: local
+  ai_planning_interval_s: 600
+  provider_options:
+    local:
+      description: deterministic heuristic planner, no API key required
+    openai:
+      api_key_env: OPENAI_API_KEY
+      model_env: OPENAI_MODEL
+      fallback: local
+      notes: do not commit API keys; judges can inject their own key/model through environment variables
+
+world_model:
+  movement_model: four_direction_grid
+  allow_diagonal_moves: false
+  tile_occupancy: required
+  lock_model: current_and_next_tile
+  lock_ttl_ticks: 3
+  route_reservation_enabled: true
+  route_reservation_window_ticks: 12
+
+runtime_loop:
+  phases:
+    - ingest_orders
+    - refresh_locks
+    - advance_skills
+    - schedule
+    - acquire_locks
+    - commit_moves
+    - detect_deadlocks
+    - update_metrics
+    - emit_events
+
+state_validation:
+  enforce_one_robot_per_tile: true
+  enforce_neighbor_moves: true
+  enforce_payload_capacity: true
+  enforce_inventory_reservation: true
+  enforce_lock_before_move: true
+  fail_fast_on_invariant_violation: true
+
+outputs:
+  dir: submissions/warehouse_quadbot_atomic_demos/outputs
+  snapshot_file: runtime_snapshot.json
+  metrics_file: benchmark_metrics.json
+  events_file: runtime_events.jsonl
+
+events:
+  enabled: true
+  sink: submissions/warehouse_quadbot_atomic_demos/outputs/runtime_events.jsonl
+  include_snapshots_every_ticks: 100
+
+metrics:
+  primary: throughput_orders_per_simulated_hour
+  emit_every_ticks: 100
+  output_path: submissions/warehouse_quadbot_atomic_demos/outputs/benchmark_metrics.json

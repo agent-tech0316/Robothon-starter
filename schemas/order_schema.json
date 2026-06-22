@@ -1,0 +1,178 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentech.local/schemas/warehouse/order_schema.json",
+  "title": "Outbound Warehouse Order",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "order_id",
+    "run_id",
+    "order_sequence",
+    "sku_id",
+    "quantity",
+    "priority",
+    "deadline_tick",
+    "creation_tick",
+    "status"
+  ],
+  "properties": {
+    "order_id": {
+      "type": "string",
+      "minLength": 20,
+      "maxLength": 96,
+      "pattern": "^[A-Za-z0-9_-]+$",
+      "description": "Globally unique long ID. Use ULID, UUIDv7, or an equivalent collision-resistant ID."
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "order_sequence": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Monotonic sequence within one simulation run for ordering and debugging."
+    },
+    "generation_profile_id": {
+      "type": ["string", "null"],
+      "description": "Order generation profile that created this order."
+    },
+    "sku_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "quantity": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "priority": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Higher value means more urgent."
+    },
+    "deadline_tick": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "The order should be unloaded to an outbound conveyor before this tick."
+    },
+    "target_conveyor_id": {
+      "type": ["string", "null"],
+      "description": "Optional assigned outbound conveyor. Null means scheduler may choose."
+    },
+    "target_dock_id": {
+      "type": ["string", "null"],
+      "description": "Optional outbound dock assignment."
+    },
+    "target_truck_visit_id": {
+      "type": ["string", "null"],
+      "description": "Optional concrete truck visit this order should catch."
+    },
+    "assigned_robot_id": {
+      "type": ["string", "null"]
+    },
+    "assigned_task_id": {
+      "type": ["string", "null"]
+    },
+    "reserved_inventory_id": {
+      "type": ["string", "null"],
+      "description": "Inventory reservation created for this order."
+    },
+    "package_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "creation_tick": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "inventory_reserved_tick": {
+      "type": ["integer", "null"],
+      "minimum": 0
+    },
+    "assignment_tick": {
+      "type": ["integer", "null"],
+      "minimum": 0
+    },
+    "picked_tick": {
+      "type": ["integer", "null"],
+      "minimum": 0
+    },
+    "unloaded_tick": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "description": "Tick when the package was unloaded to the outbound conveyor."
+    },
+    "completion_tick": {
+      "type": ["integer", "null"],
+      "minimum": 0
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "generated",
+        "pending_inventory",
+        "inventory_reserved",
+        "robot_assigned",
+        "navigating_to_rack",
+        "picking",
+        "in_transit",
+        "waiting_handoff",
+        "handoff",
+        "navigating_to_conveyor",
+        "unloading_at_conveyor",
+        "completed",
+        "failed",
+        "cancelled"
+      ]
+    },
+    "failure_reason": {
+      "type": ["string", "null"],
+      "enum": [
+        "stockout",
+        "deadline_missed",
+        "robot_error",
+        "rack_blocked",
+        "conveyor_blocked",
+        "runtime_error",
+        "cancelled",
+        null
+      ]
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "completed"
+          }
+        },
+        "required": ["status"]
+      },
+      "then": {
+        "required": ["unloaded_tick", "completion_tick"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "failed"
+          }
+        },
+        "required": ["status"]
+      },
+      "then": {
+        "required": ["failure_reason"]
+      }
+    }
+  ]
+}

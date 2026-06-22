@@ -1,0 +1,398 @@
+{
+  "name": "handoff_metal",
+  "kind": "handoff",
+  "description": "Robot-to-robot handoff with heavy package and receiver basket drop.",
+  "video": "outputs/physics_evidence/handoff_metal.mp4",
+  "scene_xml": "outputs/physics_evidence/generated_mjcf/handoff_metal_scene.xml",
+  "duration_s": 2.2,
+  "fps": 24,
+  "payload": {
+    "key": "metal",
+    "label": "heavy metal case",
+    "mass_kg": 4.0,
+    "loading_time_s": 1.35,
+    "gait_speed_mps": 0.25,
+    "leg_compression_m": 0.085,
+    "grip_close_s": 0.46
+  },
+  "mujoco_depth": {
+    "quadruped_leg_joints": 24,
+    "arm_dof_per_robot": 6,
+    "gripper_slide_joints_per_robot": 2,
+    "collision_pairs_tracked": [
+      "gripper_package",
+      "package_basket",
+      "package_shelf",
+      "package_receiver_gripper",
+      "total_contacts"
+    ],
+    "sensors": [
+      "arm jointpos",
+      "gripper framepos",
+      "basket framepos",
+      "left/right finger touch",
+      "basket touch",
+      "package framepos"
+    ],
+    "actuators": "position actuators on leg, arm, wrist, tool, and gripper joints"
+  },
+  "contact_totals": {
+    "gripper_package": 664,
+    "package_basket": 38,
+    "package_shelf": 0,
+    "package_receiver_gripper": 343,
+    "total_contacts": 4194
+  },
+  "samples": [
+    {
+      "time_s": 0.0,
+      "robot_a": [
+        -0.42,
+        0.0,
+        0.3
+      ],
+      "package": [
+        -0.46,
+        0.0,
+        0.512
+      ],
+      "contacts": {
+        "gripper_package": 12,
+        "package_basket": 0,
+        "package_shelf": 0,
+        "package_receiver_gripper": 12,
+        "total_contacts": 78
+      },
+      "robot_b": [
+        0.42,
+        0.0,
+        0.317
+      ]
+    },
+    {
+      "time_s": 0.167,
+      "robot_a": [
+        -0.42,
+        0.0,
+        0.303
+      ],
+      "package": [
+        -0.2203,
+        -0.0081,
+        0.5237
+      ],
+      "contacts": {
+        "gripper_package": 0,
+        "package_basket": 0,
+        "package_shelf": 0,
+        "package_receiver_gripper": 0,
+        "total_contacts": 79
+      },
+      "robot_b": [
+        0.42,
+        0.0,
+        0.32
+      ]
+    },
+    {
+      "time_s": 0.333,
+      "robot_a": [
+        -0.42,
+        0.0,
+        0.304
+      ],
+      "package": [
+        0.3768,
+        -0.0284,
+        0.5466
+      ],
+      "contacts": {
+        "gripper_package": 12,
+        "package_basket": 0,
+        "package_shelf": 0,
+        "package_receiver_gripper": 0,
+        "total_contacts": 83
+      },
+      "robot_b": [
+        0.42,
+        0.0,
+        0.321
+      ]
+    },
+    {
+      "time_s": 0.5,
+      "robot_a": [
+        -0.42,
+        0.0,
+        0.3024
+      ],
+      "package": [
+        0.4647,
+        0.0313,
+        0.5481
+      ],
+      "contacts": {
+        "gripper_package": 17,
+        "package_basket": 0,
+        "package_shelf": 0,
+        "package_receiver_gripper": 0,
+        "total_contacts": 83
+      },
+      "robot_b": [
+        0.42,
+        0.0,
+        0.3194
+      ]
+    },
+    {
+      "time_s": 0.667,
+      "robot_a": [
+        -0.42,
+        0.0,
+        0.2992
+      ],
+      "package": [
+        0.4647,
+        0.0313,
+        0.545
+      ],
+      "contacts": {
+        "gripper_package": 17,
+        "package_basket": 0,
+        "package_shelf": 0,
+        "package_receiver_gripper": 0,
+        "total_contacts": 83
+      },
+      "robot_b": [
+        0.42,
+        0.0,
+        0.3162
+      ]
+    },
+    {
+      "time_s": 0.833,
+      "robot_a": [
+        -0.42,
+        0.0,
+        0.2965
+      ],
+      "package": [
+        0.4647,
+        0.0313,
+        0.5423
+      ],
+      "contacts": {
+        "gripper_package": 17,
+        "package_basket": 0,
+        "package_shelf": 0,
+        "package_receiver_gripper": 0,
+        "total_contacts": 83
+      },
+      "robot_b": [
+        0.42,
+        0.0,
+        0.3135
+      ]
+    },
+    {
+      "time_s": 1.0,
+      "robot_a": [
+        -0.42,
+        0.0,
+        0.2962
+      ],
+      "package": [
+        0.4075,
+        0.0275,
+        0.543
+      ],
+      "contacts": {
+        "gripper_package": 12,
+        "package_basket": 0,
+        "package_shelf": 0,
+        "package_receiver_gripper": 0,
+        "total_contacts": 77
+      },
+      "robot_b": [
+        0.42,
+        0.0,
+        0.3132
+      ]
+    },
+    {
+      "time_s": 1.167,
+      "robot_a": [
+        -0.42,
+        0.0,
+        0.2984
+      ],
+      "package": [
+        0.0481,
+        0.0032,
+        0.5518
+      ],
+      "contacts": {
+        "gripper_package": 0,
+        "package_basket": 0,
+        "package_shelf": 0,
+        "package_receiver_gripper": 0,
+        "total_contacts": 63
+      },
+      "robot_b": [
+        0.42,
+        0.0,
+        0.3154
+      ]
+    },
+    {
+      "time_s": 1.333,
+      "robot_a": [
+        -0.42,
+        0.0,
+        0.3016
+      ],
+      "package": [
+        -0.3494,
+        -0.0236,
+        0.5623
+      ],
+      "contacts": {
+        "gripper_package": 9,
+        "package_basket": 4,
+        "package_shelf": 0,
+        "package_receiver_gripper": 9,
+        "total_contacts": 83
+      },
+      "robot_b": [
+        0.42,
+        0.0,
+        0.3186
+      ]
+    },
+    {
+      "time_s": 1.5,
+      "robot_a": [
+        -0.42,
+        0.0,
+        0.3038
+      ],
+      "package": [
+        -0.4647,
+        0.0313,
+        0.5666
+      ],
+      "contacts": {
+        "gripper_package": 17,
+        "package_basket": 0,
+        "package_shelf": 0,
+        "package_receiver_gripper": 17,
+        "total_contacts": 79
+      },
+      "robot_b": [
+        0.42,
+        0.0,
+        0.3208
+      ]
+    },
+    {
+      "time_s": 1.667,
+      "robot_a": [
+        -0.42,
+        0.0,
+        0.3035
+      ],
+      "package": [
+        -0.4647,
+        0.0313,
+        0.5663
+      ],
+      "contacts": {
+        "gripper_package": 19,
+        "package_basket": 0,
+        "package_shelf": 0,
+        "package_receiver_gripper": 19,
+        "total_contacts": 81
+      },
+      "robot_b": [
+        0.42,
+        0.0,
+        0.3205
+      ]
+    },
+    {
+      "time_s": 1.833,
+      "robot_a": [
+        -0.42,
+        0.0,
+        0.3008
+      ],
+      "package": [
+        -0.4647,
+        0.0313,
+        0.5636
+      ],
+      "contacts": {
+        "gripper_package": 19,
+        "package_basket": 0,
+        "package_shelf": 0,
+        "package_receiver_gripper": 19,
+        "total_contacts": 81
+      },
+      "robot_b": [
+        0.42,
+        0.0,
+        0.3178
+      ]
+    },
+    {
+      "time_s": 2.0,
+      "robot_a": [
+        -0.42,
+        0.0,
+        0.2976
+      ],
+      "package": [
+        -0.4647,
+        0.0313,
+        0.5604
+      ],
+      "contacts": {
+        "gripper_package": 21,
+        "package_basket": 0,
+        "package_shelf": 0,
+        "package_receiver_gripper": 21,
+        "total_contacts": 83
+      },
+      "robot_b": [
+        0.42,
+        0.0,
+        0.3146
+      ]
+    },
+    {
+      "time_s": 2.167,
+      "robot_a": [
+        -0.42,
+        0.0,
+        0.296
+      ],
+      "package": [
+        0.46,
+        -0.0,
+        0.525
+      ],
+      "contacts": {
+        "gripper_package": 9,
+        "package_basket": 2,
+        "package_shelf": 0,
+        "package_receiver_gripper": 0,
+        "total_contacts": 75
+      },
+      "robot_b": [
+        0.42,
+        0.0,
+        0.313
+      ]
+    }
+  ]
+}

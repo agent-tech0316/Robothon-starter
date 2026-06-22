@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Agentic Warehouse Runtime UI</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="runtime-shell">
+      <header class="topbar">
+        <div class="brand-block">
+          <div class="agent-logo" aria-label="Agentech">
+            <img class="agentech-wordmark" src="./assets/agentech_wordmark_white.png" alt="Agentech" />
+          </div>
+          <div class="title-copy runtime-title-copy">
+            <span class="kicker">FF Robothon Summer 2026</span>
+            <p class="runtime-caption">AgentTech Warehouse Runtime</p>
+            <small>Mission Control / Operations Center / Warehouse Management System</small>
+          </div>
+        </div>
+
+        <div class="topbar-telemetry" aria-label="Runtime summary">
+          <span>Runtime <b id="topRuntime">02:35:00</b></span>
+          <span>Robots <b id="topRobots">09</b></span>
+          <span>Locks <b id="topLocks">18</b></span>
+          <span>THR <b id="topThroughput">289/hr</b></span>
+          <span>Queue <b id="topQueue">53</b></span>
+          <span>SLA Risk <b id="topSla">08</b></span>
+        </div>
+      </header>
+
+      <main class="dashboard-layout">
+        <aside class="left-rail" aria-label="Planner panels">
+          <section class="panel throughput-panel">
+            <div class="panel-title">
+              <span>Throughput Benchmark</span>
+              <strong id="throughputTrend">+18%</strong>
+            </div>
+            <div class="benchmark-grid">
+              <div class="benchmark-tile primary">
+                <span>Orders Completed</span>
+                <strong id="ordersCompleted">289</strong>
+                <em class="mini-spark green"><i></i><i></i><i></i><i></i><i></i><i></i></em>
+              </div>
+              <div class="benchmark-tile">
+                <span>Throughput</span>
+                <strong id="throughputRate">342/hr</strong>
+                <em class="mini-spark cyan"><i></i><i></i><i></i><i></i><i></i><i></i></em>
+              </div>
+              <div class="benchmark-tile">
+                <span>Active Orders</span>
+                <strong id="activeOrders">53</strong>
+                <em class="mini-spark amber"><i></i><i></i><i></i><i></i><i></i><i></i></em>
+              </div>
+              <div class="benchmark-tile">
+                <span>Pending Orders</span>
+                <strong id="pendingOrders">96</strong>
+                <em class="mini-spark red"><i></i><i></i><i></i><i></i><i></i><i></i></em>
+              </div>
+              <div class="benchmark-tile wide">
+                <span>Avg Completion Time</span>
+                <strong id="fulfillment">18.6 min</strong>
+                <em class="micro-line"></em>
+              </div>
+            </div>
+            <div id="throughputBars" class="throughput-bars" aria-hidden="true">
+              <i style="height:42%"></i><i style="height:55%"></i><i style="height:48%"></i><i style="height:63%"></i>
+              <i style="height:71%"></i><i style="height:66%"></i><i style="height:82%"></i><i style="height:76%"></i>
+              <i style="height:88%"></i><i style="height:79%"></i><i style="height:91%"></i><i style="height:86%"></i>
+            </div>
+          </section>
+
+          <section class="panel runtime-panel">
+            <div class="panel-title">
+              <span>Fulfillment Metrics</span>
+              <strong id="runState">Live</strong>
+            </div>
+            <div class="ops-metric-grid">
+              <div class="ops-metric">
+                <span>Robot Utilization</span>
+                <strong id="utilization">74%</strong>
+                <em class="mini-spark cyan"><i></i><i></i><i></i><i></i><i></i></em>
+              </div>
+              <div class="ops-metric">
+                <span>Congestion Events</span>
+                <strong id="congestion">27</strong>
+                <em class="mini-spark red"><i></i><i></i><i></i><i></i><i></i></em>
+              </div>
+              <div class="ops-metric">
+                <span>Simulation Time</span>
+                <strong id="simClock">02:35:00</strong>
+                <em class="micro-line"></em>
+              </div>
+              <div class="ops-metric">
+                <span>Robot Fleet</span>
+                <strong id="fleetCount">09 AEGIS</strong>
+                <em class="micro-line green"></em>
+              </div>
+              <div class="ops-metric split">
+                <span>Planner</span>
+                <button id="plannerBtn" class="inline-toggle active" type="button">On</button>
+              </div>
+              <div class="ops-metric split">
+                <span>Selected Rack</span>
+                <strong id="selectedShelf">A2</strong>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel pipeline-panel">
+            <div class="panel-title">
+              <span>Optimization Counters</span>
+              <strong id="pipelineState">Optimizing</strong>
+            </div>
+            <div class="runtime-grid">
+              <span>Active Skills <b id="activeSkillCount">12</b></span>
+              <span>Deadlocks <b id="deadlockCount">02</b></span>
+              <span>Replans <b id="replanCount">07</b></span>
+              <span>Tile Locks <b id="leftTileLocks">18</b></span>
+            </div>
+            <div class="scheduler-decision">
+              <span>Latest Scheduler Decision</span>
+              <strong id="schedulerDecision">Reroute Q-06 around B2 buffer zone.</strong>
+            </div>
+            <div class="counter-strip" aria-hidden="true">
+              <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+            </div>
+          </section>
+
+          <section class="panel queue-panel">
+            <div class="panel-title">
+              <span>Queue Pressure</span>
+              <strong id="queuePressure">53 open</strong>
+            </div>
+            <div class="queue-stack">
+              <div>
+                <span>A2 priority</span>
+                <meter min="0" max="100" value="72" id="queueA2"></meter>
+              </div>
+              <div>
+                <span>B1 transfer</span>
+                <meter min="0" max="100" value="47" id="queueB1"></meter>
+              </div>
+              <div>
+                <span>Pack lane</span>
+                <meter min="0" max="100" value="58" id="queuePack"></meter>
+              </div>
+            </div>
+            <div class="queue-pulse-grid" aria-hidden="true">
+              <i></i><i></i><i></i><i></i><i></i><i></i>
+            </div>
+          </section>
+        </aside>
+
+        <section class="stage-panel" aria-label="Warehouse runtime stage">
+          <div class="stage-status">
+            <div>
+              <span class="kicker">Isometric Runtime Map</span>
+              <h2>Multi-Agent Warehouse Optimization</h2>
+            </div>
+            <div class="stage-badges">
+              <span id="activeLoadBadge">Medium Load</span>
+              <span id="speedBadge">10x</span>
+              <span id="runtimeLinkBadge">Mock Runtime</span>
+            </div>
+          </div>
+
+          <div class="canvas-wrap">
+            <div class="map-toolbar" aria-label="Map overlays">
+              <button class="tool-toggle active" type="button">Occupancy</button>
+              <button class="tool-toggle active" type="button">Routes</button>
+              <button class="tool-toggle active" type="button">Orders</button>
+              <button class="tool-toggle warning active" type="button">Congestion</button>
+            </div>
+            <canvas id="warehouseCanvas" aria-label="Animated isometric warehouse map"></canvas>
+          </div>
+
+          <div class="stage-bottom">
+            <section class="log-panel">
+              <div class="panel-title compact">
+                <span>Timeline / Scheduler Events</span>
+                <strong id="tickLabel">Tick 0000</strong>
+              </div>
+              <ul id="decisionLog" class="decision-log"></ul>
+            </section>
+            <section class="legend-panel">
+              <div class="panel-title compact">
+                <span>Legend</span>
+              </div>
+              <div class="legend-grid">
+                <span><i class="legend-line cyan"></i> Planned path</span>
+                <span><i class="legend-line amber"></i> Active route</span>
+                <span><i class="legend-dot green"></i> Verified skill</span>
+                <span><i class="legend-dot red"></i> Congestion risk</span>
+                <span><i class="legend-box"></i> Draggable shelf</span>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <aside class="right-rail" aria-label="Robot runtime modules">
+          <section class="panel robot-panel robot-module-panel">
+            <div class="panel-title">
+              <span>Robot Runtime Modules</span>
+              <strong id="fleetMode">Balanced</strong>
+            </div>
+            <div class="robot-module-summary">
+              <span>All executors are controlled by Workflow + Skill Graph.</span>
+              <strong id="wallClock">10:24:35</strong>
+            </div>
+            <div id="robotStatusList" class="robot-status-list"></div>
+          </section>
+        </aside>
+
+        <aside class="thin-rail" aria-label="Program detail rail">
+          <section class="thin-panel">
+            <span class="thin-label">SIM</span>
+            <strong>04K</strong>
+            <small>3840x2160</small>
+          </section>
+          <section class="thin-panel">
+            <span class="thin-label">TPS</span>
+            <strong>60</strong>
+            <small>target</small>
+          </section>
+          <section class="thin-panel">
+            <span class="thin-label">ORD</span>
+            <strong id="thinPending">096</strong>
+            <small>pending</small>
+          </section>
+          <section class="thin-panel warning">
+            <span class="thin-label">RPL</span>
+            <strong id="thinReplans">07</strong>
+            <small>replans</small>
+          </section>
+          <section class="thin-panel danger">
+            <span class="thin-label">DLK</span>
+            <strong id="thinDeadlocks">02</strong>
+            <small>deadlocks</small>
+          </section>
+          <section class="thin-panel">
+            <span class="thin-label">SKL</span>
+            <strong id="thinSkills">12</strong>
+            <small>active</small>
+          </section>
+          <section class="thin-panel">
+            <span class="thin-label">RUN</span>
+            <strong id="thinRun">ON</strong>
+            <small>planner</small>
+          </section>
+        </aside>
+
+        <footer class="asset-console" aria-label="Submission runtime console">
+        <section class="console-panel order-intake-panel">
+          <div class="panel-title compact">
+            <span>Order Intake</span>
+            <strong id="orderFlowMode">Live Feed</strong>
+          </div>
+          <div class="order-flow-metrics">
+            <span><small>NEW</small><b id="orderNewCount">18</b></span>
+            <span><small>ASSIGNED</small><b id="orderAssignedCount">31</b></span>
+            <span><small>AGING</small><b id="orderAgingCount">08</b></span>
+          </div>
+          <div id="orderIntakeList" class="order-intake-list" aria-label="Incoming warehouse orders"></div>
+          <div class="order-lane-strip" aria-hidden="true">
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          </div>
+        </section>
+
+        <section class="console-panel package-panel">
+          <div class="panel-title compact">
+            <span>SKU Classes</span>
+            <strong id="skuMix">Live Mix</strong>
+          </div>
+          <div class="sku-row">
+            <span><i class="sku cube light"></i>Cardboard <b>0.8kg</b></span>
+            <span><i class="sku cube wood"></i>Wood <b>2.0kg</b></span>
+            <span><i class="sku cube metal"></i>Metal <b>4.0kg</b></span>
+          </div>
+          <div class="sku-flow-grid" aria-label="SKU live warehouse flow">
+            <span><small>INBOUND</small><b id="skuInbound">42</b></span>
+            <span><small>PICK QUEUE</small><b id="skuPickQueue">27</b></span>
+            <span><small>OUTBOUND</small><b id="skuOutbound">19</b></span>
+          </div>
+          <div class="throughput-strip" aria-hidden="true">
+            <i style="height:34%"></i>
+            <i style="height:51%"></i>
+            <i style="height:44%"></i>
+            <i style="height:62%"></i>
+            <i style="height:76%"></i>
+            <i style="height:55%"></i>
+            <i style="height:82%"></i>
+            <i style="height:68%"></i>
+          </div>
+        </section>
+
+        <section class="console-panel sim-control-panel">
+          <div class="panel-title compact">
+            <span>Runtime Control</span>
+            <strong id="runtimeControlState">Linked</strong>
+          </div>
+          <div class="control-board">
+            <div class="control-bank">
+              <span class="cluster-label">Load</span>
+              <button class="segmented" data-load="low" type="button">Low</button>
+              <button class="segmented active" data-load="medium" type="button">Medium</button>
+              <button class="segmented" data-load="high" type="button">High</button>
+            </div>
+            <div class="control-bank">
+              <span class="cluster-label">Speed</span>
+              <button class="segmented active" data-speed="10" type="button">10x</button>
+              <button class="segmented" data-speed="60" type="button">60x</button>
+            </div>
+            <div class="command-bank">
+              <button id="pauseBtn" class="command primary icon-pause" type="button">Pause</button>
+              <button id="tickBtn" class="command icon-step" type="button">Next Tick</button>
+              <button id="resetBtn" class="command icon-reset" type="button">Reset</button>
+            </div>
+          </div>
+          <div class="runtime-interface-strip" aria-label="Runtime interface readiness">
+            <span>runtime_snapshot <b id="runtimeSnapshotPort">mock</b></span>
+            <span>robot_state <b id="robotsPort">ready</b></span>
+            <span>orders <b id="ordersPort">ready</b></span>
+            <span>tile_locks <b id="locksPort">ready</b></span>
+          </div>
+        </section>
+        </footer>
+      </main>
+    </div>
+
+    <script src="./app.js?v=runtime-motion-v6"></script>
+  </body>
+</html>

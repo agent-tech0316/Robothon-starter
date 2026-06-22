@@ -1,0 +1,649 @@
+{
+  "version": 28,
+  "category": "robot_dog",
+  "sprite_scale": 2,
+  "base_tile": {
+    "source_sprite": "128x128 final PNG cell for floor tiles with transparent padding",
+    "visible_diamond": "128x64",
+    "logical_model_tile": "64x48 art inside a 64x64 square canvas before nearest-neighbor 2x export",
+    "robot_png": "128x128 final PNG with transparent padding"
+  },
+  "sprites": [
+    {
+      "name": "robot_dog_base_n",
+      "rect": {
+        "x": 8,
+        "y": 8,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 128
+      },
+      "anchor": {
+        "x": 64,
+        "y": 104
+      },
+      "footprint": "base dog 8-dir",
+      "note": "High-res base AEGIS dog, north/back facing, no basket, no arm."
+    },
+    {
+      "name": "robot_dog_base_ne",
+      "rect": {
+        "x": 144,
+        "y": 8,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 128
+      },
+      "anchor": {
+        "x": 64,
+        "y": 104
+      },
+      "footprint": "base dog 8-dir",
+      "note": "High-res base AEGIS dog, north-east facing, no basket, no arm."
+    },
+    {
+      "name": "robot_dog_base_e",
+      "rect": {
+        "x": 280,
+        "y": 8,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 128
+      },
+      "anchor": {
+        "x": 64,
+        "y": 104
+      },
+      "footprint": "base dog 8-dir",
+      "note": "High-res base AEGIS dog, east/right facing, no basket, no arm."
+    },
+    {
+      "name": "robot_dog_base_se",
+      "rect": {
+        "x": 416,
+        "y": 8,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 128
+      },
+      "anchor": {
+        "x": 64,
+        "y": 104
+      },
+      "footprint": "base dog 8-dir",
+      "note": "High-res base AEGIS dog, south-east facing, no basket, no arm."
+    },
+    {
+      "name": "robot_dog_base_s",
+      "rect": {
+        "x": 552,
+        "y": 8,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 128
+      },
+      "anchor": {
+        "x": 64,
+        "y": 104
+      },
+      "footprint": "base dog 8-dir",
+      "note": "High-res base AEGIS dog, south/front facing, no basket, no arm."
+    },
+    {
+      "name": "robot_dog_base_sw",
+      "rect": {
+        "x": 688,
+        "y": 8,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 128
+      },
+      "anchor": {
+        "x": 64,
+        "y": 104
+      },
+      "footprint": "base dog 8-dir",
+      "note": "High-res base AEGIS dog, south-west facing, no basket, no arm."
+    },
+    {
+      "name": "robot_dog_base_w",
+      "rect": {
+        "x": 824,
+        "y": 8,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 128
+      },
+      "anchor": {
+        "x": 64,
+        "y": 104
+      },
+      "footprint": "base dog 8-dir",
+      "note": "High-res base AEGIS dog, west/left facing, no basket, no arm."
+    },
+    {
+      "name": "robot_dog_base_nw",
+      "rect": {
+        "x": 960,
+        "y": 8,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 128
+      },
+      "anchor": {
+        "x": 64,
+        "y": 104
+      },
+      "footprint": "base dog 8-dir",
+      "note": "High-res base AEGIS dog, north-west facing, no basket, no arm."
+    },
+    {
+      "name": "robot_dog_carry_cardboard_n",
+      "rect": {
+        "x": 1096,
+        "y": 8,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 128
+      },
+      "anchor": {
+        "x": 64,
+        "y": 104
+      },
+      "footprint": "cargo dog 8-dir",
+      "note": "High-res AEGIS dog carrying light paper/cardboard box, N direction, no basket, no arm; loaded stance adjusts by cargo weight."
+    },
+    {
+      "name": "robot_dog_carry_cardboard_ne",
+      "rect": {
+        "x": 1232,
+        "y": 8,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 128
+      },
+      "anchor": {
+        "x": 64,
+        "y": 104
+      },
+      "footprint": "cargo dog 8-dir",
+      "note": "High-res AEGIS dog carrying light paper/cardboard box, NE direction, no basket, no arm; loaded stance adjusts by cargo weight."
+    },
+    {
+      "name": "robot_dog_carry_cardboard_e",
+      "rect": {
+        "x": 1368,
+        "y": 8,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 128
+      },
+      "anchor": {
+        "x": 64,
+        "y": 104
+      },
+      "footprint": "cargo dog 8-dir",
+      "note": "High-res AEGIS dog carrying light paper/cardboard box, E direction, no basket, no arm; loaded stance adjusts by cargo weight."
+    },
+    {
+      "name": "robot_dog_carry_cardboard_se",
+      "rect": {
+        "x": 1504,
+        "y": 8,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 128
+      },
+      "anchor": {
+        "x": 64,
+        "y": 104
+      },
+      "footprint": "cargo dog 8-dir",
+      "note": "High-res AEGIS dog carrying light paper/cardboard box, SE direction, no basket, no arm; loaded stance adjusts by cargo weight."
+    },
+    {
+      "name": "robot_dog_carry_cardboard_s",
+      "rect": {
+        "x": 1640,
+        "y": 8,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 128
+      },
+      "anchor": {
+        "x": 64,
+        "y": 104
+      },
+      "footprint": "cargo dog 8-dir",
+      "note": "High-res AEGIS dog carrying light paper/cardboard box, S direction, no basket, no arm; loaded stance adjusts by cargo weight."
+    },
+    {
+      "name": "robot_dog_carry_cardboard_sw",
+      "rect": {
+        "x": 1776,
+        "y": 8,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 128
+      },
+      "anchor": {
+        "x": 64,
+        "y": 104
+      },
+      "footprint": "cargo dog 8-dir",
+      "note": "High-res AEGIS dog carrying light paper/cardboard box, SW direction, no basket, no arm; loaded stance adjusts by cargo weight."
+    },
+    {
+      "name": "robot_dog_carry_cardboard_w",
+      "rect": {
+        "x": 1912,
+        "y": 8,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 128
+      },
+      "anchor": {
+        "x": 64,
+        "y": 104
+      },
+      "footprint": "cargo dog 8-dir",
+      "note": "High-res AEGIS dog carrying light paper/cardboard box, W direction, no basket, no arm; loaded stance adjusts by cargo weight."
+    },
+    {
+      "name": "robot_dog_carry_cardboard_nw",
+      "rect": {
+        "x": 8,
+        "y": 144,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 128
+      },
+      "anchor": {
+        "x": 64,
+        "y": 104
+      },
+      "footprint": "cargo dog 8-dir",
+      "note": "High-res AEGIS dog carrying light paper/cardboard box, NW direction, no basket, no arm; loaded stance adjusts by cargo weight."
+    },
+    {
+      "name": "robot_dog_carry_wood_n",
+      "rect": {
+        "x": 144,
+        "y": 144,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 128
+      },
+      "anchor": {
+        "x": 64,
+        "y": 104
+      },
+      "footprint": "cargo dog 8-dir",
+      "note": "High-res AEGIS dog carrying medium wood crate, N direction, no basket, no arm; loaded stance adjusts by cargo weight."
+    },
+    {
+      "name": "robot_dog_carry_wood_ne",
+      "rect": {
+        "x": 280,
+        "y": 144,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 128
+      },
+      "anchor": {
+        "x": 64,
+        "y": 104
+      },
+      "footprint": "cargo dog 8-dir",
+      "note": "High-res AEGIS dog carrying medium wood crate, NE direction, no basket, no arm; loaded stance adjusts by cargo weight."
+    },
+    {
+      "name": "robot_dog_carry_wood_e",
+      "rect": {
+        "x": 416,
+        "y": 144,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 128
+      },
+      "anchor": {
+        "x": 64,
+        "y": 104
+      },
+      "footprint": "cargo dog 8-dir",
+      "note": "High-res AEGIS dog carrying medium wood crate, E direction, no basket, no arm; loaded stance adjusts by cargo weight."
+    },
+    {
+      "name": "robot_dog_carry_wood_se",
+      "rect": {
+        "x": 552,
+        "y": 144,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 128
+      },
+      "anchor": {
+        "x": 64,
+        "y": 104
+      },
+      "footprint": "cargo dog 8-dir",
+      "note": "High-res AEGIS dog carrying medium wood crate, SE direction, no basket, no arm; loaded stance adjusts by cargo weight."
+    },
+    {
+      "name": "robot_dog_carry_wood_s",
+      "rect": {
+        "x": 688,
+        "y": 144,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 128
+      },
+      "anchor": {
+        "x": 64,
+        "y": 104
+      },
+      "footprint": "cargo dog 8-dir",
+      "note": "High-res AEGIS dog carrying medium wood crate, S direction, no basket, no arm; loaded stance adjusts by cargo weight."
+    },
+    {
+      "name": "robot_dog_carry_wood_sw",
+      "rect": {
+        "x": 824,
+        "y": 144,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 128
+      },
+      "anchor": {
+        "x": 64,
+        "y": 104
+      },
+      "footprint": "cargo dog 8-dir",
+      "note": "High-res AEGIS dog carrying medium wood crate, SW direction, no basket, no arm; loaded stance adjusts by cargo weight."
+    },
+    {
+      "name": "robot_dog_carry_wood_w",
+      "rect": {
+        "x": 960,
+        "y": 144,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 128
+      },
+      "anchor": {
+        "x": 64,
+        "y": 104
+      },
+      "footprint": "cargo dog 8-dir",
+      "note": "High-res AEGIS dog carrying medium wood crate, W direction, no basket, no arm; loaded stance adjusts by cargo weight."
+    },
+    {
+      "name": "robot_dog_carry_wood_nw",
+      "rect": {
+        "x": 1096,
+        "y": 144,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 128
+      },
+      "anchor": {
+        "x": 64,
+        "y": 104
+      },
+      "footprint": "cargo dog 8-dir",
+      "note": "High-res AEGIS dog carrying medium wood crate, NW direction, no basket, no arm; loaded stance adjusts by cargo weight."
+    },
+    {
+      "name": "robot_dog_carry_metal_n",
+      "rect": {
+        "x": 1232,
+        "y": 144,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 128
+      },
+      "anchor": {
+        "x": 64,
+        "y": 104
+      },
+      "footprint": "cargo dog 8-dir",
+      "note": "High-res AEGIS dog carrying heavy metal box, N direction, no basket, no arm; loaded stance adjusts by cargo weight."
+    },
+    {
+      "name": "robot_dog_carry_metal_ne",
+      "rect": {
+        "x": 1368,
+        "y": 144,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 128
+      },
+      "anchor": {
+        "x": 64,
+        "y": 104
+      },
+      "footprint": "cargo dog 8-dir",
+      "note": "High-res AEGIS dog carrying heavy metal box, NE direction, no basket, no arm; loaded stance adjusts by cargo weight."
+    },
+    {
+      "name": "robot_dog_carry_metal_e",
+      "rect": {
+        "x": 1504,
+        "y": 144,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 128
+      },
+      "anchor": {
+        "x": 64,
+        "y": 104
+      },
+      "footprint": "cargo dog 8-dir",
+      "note": "High-res AEGIS dog carrying heavy metal box, E direction, no basket, no arm; loaded stance adjusts by cargo weight."
+    },
+    {
+      "name": "robot_dog_carry_metal_se",
+      "rect": {
+        "x": 1640,
+        "y": 144,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 128
+      },
+      "anchor": {
+        "x": 64,
+        "y": 104
+      },
+      "footprint": "cargo dog 8-dir",
+      "note": "High-res AEGIS dog carrying heavy metal box, SE direction, no basket, no arm; loaded stance adjusts by cargo weight."
+    },
+    {
+      "name": "robot_dog_carry_metal_s",
+      "rect": {
+        "x": 1776,
+        "y": 144,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 128
+      },
+      "anchor": {
+        "x": 64,
+        "y": 104
+      },
+      "footprint": "cargo dog 8-dir",
+      "note": "High-res AEGIS dog carrying heavy metal box, S direction, no basket, no arm; loaded stance adjusts by cargo weight."
+    },
+    {
+      "name": "robot_dog_carry_metal_sw",
+      "rect": {
+        "x": 1912,
+        "y": 144,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 128
+      },
+      "anchor": {
+        "x": 64,
+        "y": 104
+      },
+      "footprint": "cargo dog 8-dir",
+      "note": "High-res AEGIS dog carrying heavy metal box, SW direction, no basket, no arm; loaded stance adjusts by cargo weight."
+    },
+    {
+      "name": "robot_dog_carry_metal_w",
+      "rect": {
+        "x": 8,
+        "y": 280,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 128
+      },
+      "anchor": {
+        "x": 64,
+        "y": 104
+      },
+      "footprint": "cargo dog 8-dir",
+      "note": "High-res AEGIS dog carrying heavy metal box, W direction, no basket, no arm; loaded stance adjusts by cargo weight."
+    },
+    {
+      "name": "robot_dog_carry_metal_nw",
+      "rect": {
+        "x": 144,
+        "y": 280,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 128
+      },
+      "anchor": {
+        "x": 64,
+        "y": 104
+      },
+      "footprint": "cargo dog 8-dir",
+      "note": "High-res AEGIS dog carrying heavy metal box, NW direction, no basket, no arm; loaded stance adjusts by cargo weight."
+    }
+  ],
+  "robot_directions": [
+    "n",
+    "ne",
+    "e",
+    "se",
+    "s",
+    "sw",
+    "w",
+    "nw"
+  ],
+  "robot_cargo_types": {
+    "cardboard": {
+      "label": "light paper/cardboard box",
+      "load": 0.28
+    },
+    "wood": {
+      "label": "medium wood crate",
+      "load": 0.58
+    },
+    "metal": {
+      "label": "heavy metal box",
+      "load": 0.92
+    }
+  },
+  "robot_sprite_groups": {
+    "base": "robot_dog_base_{direction}",
+    "carry": "robot_dog_carry_{cardboard|wood|metal}_{direction}"
+  }
+}

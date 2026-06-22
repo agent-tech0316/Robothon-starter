@@ -1,0 +1,374 @@
+{
+  "project": "Warehouse Quadbot Atomic Demos",
+  "scenario": "shelf_pick_metal",
+  "scenario_kind": "shelf_pick",
+  "robot": "AEGIS quadruped with BASE_LINK-mounted basket and Futurist-right-arm-derived manipulator",
+  "model": "assets/Aegis/urdf/Aegis_mujoco.urdf",
+  "video": "submissions/warehouse_quadbot_atomic_demos/outputs/shelf_pick_metal.mp4",
+  "trajectory": "submissions/warehouse_quadbot_atomic_demos/outputs/shelf_pick_metal_trajectory.json",
+  "duration_s": 2.5,
+  "fps": 30,
+  "payload": {
+    "style": "metal",
+    "label": "heavy metal",
+    "mass_kg": 4.0,
+    "difficulty": "hard",
+    "loading_time_s": 2.05,
+    "grip_close_s": 0.46,
+    "walk_speed_mps": 0.31,
+    "leg_compression_m": 0.055
+  },
+  "box_styles": {
+    "cardboard": {
+      "label": "normal cardboard",
+      "rgba": [
+        0.72,
+        0.43,
+        0.2,
+        1.0
+      ],
+      "mass": 0.8,
+      "loading_time_s": 1.2,
+      "grip_close_s": 0.24,
+      "walk_speed_mps": 0.55,
+      "leg_compression_m": 0.01,
+      "difficulty": "easy"
+    },
+    "wood": {
+      "label": "medium wood",
+      "rgba": [
+        0.5,
+        0.28,
+        0.11,
+        1.0
+      ],
+      "mass": 2.0,
+      "loading_time_s": 1.55,
+      "grip_close_s": 0.34,
+      "walk_speed_mps": 0.43,
+      "leg_compression_m": 0.03,
+      "difficulty": "medium"
+    },
+    "metal": {
+      "label": "heavy metal",
+      "rgba": [
+        0.55,
+        0.6,
+        0.64,
+        1.0
+      ],
+      "mass": 4.0,
+      "loading_time_s": 2.05,
+      "grip_close_s": 0.46,
+      "walk_speed_mps": 0.31,
+      "leg_compression_m": 0.055,
+      "difficulty": "hard"
+    }
+  },
+  "tile_size_m": 1.0,
+  "mujoco_depth": {
+    "quadruped_leg_joints": 12,
+    "arm_dof_per_robot": 7,
+    "gripper_slide_joints_per_robot": 2,
+    "collision_geoms": [
+      "package box",
+      "left/right gripper fingers and pads",
+      "cargo basket floor and rails",
+      "pickup shelf decks"
+    ],
+    "sensors": [
+      "leg joint position",
+      "Futurist right-arm joint position",
+      "gripper frame position",
+      "basket frame position",
+      "left/right finger touch",
+      "basket touch"
+    ],
+    "actuators": "position actuators on AEGIS leg joints, seven Futurist-derived arm joints, and two finger slide joints"
+  },
+  "contact_totals": {
+    "gripper_box": 819,
+    "receiver_gripper_box": 0,
+    "box_basket": 13,
+    "box_shelf": 88,
+    "arm_basket": 0,
+    "total_contacts": 3114
+  },
+  "physics_note": "Package, shelf, basket, and gripper use MuJoCo collision geoms. During grasp and carry phases the package follows the wrist pose with matching orientation, then releases into the basket. This is still a scripted atomic-skill demo, not a full closed-loop grasp controller.",
+  "success": true,
+  "trajectory_samples": [
+    {
+      "time_s": 0.0,
+      "sender_base": [
+        0.5,
+        0.0,
+        0.31525
+      ],
+      "contacts": {
+        "gripper_box": 4,
+        "receiver_gripper_box": 0,
+        "box_basket": 0,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "total_contacts": 38
+      },
+      "box_pos": [
+        -0.16,
+        -0.02,
+        0.472
+      ]
+    },
+    {
+      "time_s": 0.2,
+      "sender_base": [
+        0.5,
+        0.0,
+        0.31817
+      ],
+      "contacts": {
+        "gripper_box": 0,
+        "receiver_gripper_box": 0,
+        "box_basket": 0,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "total_contacts": 35
+      },
+      "box_pos": [
+        -0.16,
+        -0.02,
+        0.472
+      ]
+    },
+    {
+      "time_s": 0.4,
+      "sender_base": [
+        0.5,
+        0.0,
+        0.31924
+      ],
+      "contacts": {
+        "gripper_box": 4,
+        "receiver_gripper_box": 0,
+        "box_basket": 0,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "total_contacts": 38
+      },
+      "box_pos": [
+        -0.16,
+        -0.02,
+        0.472
+      ]
+    },
+    {
+      "time_s": 0.6,
+      "sender_base": [
+        0.5,
+        0.0,
+        0.3178
+      ],
+      "contacts": {
+        "gripper_box": 7,
+        "receiver_gripper_box": 0,
+        "box_basket": 0,
+        "box_shelf": 4,
+        "arm_basket": 0,
+        "total_contacts": 46
+      },
+      "box_pos": [
+        -0.23031,
+        0.02047,
+        0.46006
+      ]
+    },
+    {
+      "time_s": 0.8,
+      "sender_base": [
+        0.5,
+        0.0,
+        0.31475
+      ],
+      "contacts": {
+        "gripper_box": 19,
+        "receiver_gripper_box": 0,
+        "box_basket": 0,
+        "box_shelf": 4,
+        "arm_basket": 0,
+        "total_contacts": 56
+      },
+      "box_pos": [
+        -0.29817,
+        0.05953,
+        0.44549
+      ]
+    },
+    {
+      "time_s": 1.0,
+      "sender_base": [
+        0.5,
+        0.0,
+        0.31201
+      ],
+      "contacts": {
+        "gripper_box": 19,
+        "receiver_gripper_box": 0,
+        "box_basket": 0,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "total_contacts": 45
+      },
+      "box_pos": [
+        -0.32531,
+        0.05333,
+        0.48037
+      ]
+    },
+    {
+      "time_s": 1.2,
+      "sender_base": [
+        0.5,
+        0.0,
+        0.31132
+      ],
+      "contacts": {
+        "gripper_box": 19,
+        "receiver_gripper_box": 0,
+        "box_basket": 0,
+        "box_shelf": 4,
+        "arm_basket": 0,
+        "total_contacts": 59
+      },
+      "box_pos": [
+        -0.39993,
+        0.02728,
+        0.63075
+      ]
+    },
+    {
+      "time_s": 1.4,
+      "sender_base": [
+        0.5,
+        0.0,
+        0.31311
+      ],
+      "contacts": {
+        "gripper_box": 19,
+        "receiver_gripper_box": 0,
+        "box_basket": 0,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "total_contacts": 43
+      },
+      "box_pos": [
+        -0.43429,
+        -0.00229,
+        0.80615
+      ]
+    },
+    {
+      "time_s": 1.6,
+      "sender_base": [
+        0.5,
+        0.0,
+        0.31624
+      ],
+      "contacts": {
+        "gripper_box": 19,
+        "receiver_gripper_box": 0,
+        "box_basket": 0,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "total_contacts": 43
+      },
+      "box_pos": [
+        -0.43413,
+        -0.01286,
+        0.89976
+      ]
+    },
+    {
+      "time_s": 1.8,
+      "sender_base": [
+        0.5,
+        0.0,
+        0.31876
+      ],
+      "contacts": {
+        "gripper_box": 14,
+        "receiver_gripper_box": 0,
+        "box_basket": 0,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "total_contacts": 42
+      },
+      "box_pos": [
+        -0.07951,
+        -0.006,
+        1.42757
+      ]
+    },
+    {
+      "time_s": 2.0,
+      "sender_base": [
+        0.5,
+        0.0,
+        0.31905
+      ],
+      "contacts": {
+        "gripper_box": 8,
+        "receiver_gripper_box": 0,
+        "box_basket": 0,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "total_contacts": 34
+      },
+      "box_pos": [
+        0.15451,
+        -0.001,
+        1.48983
+      ]
+    },
+    {
+      "time_s": 2.2,
+      "sender_base": [
+        0.5,
+        0.0,
+        0.31695
+      ],
+      "contacts": {
+        "gripper_box": 4,
+        "receiver_gripper_box": 0,
+        "box_basket": 0,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "total_contacts": 29
+      },
+      "box_pos": [
+        0.2632,
+        0.00322,
+        1.26784
+      ]
+    },
+    {
+      "time_s": 2.4,
+      "sender_base": [
+        0.5,
+        0.0,
+        0.31378
+      ],
+      "contacts": {
+        "gripper_box": 0,
+        "receiver_gripper_box": 0,
+        "box_basket": 0,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "total_contacts": 25
+      },
+      "box_pos": [
+        0.56,
+        0.00107,
+        0.63737
+      ]
+    }
+  ]
+}

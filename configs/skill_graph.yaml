@@ -1,0 +1,261 @@
+skill_graph:
+  graph_id: warehouse_fulfillment_core
+  version: 0.1.0
+  mission: maximize_order_throughput
+
+skills:
+  - skill_id: reserve_inventory
+    category: planning
+    inputs: [order_id, sku_id, quantity]
+    preconditions:
+      - order_status_in: [generated, pending_inventory]
+      - inventory_available: true
+    locks:
+      inventory: exclusive
+    duration_model:
+      type: fixed_ticks
+      ticks: 1
+    effects:
+      - set_order_status: inventory_reserved
+      - create_inventory_reservation: true
+    metrics: [inventory_wait_ticks]
+
+  - skill_id: assign_robot
+    category: planning
+    inputs: [order_id, robot_id]
+    preconditions:
+      - order_status: inventory_reserved
+      - robot_status_in: [idle, ready]
+      - robot_payload_capacity_gte_order_weight: true
+      - robot_skill_level_gte_order_difficulty: true
+    locks: {}
+    duration_model:
+      type: fixed_ticks
+      ticks: 1
+    effects:
+      - set_order_status: robot_assigned
+      - set_robot_status: assigned
+    metrics: [assignment_wait_ticks]
+
+  - skill_id: plan_route
+    category: planning
+    inputs: [robot_id, start_tile_id, target_tile_id]
+    preconditions:
+      - start_tile_valid: true
+      - target_tile_reachable: true
+      - robot_not_offline: true
+    locks: {}
+    duration_model:
+      type: fixed_ticks
+      ticks: 1
+    effects:
+      - attach_route_to_robot: true
+      - set_robot_status: navigating
+    metrics: [route_plan_count, estimated_travel_ticks]
+
+  - skill_id: acquire_tile_locks
+    category: movement
+    inputs: [robot_id, source_tile_id, destination_tile_id]
+    preconditions:
+      - robot_occupies_source_tile: true
+      - destination_is_cardinal_neighbor: true
+      - destination_is_traversable: true
+      - no_conflicting_tile_lock: true
+      - destination_unoccupied: true
+    locks:
+      source_tile: exclusive
+      destination_tile: exclusive
+      acquire: atomic
+    duration_model:
+      type: fixed_ticks
+      ticks: 0
+    effects:
+      - grant_source_destination_locks: true
+    metrics: [tile_lock_wait_ticks, tile_lock_denials]
+
+  - skill_id: move_one_tile
+    category: movement
+    inputs: [robot_id, source_tile_id, destination_tile_id]
+    preconditions:
+      - robot_owns_source_destination_locks: true
+      - destination_unoccupied: true
+      - source_occupied_by_robot: true
+    locks:
+      source_tile: owned
+      destination_tile: owned
+    duration_model:
+      type: fixed_ticks
+      ticks: 1
+    effects:
+      - clear_source_occupancy: true
+      - set_destination_occupancy: robot_id
+      - update_robot_current_tile: destination_tile_id
+      - release_movement_locks: true
+    metrics: [tiles_moved]
+
+  - skill_id: follow_route
+    category: movement
+    inputs: [robot_id, route_id]
+    preconditions:
+      - robot_has_active_route: true
+      - next_route_step_valid: true
+    locks:
+      delegated_to: acquire_tile_locks
+    duration_model:
+      type: per_tile
+      skill: move_one_tile
+    effects:
+      - advance_route_cursor: true
+      - complete_when_target_reached: true
+    metrics: [travel_ticks, route_completion_count]
+
+  - skill_id: pick_from_rack
+    category: handling
+    inputs: [order_id, robot_id, rack_id, pick_tile_id]
+    preconditions:
+      - robot_at_pick_tile: true
+      - order_has_inventory_reservation: true
+      - robot_payload_capacity_gte_order_weight: true
+      - pick_point_available: true
+    locks:
+      pick_point: exclusive
+      inventory_reservation: exclusive
+    duration_model:
+      type: difficulty_scaled_ticks
+      base_ticks: 4
+      per_difficulty_tick: 2
+    effects:
+      - move_reserved_inventory_to_robot: true
+      - set_order_status: in_transit
+      - set_robot_status: carrying
+    metrics: [pick_ticks, pick_count]
+
+  - skill_id: handoff_package
+    category: coordination
+    inputs: [order_id, sender_robot_id, receiver_robot_id, handoff_tile_id]
+    preconditions:
+      - sender_carries_order_package: true
+      - receiver_has_payload_capacity: true
+      - robots_adjacent: true
+      - handoff_point_available: true
+    locks:
+      sender_tile: exclusive
+      receiver_tile: exclusive
+      package: exclusive
+    duration_model:
+      type: fixed_ticks
+      ticks: 3
+    effects:
+      - transfer_package_to_receiver: true
+      - update_order_assigned_robot: receiver_robot_id
+      - release_sender_to_ready: true
+    metrics: [handoff_count, handoff_ticks]
+
+  - skill_id: unload_to_conveyor
+    category: handling
+    inputs: [order_id, robot_id, conveyor_id, unload_tile_id]
+    preconditions:
+      - robot_carries_order_package: true
+      - robot_at_unload_tile: true
+      - conveyor_accepts_package: true
+    locks:
+      conveyor: exclusive
+    duration_model:
+      type: fixed_ticks
+      ticks: 3
+    effects:
+      - clear_robot_package: true
+      - set_order_status: completed
+      - set_order_completion_tick: current_tick
+    metrics: [unload_count, completed_orders]
+
+  - skill_id: reroute_around_blockage
+    category: recovery
+    inputs: [robot_id, blocked_tile_ids]
+    preconditions:
+      - robot_status_in: [blocked, waiting_for_tile_lock, navigating]
+      - route_invalid_or_congested: true
+    locks: {}
+    duration_model:
+      type: fixed_ticks
+      ticks: 1
+    effects:
+      - clear_active_route: true
+      - create_avoid_tile_window: true
+      - request_new_route: true
+    metrics: [replan_count]
+
+  - skill_id: backoff_to_buffer_tile
+    category: recovery
+    inputs: [robot_id, buffer_tile_id]
+    preconditions:
+      - deadlock_confirmed: true
+      - buffer_tile_reachable: true
+      - buffer_tile_unoccupied: true
+    locks:
+      delegated_to: acquire_tile_locks
+    duration_model:
+      type: route_based
+    effects:
+      - move_robot_to_buffer_tile: true
+      - mark_deadlock_component_progressed: true
+    metrics: [deadlock_recovery_ticks]
+
+  - skill_id: update_throughput_metrics
+    category: completion
+    inputs: [order_id]
+    preconditions:
+      - order_status: completed
+    locks: {}
+    duration_model:
+      type: fixed_ticks
+      ticks: 0
+    effects:
+      - increment_completed_orders: true
+      - update_orders_per_hour: true
+    metrics: [throughput_orders_per_simulated_hour]
+
+edges:
+  - from: reserve_inventory
+    to: assign_robot
+    type: requires
+  - from: assign_robot
+    to: plan_route
+    type: requires
+    target: pick_tile
+  - from: plan_route
+    to: follow_route
+    type: enables
+  - from: follow_route
+    to: pick_from_rack
+    type: requires
+    condition: robot_reached_pick_tile
+  - from: pick_from_rack
+    to: plan_route
+    type: requires
+    target: outbound_tile
+  - from: pick_from_rack
+    to: handoff_package
+    type: alternative
+    condition: multi_robot_handoff_enabled
+  - from: handoff_package
+    to: plan_route
+    type: requires
+    target: outbound_tile
+  - from: follow_route
+    to: unload_to_conveyor
+    type: requires
+    condition: robot_reached_unload_tile
+  - from: unload_to_conveyor
+    to: update_throughput_metrics
+    type: metric
+  - from: acquire_tile_locks
+    to: reroute_around_blockage
+    type: recovery
+    condition: repeated_lock_denial
+  - from: reroute_around_blockage
+    to: plan_route
+    type: recovery
+  - from: backoff_to_buffer_tile
+    to: plan_route
+    type: recovery

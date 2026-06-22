@@ -1,0 +1,165 @@
+{
+  "version": 28,
+  "category": "floor",
+  "sprite_scale": 2,
+  "base_tile": {
+    "source_sprite": "128x128 final PNG cell for floor tiles with transparent padding",
+    "visible_diamond": "128x64",
+    "logical_model_tile": "64x48 art inside a 64x64 square canvas before nearest-neighbor 2x export",
+    "robot_png": "128x128 final PNG with transparent padding"
+  },
+  "sprites": [
+    {
+      "name": "floor_concrete_01",
+      "rect": {
+        "x": 8,
+        "y": 8,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 96
+      },
+      "anchor": {
+        "x": 64,
+        "y": 92
+      },
+      "footprint": "1x1 tile",
+      "note": "FINAL warm gray polished concrete floor variant with rivets, scratches, and tire marks."
+    },
+    {
+      "name": "floor_concrete_02",
+      "rect": {
+        "x": 144,
+        "y": 8,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 96
+      },
+      "anchor": {
+        "x": 64,
+        "y": 92
+      },
+      "footprint": "1x1 tile",
+      "note": "FINAL warm gray polished concrete floor variant with rivets, scratches, and tire marks."
+    },
+    {
+      "name": "floor_concrete_03",
+      "rect": {
+        "x": 280,
+        "y": 8,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 96
+      },
+      "anchor": {
+        "x": 64,
+        "y": 92
+      },
+      "footprint": "1x1 tile",
+      "note": "FINAL warm gray polished concrete floor variant with rivets, scratches, and tire marks."
+    },
+    {
+      "name": "floor_concrete_04",
+      "rect": {
+        "x": 416,
+        "y": 8,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 96
+      },
+      "anchor": {
+        "x": 64,
+        "y": 92
+      },
+      "footprint": "1x1 tile",
+      "note": "FINAL warm gray polished concrete floor variant with rivets, scratches, and tire marks."
+    },
+    {
+      "name": "floor_concrete_05",
+      "rect": {
+        "x": 552,
+        "y": 8,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 96
+      },
+      "anchor": {
+        "x": 64,
+        "y": 92
+      },
+      "footprint": "1x1 tile",
+      "note": "FINAL warm gray polished concrete floor variant with rivets, scratches, and tire marks."
+    },
+    {
+      "name": "floor_concrete_06",
+      "rect": {
+        "x": 688,
+        "y": 8,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 96
+      },
+      "anchor": {
+        "x": 64,
+        "y": 92
+      },
+      "footprint": "1x1 tile",
+      "note": "FINAL warm gray polished concrete floor variant with rivets, scratches, and tire marks."
+    },
+    {
+      "name": "floor_concrete_07",
+      "rect": {
+        "x": 824,
+        "y": 8,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 96
+      },
+      "anchor": {
+        "x": 64,
+        "y": 92
+      },
+      "footprint": "1x1 tile",
+      "note": "FINAL warm gray polished concrete floor variant with rivets, scratches, and tire marks."
+    },
+    {
+      "name": "floor_concrete_08",
+      "rect": {
+        "x": 960,
+        "y": 8,
+        "w": 128,
+        "h": 128
+      },
+      "art_size": {
+        "w": 128,
+        "h": 96
+      },
+      "anchor": {
+        "x": 64,
+        "y": 92
+      },
+      "footprint": "1x1 tile",
+      "note": "FINAL warm gray polished concrete floor variant with rivets, scratches, and tire marks."
+    }
+  ]
+}

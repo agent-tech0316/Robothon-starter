@@ -1,0 +1,55 @@
+benchmark:
+  benchmark_id: throughput_core_v2_nine_robot
+  primary_metric: throughput_orders_per_simulated_hour
+  run_count: 5
+  warmup_ticks: 600
+  measurement_ticks: 3600
+  drain_ticks: 1200
+
+scenarios:
+  - scenario_id: low_load_nine_robot
+    robot_mode: multi_robot
+    robot_ids: [Q-01, Q-02, Q-03, Q-04, Q-05, Q-06, Q-07, Q-08, Q-09]
+    load_profile_id: low_load
+    planner_mode: local
+  - scenario_id: medium_load_nine_robot
+    robot_mode: multi_robot
+    robot_ids: [Q-01, Q-02, Q-03, Q-04, Q-05, Q-06, Q-07, Q-08, Q-09]
+    load_profile_id: medium_load
+    planner_mode: local
+  - scenario_id: high_load_nine_robot
+    robot_mode: multi_robot
+    robot_ids: [Q-01, Q-02, Q-03, Q-04, Q-05, Q-06, Q-07, Q-08, Q-09]
+    load_profile_id: high_load
+    planner_mode: local
+  - scenario_id: high_load_ai_optional
+    robot_mode: multi_robot
+    robot_ids: [Q-01, Q-02, Q-03, Q-04, Q-05, Q-06, Q-07, Q-08, Q-09]
+    load_profile_id: high_load
+    planner_mode: openai
+    fallback: local
+
+reported_metrics:
+  - completed_orders
+  - created_orders
+  - active_orders
+  - throughput_orders_per_simulated_hour
+  - average_completion_ticks
+  - p50_completion_ticks
+  - p95_completion_ticks
+  - average_lock_wait_ticks
+  - deadlock_count
+  - deadlock_recovery_ticks
+  - replan_count
+  - robot_utilization_pct
+  - sla_miss_count
+  - planner_checks
+  - ai_planner_calls
+  - local_planner_fallbacks
+
+validity_checks:
+  require_no_occupancy_violations: true
+  require_no_lock_violations: true
+  require_all_completed_orders_have_completion_tick: true
+  require_failed_orders_have_failure_reason: true
+  require_deterministic_replay_per_seed: true

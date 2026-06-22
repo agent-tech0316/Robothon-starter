@@ -1,0 +1,64 @@
+<mujoco model="minimal_warehouse_pick_delivery">
+  <compiler angle="degree" coordinate="local"/>
+  <option timestep="0.005" gravity="0 0 -9.81" integrator="RK4"/>
+
+  <default>
+    <geom contype="1" conaffinity="1" friction="0.9 0.1 0.1" solref="0.02 1" solimp="0.9 0.95 0.001"/>
+    <joint damping="2"/>
+  </default>
+
+  <asset>
+    <material name="floor" rgba="0.18 0.20 0.22 1"/>
+    <material name="pickup_zone" rgba="0.16 0.36 0.38 1"/>
+    <material name="delivery_zone" rgba="0.36 0.26 0.12 1"/>
+    <material name="shelf" rgba="0.42 0.38 0.30 1"/>
+    <material name="sku" rgba="0.86 0.56 0.22 1"/>
+    <material name="robot_body" rgba="0.16 0.34 0.70 1"/>
+    <material name="robot_dark" rgba="0.06 0.08 0.10 1"/>
+    <material name="arm" rgba="0.78 0.82 0.86 1"/>
+    <material name="finger" rgba="0.10 0.12 0.14 1"/>
+  </asset>
+
+  <worldbody>
+    <light name="key_light" pos="0 -2 2" dir="0 1 -1" diffuse="0.8 0.8 0.8"/>
+    <camera name="overview" pos="1.8 -1.8 1.2" xyaxes="0.707 0.707 0 -0.35 0.35 0.866"/>
+
+    <geom name="floor" type="plane" pos="0 0 0" size="2 1.2 0.05" material="floor"/>
+    <geom name="pickup_tile" type="box" pos="0 0 0.003" size="0.24 0.20 0.003" material="pickup_zone" contype="0" conaffinity="0"/>
+    <geom name="delivery_tile" type="box" pos="0.90 -0.36 0.003" size="0.25 0.20 0.003" material="delivery_zone" contype="0" conaffinity="0"/>
+
+    <body name="shelf" pos="0 0 0.12">
+      <geom name="shelf_geom" type="box" size="0.16 0.14 0.12" material="shelf" mass="0"/>
+    </body>
+
+    <body name="delivery_bin" pos="0.90 -0.36 0.03">
+      <geom name="delivery_geom" type="box" size="0.22 0.18 0.03" material="delivery_zone" mass="0"/>
+    </body>
+
+    <body name="sku" pos="0 0 0.29">
+      <freejoint name="sku_free"/>
+      <geom name="sku_geom" type="box" size="0.045 0.035 0.04" material="sku" mass="0.08"/>
+      <site name="sku_site" pos="0 0 0" size="0.015" rgba="1 0.8 0.1 1"/>
+    </body>
+
+    <body name="robot" pos="-0.8 0 0.07">
+      <include file="robot.xml"/>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <position name="drive_x" joint="robot_x" kp="60" ctrllimited="true" ctrlrange="-0.15 1.35"/>
+    <position name="drive_y" joint="robot_y" kp="60" ctrllimited="true" ctrlrange="-0.55 0.25"/>
+    <position name="lift_arm" joint="arm_lift" kp="300" ctrllimited="true" ctrlrange="0 0.10"/>
+    <position name="close_left_finger" joint="left_finger" kp="30" ctrllimited="true" ctrlrange="0 0.025"/>
+    <position name="close_right_finger" joint="right_finger" kp="30" ctrllimited="true" ctrlrange="0 0.025"/>
+  </actuator>
+
+  <sensor>
+    <framepos name="sku_position" objtype="site" objname="sku_site"/>
+    <framepos name="gripper_position" objtype="site" objname="gripper_site"/>
+    <jointpos name="robot_x_position" joint="robot_x"/>
+    <jointpos name="arm_lift_position" joint="arm_lift"/>
+    <touch name="gripper_touch" site="gripper_touch_site"/>
+  </sensor>
+</mujoco>

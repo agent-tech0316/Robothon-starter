@@ -1,0 +1,308 @@
+{
+  "name": "shelf_pick_wood",
+  "kind": "shelf_pick",
+  "description": "Short shelf pickup: medium package, longer loading.",
+  "video": "outputs/physics_evidence/shelf_pick_wood.mp4",
+  "scene_xml": "outputs/physics_evidence/generated_mjcf/shelf_pick_wood_scene.xml",
+  "duration_s": 2.1,
+  "fps": 24,
+  "payload": {
+    "key": "wood",
+    "label": "medium wood crate",
+    "mass_kg": 2.0,
+    "loading_time_s": 1.05,
+    "gait_speed_mps": 0.35,
+    "leg_compression_m": 0.05,
+    "grip_close_s": 0.32
+  },
+  "mujoco_depth": {
+    "quadruped_leg_joints": 12,
+    "arm_dof_per_robot": 6,
+    "gripper_slide_joints_per_robot": 2,
+    "collision_pairs_tracked": [
+      "gripper_package",
+      "package_basket",
+      "package_shelf",
+      "package_receiver_gripper",
+      "total_contacts"
+    ],
+    "sensors": [
+      "arm jointpos",
+      "gripper framepos",
+      "basket framepos",
+      "left/right finger touch",
+      "basket touch",
+      "package framepos"
+    ],
+    "actuators": "position actuators on leg, arm, wrist, tool, and gripper joints"
+  },
+  "contact_totals": {
+    "gripper_package": 395,
+    "package_basket": 6,
+    "package_shelf": 112,
+    "package_receiver_gripper": 0,
+    "total_contacts": 2230
+  },
+  "samples": [
+    {
+      "time_s": 0.0,
+      "robot_a": [
+        0.12,
+        0.0,
+        0.335
+      ],
+      "package": [
+        -0.52,
+        0.0,
+        0.495
+      ],
+      "contacts": {
+        "gripper_package": 0,
+        "package_basket": 0,
+        "package_shelf": 0,
+        "package_receiver_gripper": 0,
+        "total_contacts": 34
+      }
+    },
+    {
+      "time_s": 0.167,
+      "robot_a": [
+        0.12,
+        0.0,
+        0.338
+      ],
+      "package": [
+        -0.52,
+        0.0,
+        0.495
+      ],
+      "contacts": {
+        "gripper_package": 0,
+        "package_basket": 0,
+        "package_shelf": 0,
+        "package_receiver_gripper": 0,
+        "total_contacts": 40
+      }
+    },
+    {
+      "time_s": 0.333,
+      "robot_a": [
+        0.12,
+        0.0,
+        0.339
+      ],
+      "package": [
+        -0.52,
+        0.0,
+        0.495
+      ],
+      "contacts": {
+        "gripper_package": 0,
+        "package_basket": 0,
+        "package_shelf": 0,
+        "package_receiver_gripper": 0,
+        "total_contacts": 40
+      }
+    },
+    {
+      "time_s": 0.5,
+      "robot_a": [
+        0.12,
+        0.0,
+        0.3374
+      ],
+      "package": [
+        -0.5399,
+        -0.0025,
+        0.5022
+      ],
+      "contacts": {
+        "gripper_package": 0,
+        "package_basket": 0,
+        "package_shelf": 0,
+        "package_receiver_gripper": 0,
+        "total_contacts": 38
+      }
+    },
+    {
+      "time_s": 0.667,
+      "robot_a": [
+        0.12,
+        0.0,
+        0.3342
+      ],
+      "package": [
+        -0.5687,
+        -0.0062,
+        0.5119
+      ],
+      "contacts": {
+        "gripper_package": 0,
+        "package_basket": 0,
+        "package_shelf": 0,
+        "package_receiver_gripper": 0,
+        "total_contacts": 39
+      }
+    },
+    {
+      "time_s": 0.833,
+      "robot_a": [
+        0.12,
+        0.0,
+        0.3315
+      ],
+      "package": [
+        -0.7647,
+        -0.0313,
+        0.5793
+      ],
+      "contacts": {
+        "gripper_package": 17,
+        "package_basket": 0,
+        "package_shelf": 4,
+        "package_receiver_gripper": 0,
+        "total_contacts": 47
+      }
+    },
+    {
+      "time_s": 1.0,
+      "robot_a": [
+        0.12,
+        0.0,
+        0.3312
+      ],
+      "package": [
+        -0.7647,
+        -0.0313,
+        0.5932
+      ],
+      "contacts": {
+        "gripper_package": 19,
+        "package_basket": 0,
+        "package_shelf": 4,
+        "package_receiver_gripper": 0,
+        "total_contacts": 49
+      }
+    },
+    {
+      "time_s": 1.167,
+      "robot_a": [
+        0.12,
+        0.0,
+        0.3334
+      ],
+      "package": [
+        -0.7652,
+        -0.0172,
+        0.6108
+      ],
+      "contacts": {
+        "gripper_package": 10,
+        "package_basket": 0,
+        "package_shelf": 4,
+        "package_receiver_gripper": 0,
+        "total_contacts": 40
+      }
+    },
+    {
+      "time_s": 1.333,
+      "robot_a": [
+        0.12,
+        0.0,
+        0.3366
+      ],
+      "package": [
+        -0.7647,
+        0.0313,
+        0.6174
+      ],
+      "contacts": {
+        "gripper_package": 13,
+        "package_basket": 0,
+        "package_shelf": 4,
+        "package_receiver_gripper": 0,
+        "total_contacts": 51
+      }
+    },
+    {
+      "time_s": 1.5,
+      "robot_a": [
+        0.12,
+        0.0,
+        0.3388
+      ],
+      "package": [
+        -0.7647,
+        0.0313,
+        0.6196
+      ],
+      "contacts": {
+        "gripper_package": 13,
+        "package_basket": 0,
+        "package_shelf": 4,
+        "package_receiver_gripper": 0,
+        "total_contacts": 57
+      }
+    },
+    {
+      "time_s": 1.667,
+      "robot_a": [
+        0.12,
+        0.0,
+        0.3385
+      ],
+      "package": [
+        -0.7647,
+        0.0313,
+        0.6193
+      ],
+      "contacts": {
+        "gripper_package": 13,
+        "package_basket": 0,
+        "package_shelf": 4,
+        "package_receiver_gripper": 0,
+        "total_contacts": 57
+      }
+    },
+    {
+      "time_s": 1.833,
+      "robot_a": [
+        0.12,
+        0.0,
+        0.3358
+      ],
+      "package": [
+        -0.5124,
+        0.0228,
+        0.5724
+      ],
+      "contacts": {
+        "gripper_package": 0,
+        "package_basket": 0,
+        "package_shelf": 2,
+        "package_receiver_gripper": 0,
+        "total_contacts": 41
+      }
+    },
+    {
+      "time_s": 2.0,
+      "robot_a": [
+        0.12,
+        0.0,
+        0.3326
+      ],
+      "package": [
+        0.1027,
+        0.0019,
+        0.5467
+      ],
+      "contacts": {
+        "gripper_package": 0,
+        "package_basket": 2,
+        "package_shelf": 0,
+        "package_receiver_gripper": 0,
+        "total_contacts": 28
+      }
+    }
+  ]
+}

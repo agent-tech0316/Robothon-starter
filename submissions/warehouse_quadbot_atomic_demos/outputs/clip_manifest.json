@@ -1,0 +1,571 @@
+{
+  "project": "Warehouse Quadbot Atomic Demos",
+  "generator": "submissions/warehouse_quadbot_atomic_demos/run_quadbot_atomic_demos.py --scenario all",
+  "robot_asset": "assets/Aegis/urdf/Aegis_mujoco.urdf",
+  "manipulator_reference": "assets/Futurist/futurist.urdf right_arm chain idx20_right_arm_joint1..idx26_right_arm_joint7 with right_arm/right_hand STL meshes",
+  "outputs_root": "submissions/warehouse_quadbot_atomic_demos/outputs",
+  "clips": [
+    {
+      "name": "arm_showcase",
+      "video": "submissions/warehouse_quadbot_atomic_demos/outputs/arm_showcase.mp4",
+      "trajectory": "submissions/warehouse_quadbot_atomic_demos/outputs/arm_showcase_trajectory.json",
+      "duration_s": 2.2,
+      "fps": 30,
+      "scenario_kind": "arm_showcase",
+      "payload": null,
+      "contact_totals": {
+        "gripper_box": 0,
+        "receiver_gripper_box": 0,
+        "box_basket": 128,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "total_contacts": 2011
+      },
+      "mujoco_depth": {
+        "quadruped_leg_joints": 12,
+        "arm_dof_per_robot": 7,
+        "gripper_slide_joints_per_robot": 2,
+        "collision_geoms": [
+          "package box",
+          "left/right gripper fingers and pads",
+          "cargo basket floor and rails",
+          "pickup shelf decks"
+        ],
+        "sensors": [
+          "leg joint position",
+          "Futurist right-arm joint position",
+          "gripper frame position",
+          "basket frame position",
+          "left/right finger touch",
+          "basket touch"
+        ],
+        "actuators": "position actuators on AEGIS leg joints, seven Futurist-derived arm joints, and two finger slide joints"
+      }
+    },
+    {
+      "name": "shelf_pick",
+      "video": "submissions/warehouse_quadbot_atomic_demos/outputs/shelf_pick.mp4",
+      "trajectory": "submissions/warehouse_quadbot_atomic_demos/outputs/shelf_pick_trajectory.json",
+      "duration_s": 2.3,
+      "fps": 30,
+      "scenario_kind": "shelf_pick",
+      "payload": {
+        "style": "wood",
+        "label": "medium wood",
+        "mass_kg": 2.0,
+        "difficulty": "medium",
+        "loading_time_s": 1.55,
+        "grip_close_s": 0.34,
+        "walk_speed_mps": 0.43,
+        "leg_compression_m": 0.03
+      },
+      "contact_totals": {
+        "gripper_box": 731,
+        "receiver_gripper_box": 0,
+        "box_basket": 13,
+        "box_shelf": 60,
+        "arm_basket": 0,
+        "total_contacts": 2896
+      },
+      "mujoco_depth": {
+        "quadruped_leg_joints": 12,
+        "arm_dof_per_robot": 7,
+        "gripper_slide_joints_per_robot": 2,
+        "collision_geoms": [
+          "package box",
+          "left/right gripper fingers and pads",
+          "cargo basket floor and rails",
+          "pickup shelf decks"
+        ],
+        "sensors": [
+          "leg joint position",
+          "Futurist right-arm joint position",
+          "gripper frame position",
+          "basket frame position",
+          "left/right finger touch",
+          "basket touch"
+        ],
+        "actuators": "position actuators on AEGIS leg joints, seven Futurist-derived arm joints, and two finger slide joints"
+      }
+    },
+    {
+      "name": "handoff",
+      "video": "submissions/warehouse_quadbot_atomic_demos/outputs/handoff.mp4",
+      "trajectory": "submissions/warehouse_quadbot_atomic_demos/outputs/handoff_trajectory.json",
+      "duration_s": 2.3,
+      "fps": 30,
+      "scenario_kind": "handoff",
+      "payload": {
+        "style": "metal",
+        "label": "heavy metal",
+        "mass_kg": 4.0,
+        "difficulty": "hard",
+        "loading_time_s": 2.05,
+        "grip_close_s": 0.46,
+        "walk_speed_mps": 0.31,
+        "leg_compression_m": 0.055
+      },
+      "contact_totals": {
+        "gripper_box": 851,
+        "receiver_gripper_box": 433,
+        "box_basket": 96,
+        "box_shelf": 0,
+        "arm_basket": 1,
+        "total_contacts": 4524
+      },
+      "mujoco_depth": {
+        "quadruped_leg_joints": 24,
+        "arm_dof_per_robot": 7,
+        "gripper_slide_joints_per_robot": 2,
+        "collision_geoms": [
+          "package box",
+          "left/right gripper fingers and pads",
+          "cargo basket floor and rails",
+          "pickup shelf decks"
+        ],
+        "sensors": [
+          "leg joint position",
+          "Futurist right-arm joint position",
+          "gripper frame position",
+          "basket frame position",
+          "left/right finger touch",
+          "basket touch"
+        ],
+        "actuators": "position actuators on AEGIS leg joints, seven Futurist-derived arm joints, and two finger slide joints"
+      }
+    },
+    {
+      "name": "rest_idle",
+      "video": "submissions/warehouse_quadbot_atomic_demos/outputs/rest_idle.mp4",
+      "trajectory": "submissions/warehouse_quadbot_atomic_demos/outputs/rest_idle_trajectory.json",
+      "duration_s": 1.4,
+      "fps": 30,
+      "scenario_kind": "rest_idle",
+      "payload": null,
+      "contact_totals": {
+        "gripper_box": 0,
+        "receiver_gripper_box": 0,
+        "box_basket": 0,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "total_contacts": 1080
+      },
+      "mujoco_depth": {
+        "quadruped_leg_joints": 12,
+        "arm_dof_per_robot": 7,
+        "gripper_slide_joints_per_robot": 2,
+        "collision_geoms": [
+          "package box",
+          "left/right gripper fingers and pads",
+          "cargo basket floor and rails",
+          "pickup shelf decks"
+        ],
+        "sensors": [
+          "leg joint position",
+          "Futurist right-arm joint position",
+          "gripper frame position",
+          "basket frame position",
+          "left/right finger touch",
+          "basket touch"
+        ],
+        "actuators": "position actuators on AEGIS leg joints, seven Futurist-derived arm joints, and two finger slide joints"
+      }
+    },
+    {
+      "name": "empty_stance",
+      "video": "submissions/warehouse_quadbot_atomic_demos/outputs/empty_stance.mp4",
+      "trajectory": "submissions/warehouse_quadbot_atomic_demos/outputs/empty_stance_trajectory.json",
+      "duration_s": 1.4,
+      "fps": 30,
+      "scenario_kind": "empty_stance",
+      "payload": null,
+      "contact_totals": {
+        "gripper_box": 0,
+        "receiver_gripper_box": 0,
+        "box_basket": 0,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "total_contacts": 1206
+      },
+      "mujoco_depth": {
+        "quadruped_leg_joints": 12,
+        "arm_dof_per_robot": 7,
+        "gripper_slide_joints_per_robot": 2,
+        "collision_geoms": [
+          "package box",
+          "left/right gripper fingers and pads",
+          "cargo basket floor and rails",
+          "pickup shelf decks"
+        ],
+        "sensors": [
+          "leg joint position",
+          "Futurist right-arm joint position",
+          "gripper frame position",
+          "basket frame position",
+          "left/right finger touch",
+          "basket touch"
+        ],
+        "actuators": "position actuators on AEGIS leg joints, seven Futurist-derived arm joints, and two finger slide joints"
+      }
+    },
+    {
+      "name": "empty_walk",
+      "video": "submissions/warehouse_quadbot_atomic_demos/outputs/empty_walk.mp4",
+      "trajectory": "submissions/warehouse_quadbot_atomic_demos/outputs/empty_walk_trajectory.json",
+      "duration_s": 1.8,
+      "fps": 30,
+      "scenario_kind": "empty_walk",
+      "payload": null,
+      "contact_totals": {
+        "gripper_box": 0,
+        "receiver_gripper_box": 0,
+        "box_basket": 0,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "total_contacts": 1616
+      },
+      "mujoco_depth": {
+        "quadruped_leg_joints": 12,
+        "arm_dof_per_robot": 7,
+        "gripper_slide_joints_per_robot": 2,
+        "collision_geoms": [
+          "package box",
+          "left/right gripper fingers and pads",
+          "cargo basket floor and rails",
+          "pickup shelf decks"
+        ],
+        "sensors": [
+          "leg joint position",
+          "Futurist right-arm joint position",
+          "gripper frame position",
+          "basket frame position",
+          "left/right finger touch",
+          "basket touch"
+        ],
+        "actuators": "position actuators on AEGIS leg joints, seven Futurist-derived arm joints, and two finger slide joints"
+      }
+    },
+    {
+      "name": "loaded_walk_cardboard",
+      "video": "submissions/warehouse_quadbot_atomic_demos/outputs/loaded_walk_cardboard.mp4",
+      "trajectory": "submissions/warehouse_quadbot_atomic_demos/outputs/loaded_walk_cardboard_trajectory.json",
+      "duration_s": 1.8,
+      "fps": 30,
+      "scenario_kind": "loaded_walk",
+      "payload": {
+        "style": "cardboard",
+        "label": "normal cardboard",
+        "mass_kg": 0.8,
+        "difficulty": "easy",
+        "loading_time_s": 1.2,
+        "grip_close_s": 0.24,
+        "walk_speed_mps": 0.55,
+        "leg_compression_m": 0.01
+      },
+      "contact_totals": {
+        "gripper_box": 0,
+        "receiver_gripper_box": 0,
+        "box_basket": 216,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "total_contacts": 1843
+      },
+      "mujoco_depth": {
+        "quadruped_leg_joints": 12,
+        "arm_dof_per_robot": 7,
+        "gripper_slide_joints_per_robot": 2,
+        "collision_geoms": [
+          "package box",
+          "left/right gripper fingers and pads",
+          "cargo basket floor and rails",
+          "pickup shelf decks"
+        ],
+        "sensors": [
+          "leg joint position",
+          "Futurist right-arm joint position",
+          "gripper frame position",
+          "basket frame position",
+          "left/right finger touch",
+          "basket touch"
+        ],
+        "actuators": "position actuators on AEGIS leg joints, seven Futurist-derived arm joints, and two finger slide joints"
+      }
+    },
+    {
+      "name": "loaded_walk_wood",
+      "video": "submissions/warehouse_quadbot_atomic_demos/outputs/loaded_walk_wood.mp4",
+      "trajectory": "submissions/warehouse_quadbot_atomic_demos/outputs/loaded_walk_wood_trajectory.json",
+      "duration_s": 1.8,
+      "fps": 30,
+      "scenario_kind": "loaded_walk",
+      "payload": {
+        "style": "wood",
+        "label": "medium wood",
+        "mass_kg": 2.0,
+        "difficulty": "medium",
+        "loading_time_s": 1.55,
+        "grip_close_s": 0.34,
+        "walk_speed_mps": 0.43,
+        "leg_compression_m": 0.03
+      },
+      "contact_totals": {
+        "gripper_box": 0,
+        "receiver_gripper_box": 0,
+        "box_basket": 216,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "total_contacts": 1790
+      },
+      "mujoco_depth": {
+        "quadruped_leg_joints": 12,
+        "arm_dof_per_robot": 7,
+        "gripper_slide_joints_per_robot": 2,
+        "collision_geoms": [
+          "package box",
+          "left/right gripper fingers and pads",
+          "cargo basket floor and rails",
+          "pickup shelf decks"
+        ],
+        "sensors": [
+          "leg joint position",
+          "Futurist right-arm joint position",
+          "gripper frame position",
+          "basket frame position",
+          "left/right finger touch",
+          "basket touch"
+        ],
+        "actuators": "position actuators on AEGIS leg joints, seven Futurist-derived arm joints, and two finger slide joints"
+      }
+    },
+    {
+      "name": "loaded_walk_metal",
+      "video": "submissions/warehouse_quadbot_atomic_demos/outputs/loaded_walk_metal.mp4",
+      "trajectory": "submissions/warehouse_quadbot_atomic_demos/outputs/loaded_walk_metal_trajectory.json",
+      "duration_s": 1.8,
+      "fps": 30,
+      "scenario_kind": "loaded_walk",
+      "payload": {
+        "style": "metal",
+        "label": "heavy metal",
+        "mass_kg": 4.0,
+        "difficulty": "hard",
+        "loading_time_s": 2.05,
+        "grip_close_s": 0.46,
+        "walk_speed_mps": 0.31,
+        "leg_compression_m": 0.055
+      },
+      "contact_totals": {
+        "gripper_box": 0,
+        "receiver_gripper_box": 0,
+        "box_basket": 182,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "total_contacts": 1622
+      },
+      "mujoco_depth": {
+        "quadruped_leg_joints": 12,
+        "arm_dof_per_robot": 7,
+        "gripper_slide_joints_per_robot": 2,
+        "collision_geoms": [
+          "package box",
+          "left/right gripper fingers and pads",
+          "cargo basket floor and rails",
+          "pickup shelf decks"
+        ],
+        "sensors": [
+          "leg joint position",
+          "Futurist right-arm joint position",
+          "gripper frame position",
+          "basket frame position",
+          "left/right finger touch",
+          "basket touch"
+        ],
+        "actuators": "position actuators on AEGIS leg joints, seven Futurist-derived arm joints, and two finger slide joints"
+      }
+    },
+    {
+      "name": "shelf_pick_cardboard",
+      "video": "submissions/warehouse_quadbot_atomic_demos/outputs/shelf_pick_cardboard.mp4",
+      "trajectory": "submissions/warehouse_quadbot_atomic_demos/outputs/shelf_pick_cardboard_trajectory.json",
+      "duration_s": 2.2,
+      "fps": 30,
+      "scenario_kind": "shelf_pick",
+      "payload": {
+        "style": "cardboard",
+        "label": "normal cardboard",
+        "mass_kg": 0.8,
+        "difficulty": "easy",
+        "loading_time_s": 1.2,
+        "grip_close_s": 0.24,
+        "walk_speed_mps": 0.55,
+        "leg_compression_m": 0.01
+      },
+      "contact_totals": {
+        "gripper_box": 690,
+        "receiver_gripper_box": 0,
+        "box_basket": 13,
+        "box_shelf": 32,
+        "arm_basket": 0,
+        "total_contacts": 2767
+      },
+      "mujoco_depth": {
+        "quadruped_leg_joints": 12,
+        "arm_dof_per_robot": 7,
+        "gripper_slide_joints_per_robot": 2,
+        "collision_geoms": [
+          "package box",
+          "left/right gripper fingers and pads",
+          "cargo basket floor and rails",
+          "pickup shelf decks"
+        ],
+        "sensors": [
+          "leg joint position",
+          "Futurist right-arm joint position",
+          "gripper frame position",
+          "basket frame position",
+          "left/right finger touch",
+          "basket touch"
+        ],
+        "actuators": "position actuators on AEGIS leg joints, seven Futurist-derived arm joints, and two finger slide joints"
+      }
+    },
+    {
+      "name": "shelf_pick_wood",
+      "video": "submissions/warehouse_quadbot_atomic_demos/outputs/shelf_pick_wood.mp4",
+      "trajectory": "submissions/warehouse_quadbot_atomic_demos/outputs/shelf_pick_wood_trajectory.json",
+      "duration_s": 2.3,
+      "fps": 30,
+      "scenario_kind": "shelf_pick",
+      "payload": {
+        "style": "wood",
+        "label": "medium wood",
+        "mass_kg": 2.0,
+        "difficulty": "medium",
+        "loading_time_s": 1.55,
+        "grip_close_s": 0.34,
+        "walk_speed_mps": 0.43,
+        "leg_compression_m": 0.03
+      },
+      "contact_totals": {
+        "gripper_box": 731,
+        "receiver_gripper_box": 0,
+        "box_basket": 13,
+        "box_shelf": 60,
+        "arm_basket": 0,
+        "total_contacts": 2896
+      },
+      "mujoco_depth": {
+        "quadruped_leg_joints": 12,
+        "arm_dof_per_robot": 7,
+        "gripper_slide_joints_per_robot": 2,
+        "collision_geoms": [
+          "package box",
+          "left/right gripper fingers and pads",
+          "cargo basket floor and rails",
+          "pickup shelf decks"
+        ],
+        "sensors": [
+          "leg joint position",
+          "Futurist right-arm joint position",
+          "gripper frame position",
+          "basket frame position",
+          "left/right finger touch",
+          "basket touch"
+        ],
+        "actuators": "position actuators on AEGIS leg joints, seven Futurist-derived arm joints, and two finger slide joints"
+      }
+    },
+    {
+      "name": "shelf_pick_metal",
+      "video": "submissions/warehouse_quadbot_atomic_demos/outputs/shelf_pick_metal.mp4",
+      "trajectory": "submissions/warehouse_quadbot_atomic_demos/outputs/shelf_pick_metal_trajectory.json",
+      "duration_s": 2.5,
+      "fps": 30,
+      "scenario_kind": "shelf_pick",
+      "payload": {
+        "style": "metal",
+        "label": "heavy metal",
+        "mass_kg": 4.0,
+        "difficulty": "hard",
+        "loading_time_s": 2.05,
+        "grip_close_s": 0.46,
+        "walk_speed_mps": 0.31,
+        "leg_compression_m": 0.055
+      },
+      "contact_totals": {
+        "gripper_box": 819,
+        "receiver_gripper_box": 0,
+        "box_basket": 13,
+        "box_shelf": 88,
+        "arm_basket": 0,
+        "total_contacts": 3114
+      },
+      "mujoco_depth": {
+        "quadruped_leg_joints": 12,
+        "arm_dof_per_robot": 7,
+        "gripper_slide_joints_per_robot": 2,
+        "collision_geoms": [
+          "package box",
+          "left/right gripper fingers and pads",
+          "cargo basket floor and rails",
+          "pickup shelf decks"
+        ],
+        "sensors": [
+          "leg joint position",
+          "Futurist right-arm joint position",
+          "gripper frame position",
+          "basket frame position",
+          "left/right finger touch",
+          "basket touch"
+        ],
+        "actuators": "position actuators on AEGIS leg joints, seven Futurist-derived arm joints, and two finger slide joints"
+      }
+    },
+    {
+      "name": "handoff_metal",
+      "video": "submissions/warehouse_quadbot_atomic_demos/outputs/handoff_metal.mp4",
+      "trajectory": "submissions/warehouse_quadbot_atomic_demos/outputs/handoff_metal_trajectory.json",
+      "duration_s": 2.4,
+      "fps": 30,
+      "scenario_kind": "handoff",
+      "payload": {
+        "style": "metal",
+        "label": "heavy metal",
+        "mass_kg": 4.0,
+        "difficulty": "hard",
+        "loading_time_s": 2.05,
+        "grip_close_s": 0.46,
+        "walk_speed_mps": 0.31,
+        "leg_compression_m": 0.055
+      },
+      "contact_totals": {
+        "gripper_box": 905,
+        "receiver_gripper_box": 484,
+        "box_basket": 100,
+        "box_shelf": 0,
+        "arm_basket": 2,
+        "total_contacts": 4745
+      },
+      "mujoco_depth": {
+        "quadruped_leg_joints": 24,
+        "arm_dof_per_robot": 7,
+        "gripper_slide_joints_per_robot": 2,
+        "collision_geoms": [
+          "package box",
+          "left/right gripper fingers and pads",
+          "cargo basket floor and rails",
+          "pickup shelf decks"
+        ],
+        "sensors": [
+          "leg joint position",
+          "Futurist right-arm joint position",
+          "gripper frame position",
+          "basket frame position",
+          "left/right finger touch",
+          "basket touch"
+        ],
+        "actuators": "position actuators on AEGIS leg joints, seven Futurist-derived arm joints, and two finger slide joints"
+      }
+    }
+  ]
+}
