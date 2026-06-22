@@ -6,6 +6,8 @@ Agentic Warehouse Quadbot Fulfillment Simulator is Agentech's FFAI Robothon 2026
 
 The core challenge is fleet-level coordination: one robot can move a parcel, but many robots sharing narrow aisles create traffic, priority conflicts, deadlock risk, and tile-lock contention. This submission evaluates whether the whole warehouse keeps moving safely and efficiently under load.
 
+Judge-facing distinction: this is not only a multi-robot clip. It is a scalable warehouse benchmark. MuJoCo proves the atomic robot skills are physically plausible; the runtime proves that fleet decisions improve throughput under congestion, SKU-weight variation, pick difficulty, and long-horizon load.
+
 # Robot Platform
 
 Faraday Future AEGIS quadruped, with a BASE_LINK-mounted basket and a Futurist-right-arm-derived front manipulator. MuJoCo evidence clips validate walking, payload carrying, shelf pickup, basket contact, and robot-to-robot handoff.

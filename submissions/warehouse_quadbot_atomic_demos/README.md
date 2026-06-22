@@ -4,6 +4,17 @@ Agentech's Robothon 2026 entry is a warehouse-order-fulfillment simulator built 
 
 This is not a low-level robot teleoperation project. MuJoCo is used as the physical-world validator for atomic robot actions such as walking with different payloads, shelf pickup, basket loading, and robot-to-robot handoff.
 
+## Judge Takeaway: System Benchmark, Not One Clip
+
+A cooperative handoff demo answers one question: can robots complete a visible physical action? This project answers the next warehouse question: can a fleet keep orders moving for hours when every robot competes for the same aisle tiles?
+
+The scoring evidence is deliberately system-level:
+
+- 9 AEGIS quadrupeds share rack aisles through atomic current+next tile locks.
+- Planner-off and planner-on runs are compared, so the throughput gain is measured against a baseline.
+- The 27-scenario stress benchmark varies load, SKU weight mix, and pick difficulty, then fast-forwards 1,458 robot-hours with 0 collision and 0 lock-overlap violations.
+- MuJoCo validates the physical atomic skills; the runtime validates warehouse-scale decision quality.
+
 ## Demo Video
 
 Final 1-3 minute demo video: [`demo.mp4`](demo.mp4).

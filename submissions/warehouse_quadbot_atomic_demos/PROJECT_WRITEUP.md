@@ -10,6 +10,12 @@ The project is intentionally layered:
 
 Mission -> Workflow -> Skill Graph -> Runtime -> Multi-Agent Warehouse Optimization -> MuJoCo Evidence -> Mission Control UI
 
+# Judge-Facing Thesis
+
+This submission is best read as a warehouse optimization benchmark with MuJoCo-backed robot skills, not as a single action demo. A single relay or handoff proves one local physical event. This project measures whether a shared warehouse stays productive when 9 quadrupeds compete for orders, racks, tile locks, priority, and narrow aisles over long simulated horizons.
+
+The important claim is measurable: planner-off versus local-planner baselines show throughput uplift, wait-time reduction, and zero movement safety violations across generated load profiles and the 27-scenario accelerated stress benchmark.
+
 # Problem Statement
 
 Warehouse throughput depends on more than one robot successfully moving a parcel. A practical system must coordinate many robots, reserve space, avoid rack collisions, handle congestion, prioritize orders, and still prove that low-level robot actions are physically plausible. This submission targets that full stack while keeping MuJoCo focused on physical validation.
