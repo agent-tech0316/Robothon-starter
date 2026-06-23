@@ -6,7 +6,7 @@
     <title>Agentic Warehouse Runtime UI</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
-  <body>
+  <body class="judge-simple">
     <div class="runtime-shell">
       <header class="topbar">
         <div class="brand-block">
@@ -16,7 +16,7 @@
           <div class="title-copy runtime-title-copy">
             <span class="kicker">FF Robothon Summer 2026</span>
             <p class="runtime-caption">AgentTech Warehouse Runtime</p>
-            <small>Judge view: 54-scenario stress benchmark, planner uplift, MuJoCo proof</small>
+            <small>Default: simplified judge view. Expand ops detail only if needed.</small>
           </div>
         </div>
 
@@ -163,7 +163,7 @@
           <div class="stage-status">
             <div>
               <span class="kicker">Judge Review Path</span>
-              <h2>9 Robots / 54 Stress Scenarios / Zero Collisions</h2>
+              <h2>Simple Review: Throughput / Safety / MuJoCo Proof</h2>
             </div>
             <div class="stage-badges">
               <span id="activeLoadBadge">Medium Load</span>
@@ -171,6 +171,23 @@
               <span id="runtimeLinkBadge">Mock Runtime</span>
             </div>
           </div>
+
+          <section class="judge-simple-card" aria-label="Simplified AI judge summary">
+            <div class="judge-simple-copy">
+              <span class="kicker">AI Judge Fast Path</span>
+              <h3>9 AEGIS robots share warehouse aisles without collisions.</h3>
+              <p>MuJoCo validates the atomic robot skills. The runtime validates fleet scheduling, tile locks, congestion recovery, and planner uplift across stress scenarios.</p>
+            </div>
+            <div class="judge-proof-grid">
+              <span><small>Stress Matrix</small><b>54 x 6h</b></span>
+              <span><small>Robot-Hours</small><b>2,916</b></span>
+              <span><small>Planner Uplift</small><b>+30.74%</b></span>
+              <span><small>Safety</small><b>0 violations</b></span>
+              <span><small>MuJoCo Proof</small><b>clips + contacts</b></span>
+              <span><small>Review Command</small><b>run_agentech_judge_review.py</b></span>
+            </div>
+            <button id="detailModeBtn" class="command icon-step judge-detail-toggle" type="button">Show Ops Detail</button>
+          </section>
 
           <div class="canvas-wrap">
             <div class="map-toolbar" aria-label="Map overlays">
@@ -335,6 +352,6 @@
       </main>
     </div>
 
-    <script src="./app.js?v=judge-path-v1"></script>
+    <script src="./app.js?v=judge-simple-v2"></script>
   </body>
 </html>

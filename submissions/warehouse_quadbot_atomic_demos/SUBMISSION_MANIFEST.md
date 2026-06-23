@@ -11,6 +11,7 @@ This submission is intentionally organized as a repository-level project with th
 Start here:
 
 - `submissions/warehouse_quadbot_atomic_demos/README.md`
+- `submissions/warehouse_quadbot_atomic_demos/JUDGE_FAST_PATH.md`
 - `submissions/warehouse_quadbot_atomic_demos/PROJECT_WRITEUP.md`
 - `submissions/warehouse_quadbot_atomic_demos/registration.json`
 - `submissions/warehouse_quadbot_atomic_demos/PR_DESCRIPTION.md`
@@ -21,6 +22,7 @@ Start here:
 Runtime and benchmark code:
 
 - `warehouse_runtime/`
+- `examples/run_agentech_judge_review.py`
 - `examples/build_integrated_demo_data.py`
 - `examples/run_warehouse_runtime.py`
 - `examples/run_fleet_stress_benchmark.py`
@@ -85,6 +87,7 @@ From the repository root:
 python3.12 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
+python examples/run_agentech_judge_review.py
 python examples/build_integrated_demo_data.py
 python examples/run_warehouse_runtime.py --load medium --planner local --ticks 900 --print-summary
 python examples/run_fleet_stress_benchmark.py --hours 6 --scenario-limit 54

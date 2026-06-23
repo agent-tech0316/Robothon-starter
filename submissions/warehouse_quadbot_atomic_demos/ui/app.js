@@ -96,6 +96,7 @@ const els = {
   thinDeadlocks: document.getElementById("thinDeadlocks"),
   thinSkills: document.getElementById("thinSkills"),
   thinRun: document.getElementById("thinRun"),
+  detailModeBtn: document.getElementById("detailModeBtn"),
 };
 
 let grid = { cols: 16, rows: 12 };
@@ -2531,6 +2532,18 @@ function bindEvents() {
   if (els.resetBtn) els.resetBtn.addEventListener("click", resetSimulation);
 
   if (els.recordBtn) els.recordBtn.addEventListener("click", toggleRecording);
+
+  if (els.detailModeBtn) {
+    els.detailModeBtn.addEventListener("click", () => {
+      const simple = document.body.classList.toggle("judge-simple");
+      els.detailModeBtn.textContent = simple ? "Show Ops Detail" : "Back To Judge View";
+      requestAnimationFrame(() => {
+        scaleDesignSurface();
+        resizeCanvas();
+        render();
+      });
+    });
+  }
 
   if (els.plannerBtn) {
     els.plannerBtn.addEventListener("click", () => {

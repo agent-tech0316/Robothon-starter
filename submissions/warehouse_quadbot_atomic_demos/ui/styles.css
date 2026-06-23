@@ -2525,3 +2525,124 @@ meter::-webkit-meter-optimum-value {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* Judge Simple Mode: default view addresses AI feedback that the UI was too complex. */
+.judge-simple .runtime-shell {
+  grid-template-rows: 142px minmax(0, 1fr);
+}
+
+.judge-simple .topbar-telemetry,
+.judge-simple .left-rail,
+.judge-simple .right-rail,
+.judge-simple .thin-rail,
+.judge-simple .asset-console,
+.judge-simple .stage-bottom {
+  display: none;
+}
+
+.judge-simple .dashboard-layout {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.judge-simple .stage-panel {
+  grid-column: 1;
+  grid-row: 1;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: 16px;
+}
+
+.judge-simple .stage-status h2 {
+  font-size: 36px;
+}
+
+.judge-simple-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(920px, 1.8fr) max-content;
+  gap: 18px;
+  align-items: stretch;
+  margin: 0 24px;
+  min-height: 192px;
+  border: 2px solid rgba(92, 221, 97, 0.34);
+  background:
+    linear-gradient(180deg, rgba(92, 221, 97, 0.08), transparent 48%),
+    rgba(6, 11, 15, 0.86);
+  padding: 22px;
+  box-shadow: inset -5px -5px 0 rgba(0, 0, 0, 0.26);
+  clip-path: polygon(0 10px, 10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px));
+}
+
+.judge-simple-copy {
+  display: grid;
+  align-content: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.judge-simple-copy h3 {
+  margin: 0;
+  color: var(--text);
+  font-size: 34px;
+  line-height: 1.12;
+  text-shadow: var(--type-shadow-strong);
+  text-transform: uppercase;
+}
+
+.judge-simple-copy p {
+  color: var(--muted);
+  font-size: 19px;
+  line-height: 1.35;
+  max-width: 780px;
+}
+
+.judge-proof-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.judge-proof-grid span {
+  display: grid;
+  align-content: center;
+  min-width: 0;
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 42%),
+    rgba(5, 9, 12, 0.76);
+  padding: 14px 16px;
+  text-transform: uppercase;
+  box-shadow: inset -3px -3px 0 rgba(0, 0, 0, 0.32);
+  clip-path: polygon(0 7px, 7px 0, calc(100% - 7px) 0, 100% 7px, 100% calc(100% - 7px), calc(100% - 7px) 100%, 7px 100%, 0 calc(100% - 7px));
+}
+
+.judge-proof-grid small {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.judge-proof-grid b {
+  display: block;
+  margin-top: 8px;
+  color: var(--green);
+  font-size: 27px;
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+  text-shadow: var(--type-shadow-strong);
+}
+
+.judge-detail-toggle {
+  align-self: center;
+  min-width: 260px;
+  min-height: 82px;
+  border-color: rgba(50, 201, 244, 0.7);
+  background:
+    linear-gradient(180deg, rgba(50, 201, 244, 0.18), transparent 45%),
+    linear-gradient(180deg, rgba(19, 76, 93, 0.95), rgba(6, 39, 52, 0.98));
+}
+
+.judge-simple .canvas-wrap {
+  min-height: 0;
+}

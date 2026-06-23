@@ -15,6 +15,18 @@ The scoring evidence is deliberately system-level:
 - The 54-scenario stress benchmark varies load, SKU weight mix, pick difficulty, and aisle-surge congestion, then fast-forwards 2,916 robot-hours with 0 collision and 0 lock-overlap violations.
 - MuJoCo validates the physical atomic skills; the runtime validates warehouse-scale decision quality.
 
+## AI Judge Fast Path
+
+For the quickest no-browser review, run:
+
+```bash
+python examples/run_agentech_judge_review.py
+```
+
+This prints the artifact check, fleet stress benchmark, medium/high runtime metrics, MuJoCo evidence count, and rubric mapping in one terminal summary. Details are in `JUDGE_FAST_PATH.md`.
+
+The dashboard also opens in simplified judge mode by default: the first screen shows throughput, safety, MuJoCo proof, and the live warehouse map; detailed operations panels are one click away.
+
 ## Demo Video
 
 Final 1-3 minute demo video: [`demo.mp4`](demo.mp4).
@@ -34,6 +46,7 @@ Submission support documents:
 
 - `SUBMISSION_MANIFEST.md`: maps the judge-facing submission to repo-root runtime/config/schema code.
 - `VALIDATION_REPORT.md`: records clean-copy validation and artifact hygiene checks.
+- `JUDGE_FAST_PATH.md`: one-command AI judge review path.
 - `DEMO_VIDEO_SCRIPT.md`: capture plan for the final 1-3 minute video.
 - `FLEET_STRESS_BENCHMARK.md`: 54-scenario accelerated fleet stress benchmark with nominal and aisle-surge congestion modes.
 - `SUBMISSION_CHECKLIST.md`: final PR readiness checklist.

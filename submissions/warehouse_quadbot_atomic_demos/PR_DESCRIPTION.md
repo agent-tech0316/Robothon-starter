@@ -8,6 +8,8 @@ The core challenge is fleet-level coordination: one robot can move a parcel, but
 
 Judge-facing distinction: this is not only a multi-robot clip. It is a scalable warehouse benchmark. MuJoCo proves the atomic robot skills are physically plausible; the runtime proves that fleet decisions improve throughput under congestion, SKU-weight variation, pick difficulty, and long-horizon load.
 
+Latest judge fast path: `python examples/run_agentech_judge_review.py` prints artifact readiness, 54-scenario stress benchmark results, medium/high runtime metrics, MuJoCo evidence count, and rubric mapping without requiring the dashboard UI.
+
 # Robot Platform
 
 Faraday Future AEGIS quadruped, with a BASE_LINK-mounted basket and a Futurist-right-arm-derived front manipulator. MuJoCo evidence clips validate walking, payload carrying, shelf pickup, basket contact, and robot-to-robot handoff.
@@ -30,7 +32,8 @@ The runtime uses four-direction movement, atomic source+destination locks, deadl
 - MuJoCo used as physical evidence for atomic skills while fleet planning stays in a scalable tile-level simulator.
 - MuJoCo evidence scorecard makes physical validation inspectable: joints, actuators, sensors, contact counters, payload response, and two-robot handoff scene depth.
 - Runtime snapshots expose robot state, order state, movement locks, rack-blocking, congestion, and KPI metrics directly to the dashboard.
-- AI-judge-friendly static UI and generated artifacts make the project understandable without extra explanation.
+- One-command AI judge fast path reduces review friction and directly addresses the prior UI-complexity feedback.
+- Default simplified UI mode directly addresses prior judge feedback: first screen now shows only throughput, safety, MuJoCo proof, and the live map; dense ops panels are one click away.
 - Dashboard benchmark proof strip exposes the medium planner-off baseline, local-planner result, and zero safety violations in the first KPI panel.
 - Simplified Judge Review Path reduces UI scanning cost by surfacing fleet size, planner uplift, safety, replans, and MuJoCo skill proof in one narrow rail.
 - Accelerated fleet stress benchmark runs 54 six-hour nominal/aisle-surge scenarios / 108 raw planner runs / 2,916 simulated robot-hours in about 7.7 seconds, with 100% safety pass rate and +30.74% average planner throughput uplift.
@@ -67,6 +70,7 @@ Included evidence clips:
 python3.12 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
+python examples/run_agentech_judge_review.py
 python examples/build_integrated_demo_data.py
 python examples/run_warehouse_runtime.py --load medium --planner local --ticks 900 --print-summary
 python -m http.server 8765 --bind 127.0.0.1
