@@ -110,7 +110,7 @@ The current medium profile completes 77 of 84 orders and reaches 308 orders/hour
 
 # Current Limitations
 
-- Final 1-3 minute demo video is included as `demo.mp4`.
+- Final 1-3 minute demo video is included as `demo.mp4`; it is a program-only cut with no AI-generated moving footage.
 - Route-window reservation improves planner throughput, but the next step is learning lane direction and handoff timing policies instead of using a fixed reservation factor.
 - Full fleet movement is tile-simulated; MuJoCo is used for atomic skill validation and small-fleet physical interaction evidence rather than continuous simulation of all 30 warehouse robots.
 - Optional OpenAI planner mode is not required for default judging and depends on external API credentials.

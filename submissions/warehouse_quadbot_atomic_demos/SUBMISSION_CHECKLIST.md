@@ -80,3 +80,10 @@ python -m http.server 8765 --bind 127.0.0.1
 - [x] Human-intrusion high-load evidence generated: 10 stochastic people, 17 risk tiles, 147 hold ticks, 17 reroutes, 0 collisions, 0 lock overlaps.
 - [x] UI exposes `Humans On/Off` and AI Decision Board explains human-aware reroutes.
 - [x] Judge fast path now reports human-intrusion evidence.
+
+## Program-Only Demo Refresh
+
+- [x] Rebuilt `demo.mp4` with `examples/build_program_only_demo_video.py`.
+- [x] Final video is 1:25.00, 1280x720, no audio, approximately 3.75 MB.
+- [x] All moving footage comes from real Web runtime recording or MuJoCo renderer clips; title cards and captions are generated text only.
+- [x] `outputs/program_only_demo_manifest.json` records every segment and marks `ai_generated_moving_footage: false`.

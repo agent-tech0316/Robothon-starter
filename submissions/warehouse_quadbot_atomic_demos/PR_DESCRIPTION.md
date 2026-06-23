@@ -14,7 +14,7 @@ Registration UUID: 13b27675-9c26-49df-9014-cb31f33f9df8
 | High-load result | 91 / 140 orders, 364 orders/hour, 0 movement safety violations |
 | MuJoCo depth | 14 evidence clips, generated MJCF, touch sensors, collision geoms, contact traces, 3-robot corridor physics, heterogeneous dexterous/magnet/rail end-effectors |
 | 6-DOF + tool proof | 630 gripper/package contacts; heterogeneous tool contacts: 1077 dexterous/fragile, 508 magnet/metal, 1020 rail/tote |
-| Demo | 1:27.58 AI-judge cut with Web/MuJoCo layered validation, expanded live runtime decision replay, and 3-robot corridor physics, benchmark proof, contact sheet, 6-DOF grasp, and handoff |
+| Demo | 1:25 program-only cut using real Web runtime footage, MuJoCo renderer clips, generated contact sheet, benchmark text cards, and no AI-generated moving footage |
 
 Run first: `python examples/run_agentech_judge_review.py`. Read first: `submissions/warehouse_quadbot_atomic_demos/JUDGE_SCORECARD.md`.
 
@@ -81,10 +81,11 @@ Safety violations include blocked tiles, non-cardinal moves, robot collisions, a
 
 Final 1-3 minute demo video: `submissions/warehouse_quadbot_atomic_demos/demo.mp4`
 
-The final video is now a 1:27.58 AI-judge review cut. The final cut opens with a Web Runtime vs MuJoCo Physics title card, then live runtime decision footage: 9 robots moving, tile locks, AI decision text, selected robot, next skill, order pressure, KPI proof, 54-scenario benchmark numbers, contact-sheet evidence, 6-DOF MuJoCo grasp/handoff proof, and the new 3-AEGIS corridor physics clip.
+The final video is now a 1:25 program-only review cut. The final cut opens with a Web Runtime vs MuJoCo Physics title card, then live runtime decision footage: 9 robots moving, tile locks, AI decision text, selected robot, next skill, order pressure, KPI proof, 54-scenario benchmark numbers, contact-sheet evidence, 6-DOF MuJoCo grasp/handoff proof, and the new 3-AEGIS corridor physics clip.
 
 Included evidence clips:
 
+- `submissions/warehouse_quadbot_atomic_demos/outputs/program_only_demo_manifest.json`
 - `submissions/warehouse_quadbot_atomic_demos/outputs/runtime_live_decision_replay.mp4`
 - `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/fleet_physics_corridor.mp4`
 - `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/effector_mix_lab.mp4`
@@ -123,4 +124,4 @@ http://127.0.0.1:8765/submissions/warehouse_quadbot_atomic_demos/ui/index.html
 
 Clean-copy validation passed with Python 3.12: dependency install, runtime data generation, medium benchmark run, pytest smoke tests, MuJoCo shelf-pick smoke generation, and HTTP resource checks for UI/runtime/video artifacts.
 
-Final demo video is included as `submissions/warehouse_quadbot_atomic_demos/demo.mp4`; the latest 1:27.58 judge-cut video audit passed locally with layered Web/MuJoCo validation, expanded live runtime footage, and 3-robot MuJoCo corridor physics.
+Final demo video is included as `submissions/warehouse_quadbot_atomic_demos/demo.mp4`; the latest 1:25 program-only video audit passed locally with layered Web/MuJoCo validation, expanded live runtime footage, and 3-robot MuJoCo corridor physics.

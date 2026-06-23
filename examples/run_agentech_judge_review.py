@@ -24,6 +24,7 @@ REQUIRED_FILES = [
     OUTPUTS / "runtime_snapshot_high_humans.json",
     OUTPUTS / "benchmark_metrics_high_humans.json",
     OUTPUTS / "runtime_events_high_humans.jsonl",
+    OUTPUTS / "program_only_demo_manifest.json",
     PHYSICS / "clip_manifest.json",
     PHYSICS / "physics_evidence_contact_sheet.png",
     PHYSICS / "effector_mix_lab.mp4",
@@ -50,6 +51,7 @@ def main() -> int:
     high_humans = load_json(OUTPUTS / "benchmark_metrics_high_humans.json")
     high_human_snapshot = load_json(OUTPUTS / "runtime_snapshot_high_humans.json")
     human_intrusion = high_human_snapshot.get("human_intrusion", {})
+    demo_manifest = load_json(OUTPUTS / "program_only_demo_manifest.json")
     clip_manifest = load_json(PHYSICS / "clip_manifest.json")
     clips = clip_manifest.get("clips", [])
 
@@ -77,6 +79,7 @@ def main() -> int:
     print("- Stress extension: 30 AEGIS quadrupeds with mixed gripper/dexterous/magnet/rail end-effectors")
     print("- Human intrusion extension: continuous random people create temporary risk tiles for hold/reroute decisions")
     print("- Core claim: scalable warehouse decisions improve throughput while MuJoCo validates physical skills")
+    print(f"- Demo video provenance: {len(demo_manifest.get('segments', []))} segments, no AI-generated moving footage")
     print()
 
     print("Runtime benchmark evidence")
@@ -119,7 +122,7 @@ def main() -> int:
     print("- Task design: warehouse order fulfillment under load, SKU weight, pick difficulty, congestion, and random human intrusion")
     print("- Control: congestion-aware multi-port planner versus nearest-exit planner-off baseline")
     print("- Engineering quality: runtime schemas, configs, event logs, reproducible JSON artifacts")
-    print("- Presentation: short demo video plus simplified judge fast path")
+    print("- Presentation: 1:25 program-only demo video plus simplified judge fast path")
     print("- Innovation: multi-agent warehouse optimization with human-aware planning, MuJoCo-backed atomic skills, and heterogeneous robot tools")
     print()
 

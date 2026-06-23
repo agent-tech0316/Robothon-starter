@@ -20,7 +20,7 @@ UUID: `13b27675-9c26-49df-9014-cb31f33f9df8`
 | High-load result | 91 / 140 orders, 364 orders/hour, 0 movement safety violations |
 | MuJoCo depth | 14 evidence clips, generated MJCF, touch sensors, collision geoms, contact traces, 3-robot corridor physics, heterogeneous end-effectors |
 | 6-DOF + tool proof | 630 gripper/package contacts; heterogeneous tool contacts: 1077 dexterous/fragile, 508 magnet/metal, 1020 rail/tote |
-| Demo | 1:27.58 AI-judge cut with Web/MuJoCo layered validation, expanded live runtime decision replay, and 3-robot corridor physics, benchmark proof, contact sheet, 6-DOF grasp, and handoff |
+| Demo | 1:25 program-only cut using real Web runtime footage, MuJoCo renderer clips, generated contact sheet, benchmark text cards, and no AI-generated moving footage |
 
 Read first: [`JUDGE_SCORECARD.md`](JUDGE_SCORECARD.md). Run first: `python examples/run_agentech_judge_review.py`.
 
@@ -48,8 +48,9 @@ The dashboard opens in a polished judge mode by default: the first screen shows 
 
 Final 1-3 minute demo video: [`demo.mp4`](demo.mp4).
 
-The final demo video is included directly in this submission as `demo.mp4` (1:27.58, 720p MP4, 38.5 MB). It was recut in response to judge feedback: it now opens with Web Runtime vs MuJoCo Physics layering, then shows live runtime decision replay with 9 robots, tile locks, AI planner decisions, KPI proof, and order pressure before moving into contact-sheet evidence, 6-DOF MuJoCo grasp/handoff proof, and the new 3-AEGIS corridor physics clip. Additional evidence clips are included separately for physical inspection:
+The final demo video is included directly in this submission as `demo.mp4` (1:25, 720p MP4, 3.75 MB). It was recut in response to judge feedback: it now opens with Web Runtime vs MuJoCo Physics layering, then shows live runtime decision replay with 9 robots, tile locks, AI planner decisions, KPI proof, and order pressure before moving into contact-sheet evidence, 6-DOF MuJoCo grasp/handoff proof, and the new 3-AEGIS corridor physics clip. Additional evidence clips are included separately for physical inspection:
 
+- Program-only demo manifest: `outputs/program_only_demo_manifest.json`
 - Live runtime decision replay: `outputs/runtime_live_decision_replay.mp4`
 - MuJoCo multi-robot corridor: `outputs/physics_evidence/fleet_physics_corridor.mp4` and `outputs/physics_evidence/fleet_physics_corridor_trajectory.json`
 - MuJoCo heterogeneous end-effector lab: `outputs/physics_evidence/effector_mix_lab.mp4` and `outputs/physics_evidence/effector_mix_lab_trajectory.json`

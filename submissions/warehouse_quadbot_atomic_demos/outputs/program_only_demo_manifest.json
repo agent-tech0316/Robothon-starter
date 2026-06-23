@@ -1,0 +1,101 @@
+{
+  "demo_video": "submissions/warehouse_quadbot_atomic_demos/demo.mp4",
+  "duration_target_s": 85.0,
+  "encoding": {
+    "resolution": "1280x720",
+    "fps": 24,
+    "crf": "18",
+    "audio": "none"
+  },
+  "policy": "All moving footage is real program output from Web runtime recording or MuJoCo renderer clips. Cards/text overlays are generated, but no AI-generated moving video is used.",
+  "segments": [
+    {
+      "index": 1,
+      "kind": "image",
+      "source": "generated text card from build_program_only_demo_video.py",
+      "duration_s": 5.0,
+      "description": "Program-only title card",
+      "ai_generated_moving_footage": false
+    },
+    {
+      "index": 2,
+      "kind": "image",
+      "source": "submissions/warehouse_quadbot_atomic_demos/docs/screenshots/mission_control_program_only.png",
+      "duration_s": 7.0,
+      "description": "Chrome capture of current UI runtime",
+      "ai_generated_moving_footage": false
+    },
+    {
+      "index": 3,
+      "kind": "video",
+      "source": "submissions/warehouse_quadbot_atomic_demos/outputs/runtime_live_decision_replay.mp4",
+      "duration_s": 18.0,
+      "description": "Web runtime recording",
+      "ai_generated_moving_footage": false
+    },
+    {
+      "index": 4,
+      "kind": "image",
+      "source": "generated text card from benchmark_metrics_high_humans.json",
+      "duration_s": 6.0,
+      "description": "Generated text card from runtime metrics",
+      "ai_generated_moving_footage": false
+    },
+    {
+      "index": 5,
+      "kind": "image",
+      "source": "generated text card from fleet_stress_benchmark_30robots.json",
+      "duration_s": 6.0,
+      "description": "Generated text card from benchmark metrics",
+      "ai_generated_moving_footage": false
+    },
+    {
+      "index": 6,
+      "kind": "video",
+      "source": "submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/fleet_physics_corridor.mp4",
+      "duration_s": 8.0,
+      "description": "MuJoCo fleet corridor renderer clip",
+      "ai_generated_moving_footage": false
+    },
+    {
+      "index": 7,
+      "kind": "video",
+      "source": "submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/six_dof_grasp_sweep_metal.mp4",
+      "duration_s": 8.0,
+      "description": "MuJoCo 6-DOF grasp renderer clip",
+      "ai_generated_moving_footage": false
+    },
+    {
+      "index": 8,
+      "kind": "video",
+      "source": "submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/handoff_metal.mp4",
+      "duration_s": 7.0,
+      "description": "MuJoCo two-robot handoff renderer clip",
+      "ai_generated_moving_footage": false
+    },
+    {
+      "index": 9,
+      "kind": "video",
+      "source": "submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/effector_mix_lab.mp4",
+      "duration_s": 8.0,
+      "description": "MuJoCo heterogeneous end-effector renderer clip",
+      "ai_generated_moving_footage": false
+    },
+    {
+      "index": 10,
+      "kind": "image",
+      "source": "submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/physics_evidence_contact_sheet.png",
+      "duration_s": 7.0,
+      "description": "Generated MuJoCo contact sheet",
+      "ai_generated_moving_footage": false
+    },
+    {
+      "index": 11,
+      "kind": "image",
+      "source": "generated text card from build_program_only_demo_video.py",
+      "duration_s": 5.0,
+      "description": "Closing text card",
+      "ai_generated_moving_footage": false
+    }
+  ]
+}

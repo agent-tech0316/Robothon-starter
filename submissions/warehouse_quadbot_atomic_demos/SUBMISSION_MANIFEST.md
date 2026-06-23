@@ -126,3 +126,10 @@ The final demo video is included as `submissions/warehouse_quadbot_atomic_demos/
 - `outputs/runtime_snapshot_high_humans.json` / `benchmark_metrics_high_humans.json` / `runtime_events_high_humans.jsonl`
 - `configs/mission_layout.yaml` defines the continuous-human-to-temporary-risk-tile planner contract.
 - `ui/index.html` exposes the `Humans On/Off` switch for judge review.
+
+## Program-only demo provenance
+
+- `submissions/warehouse_quadbot_atomic_demos/demo.mp4` is rebuilt by `examples/build_program_only_demo_video.py`.
+- `submissions/warehouse_quadbot_atomic_demos/outputs/program_only_demo_manifest.json` records every segment source.
+- Moving footage sources are only `outputs/runtime_live_decision_replay.mp4` and MuJoCo renderer clips under `outputs/physics_evidence/`.
+- Generated text/title cards are allowed; no AI-generated moving clip is used.

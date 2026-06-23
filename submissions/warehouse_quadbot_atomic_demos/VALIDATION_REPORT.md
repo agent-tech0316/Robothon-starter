@@ -140,10 +140,10 @@ Heavy 6-DOF grasp evidence reports 630 gripper/package contacts, 220 left-finger
 
 Final demo video was integrated after recording:
 
-- Source located from the user desktop export, then replaced by a tighter AI-judge review cut.
-- Re-edited to combine UI runtime footage, benchmark title cards, MuJoCo contact sheet, 6-DOF grasp evidence, and handoff evidence.
+- Rebuilt with `examples/build_program_only_demo_video.py`.
+- All moving footage comes from real Web runtime recording or MuJoCo renderer clips; generated title cards/captions are allowed, and no AI-generated moving footage is used.
 - Output: `submissions/warehouse_quadbot_atomic_demos/demo.mp4`
-- Properties: 1:27.58, 1280x720, MP4 video, approximately 38.5 MB. The opening title card explains Web Runtime vs MuJoCo Physics, followed by live runtime decision replay and the new fleet corridor clip.
+- Properties: 1:25.00, 1280x720, MP4 video, approximately 3.75 MB. The manifest `outputs/program_only_demo_manifest.json` records every segment source and marks AI-generated moving footage as false.
 - README, PR description, manifest, write-up, and checklist were updated to reference the file.
 
 ## Remaining Final Check
