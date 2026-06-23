@@ -134,7 +134,7 @@ Regenerated outputs include 12 MP4 clips, 12 JSON contact traces, generated MJCF
 - `outputs/physics_evidence/six_dof_grasp_sweep_wood.mp4`
 - `outputs/physics_evidence/six_dof_grasp_sweep_metal.mp4`
 
-Heavy 6-DOF grasp evidence reports 630 gripper/package contacts, 220 left-finger contacts, 250 right-finger contacts, and 36 dual-finger grasp frames. Heavy handoff evidence reports 279 receiver-gripper/package contacts.
+Heavy 6-DOF grasp evidence reports 630 gripper/package contacts, 220 left-finger contacts, 250 right-finger contacts, and 36 dual-finger grasp frames. Heavy handoff evidence reports 279 receiver-gripper/package contacts. New fleet corridor evidence reports 458 gripper/package contacts, 192 receiver-gripper/package contacts, 190 box/basket contacts, 0 robot-obstacle contacts, 0 box-obstacle contacts, 0.6161m minimum robot spacing, and 0.6513m minimum obstacle clearance.
 
 ## Demo Video Integration
 
@@ -143,7 +143,7 @@ Final demo video was integrated after recording:
 - Source located from the user desktop export, then replaced by a tighter AI-judge review cut.
 - Re-edited to combine UI runtime footage, benchmark title cards, MuJoCo contact sheet, 6-DOF grasp evidence, and handoff evidence.
 - Output: `submissions/warehouse_quadbot_atomic_demos/demo.mp4`
-- Properties: 1:21.38, 1280x720, MP4 video, approximately 37.9 MB. The opening 18 seconds are live runtime decision replay.
+- Properties: 1:27.58, 1280x720, MP4 video, approximately 38.5 MB. The opening title card explains Web Runtime vs MuJoCo Physics, followed by live runtime decision replay and the new fleet corridor clip.
 - README, PR description, manifest, write-up, and checklist were updated to reference the file.
 
 ## Remaining Final Check

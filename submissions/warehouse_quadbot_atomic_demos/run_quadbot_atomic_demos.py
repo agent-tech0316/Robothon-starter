@@ -63,6 +63,7 @@ BOX_STYLES = {
 
 LEGACY_SCENARIOS = ("arm_showcase", "shelf_pick", "handoff")
 STATE_SCENARIOS = (
+    "fleet_physics_corridor",
     "rest_idle",
     "empty_stance",
     "empty_walk",
@@ -89,6 +90,7 @@ SCENARIO_DURATIONS = {
     "shelf_pick_wood": 2.3,
     "shelf_pick_metal": 2.5,
     "handoff_metal": 2.4,
+    "fleet_physics_corridor": 3.2,
 }
 
 FUTURIST_ARM_JOINTS = (
@@ -151,6 +153,8 @@ def lerp_tuple(a: tuple[float, ...], b: tuple[float, ...], t: float) -> tuple[fl
 
 
 def scenario_kind(scenario: str) -> str:
+    if scenario.startswith("fleet_physics"):
+        return "fleet_physics"
     if scenario.startswith("loaded_walk_"):
         return "loaded_walk"
     if scenario.startswith("shelf_pick_") or scenario == "shelf_pick":
@@ -164,7 +168,7 @@ def scenario_payload_style(scenario: str) -> str:
     for style in BOX_STYLES:
         if scenario.endswith(f"_{style}"):
             return style
-    if scenario == "handoff":
+    if scenario == "handoff" or scenario.startswith("fleet_physics"):
         return "metal"
     if scenario == "arm_showcase":
         return "wood"
@@ -172,7 +176,7 @@ def scenario_payload_style(scenario: str) -> str:
 
 
 def rig_prefix(name: str) -> str:
-    return "r_" if name == "receiver_rig" else ""
+    return {"receiver_rig": "r_", "third_rig": "t_"}.get(name, "")
 
 
 def rig_joint_name(name: str, suffix: str) -> str:
@@ -369,6 +373,8 @@ def contact_counters(model: mujoco.MjModel, data: mujoco.MjData) -> dict[str, in
         "box_basket": 0,
         "box_shelf": 0,
         "arm_basket": 0,
+        "robot_obstacle": 0,
+        "box_obstacle": 0,
         "total_contacts": int(data.ncon),
     }
     for idx in range(data.ncon):
@@ -382,6 +388,7 @@ def contact_counters(model: mujoco.MjModel, data: mujoco.MjData) -> dict[str, in
         has_gripper = "gripper" in joined
         has_basket = "basket" in joined
         has_shelf = "pickup_shelf" in joined
+        has_obstacle = "avoidance" in joined
         has_arm = "arm_" in joined or "gripper" in joined
 
         if has_gripper and has_box:
@@ -394,6 +401,10 @@ def contact_counters(model: mujoco.MjModel, data: mujoco.MjData) -> dict[str, in
             counters["box_shelf"] += 1
         if has_arm and has_basket:
             counters["arm_basket"] += 1
+        if has_obstacle and has_box:
+            counters["box_obstacle"] += 1
+        elif has_obstacle:
+            counters["robot_obstacle"] += 1
     return counters
 
 
@@ -1015,6 +1026,32 @@ def add_scene_common(spec: mujoco.MjSpec, scenario: str) -> None:
         add_tile(world, "tile_receiver", (0.55, 0.0), [0.085, 0.135, 0.110, 1.0])
         add_payload_box(world, "transfer_box", payload_style, (-0.63, 0.0, 0.625))
 
+    elif kind == "fleet_physics":
+        for x in (-1.5, -0.75, 0.0, 0.75, 1.5):
+            for y in (-0.5, 0.5):
+                color = [0.070, 0.105, 0.125, 1.0] if y < 0 else [0.085, 0.135, 0.120, 1.0]
+                add_tile(world, f"tile_corridor_{x}_{y}", (x, y), color)
+        world.add_geom(
+            name="avoidance_pillar",
+            type=mujoco.mjtGeom.mjGEOM_BOX,
+            pos=[0.0, 0.0, 0.30],
+            size=[0.16, 0.20, 0.30],
+            rgba=[0.45, 0.16, 0.10, 1.0],
+            friction=[1.0, 0.08, 0.03],
+            contype=1,
+            conaffinity=1,
+        )
+        world.add_geom(
+            name="avoidance_clearance_ring",
+            type=mujoco.mjtGeom.mjGEOM_CYLINDER,
+            pos=[0.0, 0.0, 0.018],
+            size=[0.46, 0.010],
+            rgba=[1.0, 0.65, 0.08, 0.20],
+            contype=0,
+            conaffinity=0,
+        )
+        add_payload_box(world, "target_box", payload_style, (-1.25, 0.32, 0.62))
+
     elif kind in {"rest_idle", "empty_stance", "empty_walk", "loaded_walk"}:
         add_tile(world, "tile_quadbot", (0.0, 0.0), [0.085, 0.135, 0.120, 1.0])
         if kind in {"empty_walk", "loaded_walk"}:
@@ -1039,6 +1076,7 @@ def style_model_for_video(model: mujoco.MjModel) -> None:
             or name.startswith("metal_box")
             or name.startswith("target_box")
             or name.startswith("transfer_box")
+            or name.startswith("avoidance")
             or "basket" in name
             or "arm_" in name
             or "gripper" in name
@@ -1067,18 +1105,26 @@ def style_model_for_video(model: mujoco.MjModel) -> None:
 def build_model(urdf_path: Path, scenario: str) -> mujoco.MjModel:
     spec = build_aegis_spec(urdf_path, accessories=True)
     kind = scenario_kind(scenario)
-    if kind == "handoff":
+    if kind in {"handoff", "fleet_physics"}:
         receiver_frame = spec.worldbody.add_frame(name="receiver_attach_frame", pos=[0.0, 0.0, 0.0])
         receiver = build_aegis_spec(urdf_path, accessories=True)
         spec.attach(receiver, prefix="r_", frame=receiver_frame)
+    if kind == "fleet_physics":
+        traffic_frame = spec.worldbody.add_frame(name="traffic_attach_frame", pos=[0.0, 0.0, 0.0])
+        traffic = build_aegis_spec(urdf_path, accessories=True)
+        spec.attach(traffic, prefix="t_", frame=traffic_frame)
 
     add_scene_common(spec, scenario)
     add_aegis_leg_actuators_and_sensors(spec, "")
-    if kind == "handoff":
+    if kind in {"handoff", "fleet_physics"}:
         add_aegis_leg_actuators_and_sensors(spec, "r_")
+    if kind == "fleet_physics":
+        add_aegis_leg_actuators_and_sensors(spec, "t_")
     add_rig_actuators_and_sensors(spec, "")
-    if kind == "handoff":
+    if kind in {"handoff", "fleet_physics"}:
         add_rig_actuators_and_sensors(spec, "r_")
+    if kind == "fleet_physics":
+        add_rig_actuators_and_sensors(spec, "t_")
     model = spec.compile()
     style_model_for_video(model)
     return model
@@ -1489,6 +1535,85 @@ def apply_loaded_walk(
     mujoco.mj_forward(model, data)
 
 
+def curved_lane_pose(start: tuple[float, float], mid: tuple[float, float], end: tuple[float, float], progress: float) -> tuple[float, float]:
+    progress = float(np.clip(progress, 0.0, 1.0))
+    if progress < 0.5:
+        local = progress / 0.5
+        return (start[0] * (1.0 - local) + mid[0] * local, start[1] * (1.0 - local) + mid[1] * local)
+    local = (progress - 0.5) / 0.5
+    return (mid[0] * (1.0 - local) + end[0] * local, mid[1] * (1.0 - local) + end[1] * local)
+
+
+def fleet_clearance_metrics(model: mujoco.MjModel, data: mujoco.MjData) -> dict[str, float]:
+    positions = [
+        np.asarray(body_position(model, data, "BASE_LINK")[:2], dtype=float),
+        np.asarray(body_position(model, data, "r_BASE_LINK")[:2], dtype=float),
+        np.asarray(body_position(model, data, "t_BASE_LINK")[:2], dtype=float),
+    ]
+    pairwise = [float(np.linalg.norm(a - b)) for idx, a in enumerate(positions) for b in positions[idx + 1:]]
+    obstacle = np.asarray([0.0, 0.0], dtype=float)
+    obstacle_clearances = [float(np.linalg.norm(pos - obstacle) - 0.36) for pos in positions]
+    return {
+        "min_robot_spacing_m": round(min(pairwise), 4),
+        "min_obstacle_clearance_m": round(min(obstacle_clearances), 4),
+    }
+
+
+def apply_fleet_physics(model: mujoco.MjModel, data: mujoco.MjData, time_s: float, duration_s: float) -> None:
+    data.qpos[:] = 0.0
+    data.qvel[:] = 0.0
+    cfg = BOX_STYLES["metal"]
+    p = smoothstep(0.0, duration_s, time_s)
+    sender_xy = curved_lane_pose((-1.35, 0.32), (-0.05, 0.62), (1.22, 0.30), p)
+    receiver_wait = smoothstep(0.84, 1.0, p)
+    receiver_xy = curved_lane_pose((1.38, -0.48), (1.28, -0.46), (0.92, -0.42), receiver_wait)
+    traffic_release = smoothstep(0.58, 0.96, p)
+    traffic_xy = curved_lane_pose((-0.20, -1.05), (0.22, -1.08), (0.78, -1.02), traffic_release)
+
+    set_aegis_pose(model, data, prefix="", pos=(sender_xy[0], sender_xy[1], 0.345), yaw=0.08, time_s=time_s, moving=True, leg_compression=float(cfg["leg_compression_m"]), gait_speed=0.78)
+    set_aegis_pose(model, data, prefix="r_", pos=(receiver_xy[0], receiver_xy[1], 0.345), yaw=math.pi - 0.04, time_s=time_s, moving=p > 0.84, leg_compression=0.012, gait_speed=0.65)
+    set_aegis_pose(model, data, prefix="t_", pos=(traffic_xy[0], traffic_xy[1], 0.345), yaw=0.02, time_s=time_s, moving=p > 0.58, leg_compression=0.010, gait_speed=0.55)
+
+    carry_pose = (0.02, -1.92, -0.74, 0.36, 0.12 * math.sin(4.2 * time_s), 0.05)
+    handoff_pose = (0.08, -0.10, 0.64, -0.06, 0.10, -0.04)
+    sender_pose = lerp_tuple(carry_pose, handoff_pose, smoothstep(0.66, 0.86, p))
+    receiver_pose = lerp_tuple((-0.08, 0.06, 0.70, -0.12, -0.08, 0.10), (0.08, -2.05, -0.82, 0.10, 0.04, 0.05), smoothstep(0.88, 1.0, p))
+    traffic_pose = (0.00, -1.55, -0.60, 0.48, 0.00, 0.00)
+    set_rig_arm_pose_tuple(model, data, name="sender_rig", pose=sender_pose)
+    set_rig_arm_pose_tuple(model, data, name="receiver_rig", pose=receiver_pose)
+    set_rig_arm_pose_tuple(model, data, name="third_rig", pose=traffic_pose)
+    set_rig_gripper(model, data, name="sender_rig", closed=1.0 - 0.85 * smoothstep(0.78, 0.90, p))
+    set_rig_gripper(model, data, name="receiver_rig", closed=smoothstep(0.70, 0.86, p) * (1.0 - 0.75 * smoothstep(0.94, 1.0, p)))
+    set_rig_gripper(model, data, name="third_rig", closed=0.0)
+    mujoco.mj_forward(model, data)
+
+    sender_basket_site = site_position(model, data, rig_site_name("sender_rig", "basket_payload_site"))
+    sender_grip_site = site_position(model, data, rig_site_name("sender_rig", "gripper_site"))
+    receiver_grip_site = site_position(model, data, rig_site_name("receiver_rig", "gripper_site"))
+    receiver_basket_site = site_position(model, data, rig_site_name("receiver_rig", "basket_payload_site"))
+    sender_basket = (sender_basket_site[0], sender_basket_site[1], sender_basket_site[2] - 0.006)
+    sender_grip = (sender_grip_site[0], sender_grip_site[1], sender_grip_site[2] - 0.006)
+    receiver_grip = (receiver_grip_site[0], receiver_grip_site[1], receiver_grip_site[2] - 0.006)
+    receiver_basket = (receiver_basket_site[0], receiver_basket_site[1], receiver_basket_site[2] - 0.006)
+    pickup = smoothstep(0.02, 0.16, p)
+    transfer = smoothstep(0.70, 0.86, p)
+    release = smoothstep(0.92, 1.0, p)
+    if pickup < 1.0:
+        box_pos = lerp(sender_grip, sender_basket, pickup)
+        box_quat = quat_slerp(body_quat(model, data, rig_body_name("sender_rig", "right_hand")), quat_from_yaw_pitch(0.0, 0.04), pickup)
+    elif transfer < 1.0:
+        box_pos = lerp(sender_basket, receiver_grip, transfer)
+        box_quat = quat_slerp(quat_from_yaw_pitch(0.0, 0.06 * math.sin(4.0 * time_s)), body_quat(model, data, rig_body_name("receiver_rig", "right_hand")), transfer)
+    elif release < 1.0:
+        box_pos = lerp(receiver_grip, receiver_basket, release)
+        box_quat = quat_slerp(body_quat(model, data, rig_body_name("receiver_rig", "right_hand")), quat_from_yaw_pitch(math.pi, 0.0), release)
+    else:
+        box_pos = receiver_basket
+        box_quat = quat_from_yaw_pitch(math.pi, 0.0)
+    set_freejoint_pose_quat(model, data, "target_box_freejoint", box_pos, box_quat)
+    mujoco.mj_forward(model, data)
+
+
 def apply_scenario_state(
     model: mujoco.MjModel,
     data: mujoco.MjData,
@@ -1512,6 +1637,8 @@ def apply_scenario_state(
         apply_empty_walk(model, data, time_s, duration_s)
     elif kind == "loaded_walk":
         apply_loaded_walk(model, data, time_s, duration_s, style=style)
+    elif kind == "fleet_physics":
+        apply_fleet_physics(model, data, time_s, duration_s)
     else:
         raise ValueError(f"Unknown scenario: {scenario}")
 
@@ -1539,6 +1666,11 @@ def update_camera(
         camera.distance = 1.65
         camera.azimuth = 118.0 + 4.0 * math.sin(0.7 * time_s)
         camera.elevation = -18.0
+    elif kind == "fleet_physics":
+        camera.lookat[:] = [0.02, 0.0, 0.40]
+        camera.distance = 3.10
+        camera.azimuth = 100.0 + 5.0 * math.sin(0.35 * time_s)
+        camera.elevation = -21.0
     else:
         camera.lookat[:] = [0.0, 0.0, 0.38]
         camera.distance = 2.30
@@ -1575,6 +1707,8 @@ def run_scenario(
         "box_basket": 0,
         "box_shelf": 0,
         "arm_basket": 0,
+        "robot_obstacle": 0,
+        "box_obstacle": 0,
         "total_contacts": 0,
     }
     total_frames = max(1, int(round(duration_s * fps)))
@@ -1597,6 +1731,11 @@ def run_scenario(
             if kind == "handoff":
                 sample["receiver_base"] = body_position(model, data, "r_BASE_LINK")
                 sample["box_pos"] = body_position(model, data, "transfer_box")
+            elif kind == "fleet_physics":
+                sample["receiver_base"] = body_position(model, data, "r_BASE_LINK")
+                sample["traffic_base"] = body_position(model, data, "t_BASE_LINK")
+                sample["box_pos"] = body_position(model, data, "target_box")
+                sample["clearance"] = fleet_clearance_metrics(model, data)
             elif kind in {"shelf_pick", "loaded_walk"}:
                 sample["box_pos"] = body_position(model, data, "target_box")
             elif scenario == "arm_showcase":
@@ -1639,7 +1778,7 @@ def run_scenario(
         "box_styles": BOX_STYLES,
         "tile_size_m": TILE_SIZE,
         "mujoco_depth": {
-            "quadruped_leg_joints": 12 if kind != "handoff" else 24,
+            "quadruped_leg_joints": 36 if kind == "fleet_physics" else (12 if kind != "handoff" else 24),
             "arm_dof_per_robot": 7,
             "gripper_slide_joints_per_robot": 2,
             "collision_geoms": [
@@ -1647,6 +1786,7 @@ def run_scenario(
                 "left/right gripper fingers and pads",
                 "cargo basket floor and rails",
                 "pickup shelf decks",
+                "fleet corridor obstacle pillar",
             ],
             "sensors": [
                 "leg joint position",
@@ -1659,6 +1799,7 @@ def run_scenario(
             "actuators": "position actuators on AEGIS leg joints, seven Futurist-derived arm joints, and two finger slide joints",
         },
         "contact_totals": contact_totals,
+        "fleet_physics_metrics": fleet_clearance_metrics(model, data) if kind == "fleet_physics" else None,
         "physics_note": (
             "Package, shelf, basket, and gripper use MuJoCo collision geoms. "
             "During grasp and carry phases the package follows the wrist pose with "

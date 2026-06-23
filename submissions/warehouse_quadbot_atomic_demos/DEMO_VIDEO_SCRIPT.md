@@ -42,7 +42,7 @@ The submitted `demo.mp4` is intentionally short and edited for AI judges. The ju
 
 ## Original Capture Plan
 
-The longer outline below is retained as provenance, but the final video is now a 1:21.38 judge-cut edit with expanded live runtime decision replay for faster scoring.
+The longer outline below is retained as provenance, but the final video is now a 1:27.58 judge-cut edit with Web/MuJoCo layered validation, expanded live runtime decision replay, and 3-robot corridor physics for faster scoring.
 
 ### Startup and Project Identity
 
@@ -79,6 +79,6 @@ This project turns quadruped warehouse work into a full agentic fulfillment benc
 ## Final Video File
 
 - `submissions/warehouse_quadbot_atomic_demos/demo.mp4`
-- Duration: 1:21.38
+- Duration: 1:27.58
 - Format: 1280x720 H.264/AAC MP4
-- Size: approximately 37.9 MB
+- Size: approximately 38.5 MB

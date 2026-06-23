@@ -1,0 +1,700 @@
+{
+  "project": "Warehouse Quadbot Atomic Demos",
+  "scenario": "fleet_physics_corridor",
+  "scenario_kind": "fleet_physics",
+  "robot": "AEGIS quadruped with BASE_LINK-mounted basket and Futurist-right-arm-derived manipulator",
+  "model": "assets/Aegis/urdf/Aegis_mujoco.urdf",
+  "video": "submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/fleet_physics_corridor.mp4",
+  "trajectory": "submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/fleet_physics_corridor_trajectory.json",
+  "duration_s": 3.2,
+  "fps": 30,
+  "payload": {
+    "style": "metal",
+    "label": "heavy metal",
+    "mass_kg": 4.0,
+    "difficulty": "hard",
+    "loading_time_s": 2.05,
+    "grip_close_s": 0.46,
+    "walk_speed_mps": 0.31,
+    "leg_compression_m": 0.055
+  },
+  "box_styles": {
+    "cardboard": {
+      "label": "normal cardboard",
+      "rgba": [
+        0.72,
+        0.43,
+        0.2,
+        1.0
+      ],
+      "mass": 0.8,
+      "loading_time_s": 1.2,
+      "grip_close_s": 0.24,
+      "walk_speed_mps": 0.55,
+      "leg_compression_m": 0.01,
+      "difficulty": "easy"
+    },
+    "wood": {
+      "label": "medium wood",
+      "rgba": [
+        0.5,
+        0.28,
+        0.11,
+        1.0
+      ],
+      "mass": 2.0,
+      "loading_time_s": 1.55,
+      "grip_close_s": 0.34,
+      "walk_speed_mps": 0.43,
+      "leg_compression_m": 0.03,
+      "difficulty": "medium"
+    },
+    "metal": {
+      "label": "heavy metal",
+      "rgba": [
+        0.55,
+        0.6,
+        0.64,
+        1.0
+      ],
+      "mass": 4.0,
+      "loading_time_s": 2.05,
+      "grip_close_s": 0.46,
+      "walk_speed_mps": 0.31,
+      "leg_compression_m": 0.055,
+      "difficulty": "hard"
+    }
+  },
+  "tile_size_m": 1.0,
+  "mujoco_depth": {
+    "quadruped_leg_joints": 36,
+    "arm_dof_per_robot": 7,
+    "gripper_slide_joints_per_robot": 2,
+    "collision_geoms": [
+      "package box",
+      "left/right gripper fingers and pads",
+      "cargo basket floor and rails",
+      "pickup shelf decks",
+      "fleet corridor obstacle pillar"
+    ],
+    "sensors": [
+      "leg joint position",
+      "Futurist right-arm joint position",
+      "gripper frame position",
+      "basket frame position",
+      "left/right finger touch",
+      "basket touch"
+    ],
+    "actuators": "position actuators on AEGIS leg joints, seven Futurist-derived arm joints, and two finger slide joints"
+  },
+  "contact_totals": {
+    "gripper_box": 458,
+    "receiver_gripper_box": 192,
+    "box_basket": 190,
+    "box_shelf": 0,
+    "arm_basket": 0,
+    "robot_obstacle": 0,
+    "box_obstacle": 0,
+    "total_contacts": 8907
+  },
+  "fleet_physics_metrics": {
+    "min_robot_spacing_m": 0.6161,
+    "min_obstacle_clearance_m": 0.6513
+  },
+  "physics_note": "Package, shelf, basket, and gripper use MuJoCo collision geoms. During grasp and carry phases the package follows the wrist pose with matching orientation, then releases into the basket. This is still a scripted atomic-skill demo, not a full closed-loop grasp controller.",
+  "success": true,
+  "trajectory_samples": [
+    {
+      "time_s": 0.0,
+      "sender_base": [
+        -1.35,
+        0.32,
+        0.29
+      ],
+      "contacts": {
+        "gripper_box": 22,
+        "receiver_gripper_box": 0,
+        "box_basket": 0,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "robot_obstacle": 0,
+        "box_obstacle": 0,
+        "total_contacts": 121
+      },
+      "receiver_base": [
+        1.38,
+        -0.48,
+        0.333
+      ],
+      "traffic_base": [
+        -0.2,
+        -1.05,
+        0.335
+      ],
+      "box_pos": [
+        -0.94973,
+        0.31742,
+        1.42448
+      ],
+      "clearance": {
+        "min_robot_spacing_m": 1.6797,
+        "min_obstacle_clearance_m": 0.7089
+      }
+    },
+    {
+      "time_s": 0.2,
+      "sender_base": [
+        -1.3208,
+        0.32674,
+        0.29905
+      ],
+      "contacts": {
+        "gripper_box": 21,
+        "receiver_gripper_box": 0,
+        "box_basket": 0,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "robot_obstacle": 0,
+        "box_obstacle": 0,
+        "total_contacts": 105
+      },
+      "receiver_base": [
+        1.38,
+        -0.48,
+        0.33592
+      ],
+      "traffic_base": [
+        -0.2,
+        -1.05,
+        0.33792
+      ],
+      "box_pos": [
+        -0.92296,
+        0.33916,
+        1.43345
+      ],
+      "clearance": {
+        "min_robot_spacing_m": 1.6797,
+        "min_obstacle_clearance_m": 0.7089
+      }
+    },
+    {
+      "time_s": 0.4,
+      "sender_base": [
+        -1.23828,
+        0.34578,
+        0.28229
+      ],
+      "contacts": {
+        "gripper_box": 9,
+        "receiver_gripper_box": 0,
+        "box_basket": 0,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "robot_obstacle": 0,
+        "box_obstacle": 0,
+        "total_contacts": 94
+      },
+      "receiver_base": [
+        1.38,
+        -0.48,
+        0.33699
+      ],
+      "traffic_base": [
+        -0.2,
+        -1.05,
+        0.33899
+      ],
+      "box_pos": [
+        -0.87587,
+        0.36145,
+        1.35512
+      ],
+      "clearance": {
+        "min_robot_spacing_m": 1.6797,
+        "min_obstacle_clearance_m": 0.7089
+      }
+    },
+    {
+      "time_s": 0.6,
+      "sender_base": [
+        -1.11006,
+        0.37537,
+        0.28751
+      ],
+      "contacts": {
+        "gripper_box": 0,
+        "receiver_gripper_box": 0,
+        "box_basket": 0,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "robot_obstacle": 0,
+        "box_obstacle": 0,
+        "total_contacts": 85
+      },
+      "receiver_base": [
+        1.38,
+        -0.48,
+        0.33555
+      ],
+      "traffic_base": [
+        -0.2,
+        -1.05,
+        0.33755
+      ],
+      "box_pos": [
+        -0.96239,
+        0.37638,
+        0.97329
+      ],
+      "clearance": {
+        "min_robot_spacing_m": 1.6797,
+        "min_obstacle_clearance_m": 0.7089
+      }
+    },
+    {
+      "time_s": 0.8,
+      "sender_base": [
+        -0.94375,
+        0.41375,
+        0.29982
+      ],
+      "contacts": {
+        "gripper_box": 0,
+        "receiver_gripper_box": 0,
+        "box_basket": 4,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "robot_obstacle": 0,
+        "box_obstacle": 0,
+        "total_contacts": 92
+      },
+      "receiver_base": [
+        1.38,
+        -0.48,
+        0.3325
+      ],
+      "traffic_base": [
+        -0.2,
+        -1.05,
+        0.3345
+      ],
+      "box_pos": [
+        -1.02248,
+        0.40736,
+        0.58063
+      ],
+      "clearance": {
+        "min_robot_spacing_m": 1.6419,
+        "min_obstacle_clearance_m": 0.6705
+      }
+    },
+    {
+      "time_s": 1.0,
+      "sender_base": [
+        -0.74697,
+        0.45916,
+        0.28412
+      ],
+      "contacts": {
+        "gripper_box": 0,
+        "receiver_gripper_box": 0,
+        "box_basket": 4,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "robot_obstacle": 0,
+        "box_obstacle": 0,
+        "total_contacts": 84
+      },
+      "receiver_base": [
+        1.38,
+        -0.48,
+        0.32976
+      ],
+      "traffic_base": [
+        -0.2,
+        -1.05,
+        0.33176
+      ],
+      "box_pos": [
+        -0.82672,
+        0.45277,
+        0.56312
+      ],
+      "clearance": {
+        "min_robot_spacing_m": 1.6052,
+        "min_obstacle_clearance_m": 0.5168
+      }
+    },
+    {
+      "time_s": 1.2,
+      "sender_base": [
+        -0.52734,
+        0.50984,
+        0.28518
+      ],
+      "contacts": {
+        "gripper_box": 0,
+        "receiver_gripper_box": 0,
+        "box_basket": 4,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "robot_obstacle": 0,
+        "box_obstacle": 0,
+        "total_contacts": 91
+      },
+      "receiver_base": [
+        1.38,
+        -0.48,
+        0.32907
+      ],
+      "traffic_base": [
+        -0.2,
+        -1.05,
+        0.33107
+      ],
+      "box_pos": [
+        -0.60709,
+        0.50345,
+        0.56418
+      ],
+      "clearance": {
+        "min_robot_spacing_m": 1.5938,
+        "min_obstacle_clearance_m": 0.3735
+      }
+    },
+    {
+      "time_s": 1.4,
+      "sender_base": [
+        -0.29248,
+        0.56404,
+        0.29998
+      ],
+      "contacts": {
+        "gripper_box": 0,
+        "receiver_gripper_box": 0,
+        "box_basket": 4,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "robot_obstacle": 0,
+        "box_obstacle": 0,
+        "total_contacts": 89
+      },
+      "receiver_base": [
+        1.38,
+        -0.48,
+        0.33086
+      ],
+      "traffic_base": [
+        -0.2,
+        -1.05,
+        0.33286
+      ],
+      "box_pos": [
+        -0.37222,
+        0.55765,
+        0.57898
+      ],
+      "clearance": {
+        "min_robot_spacing_m": 1.6167,
+        "min_obstacle_clearance_m": 0.2754
+      }
+    },
+    {
+      "time_s": 1.6,
+      "sender_base": [
+        -0.05,
+        0.62,
+        0.28632
+      ],
+      "contacts": {
+        "gripper_box": 0,
+        "receiver_gripper_box": 0,
+        "box_basket": 4,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "robot_obstacle": 0,
+        "box_obstacle": 0,
+        "total_contacts": 89
+      },
+      "receiver_base": [
+        1.38,
+        -0.48,
+        0.33399
+      ],
+      "traffic_base": [
+        -0.2,
+        -1.05,
+        0.33599
+      ],
+      "box_pos": [
+        -0.12974,
+        0.61361,
+        0.56532
+      ],
+      "clearance": {
+        "min_robot_spacing_m": 1.6767,
+        "min_obstacle_clearance_m": 0.262
+      }
+    },
+    {
+      "time_s": 1.8,
+      "sender_base": [
+        0.18688,
+        0.56031,
+        0.28315
+      ],
+      "contacts": {
+        "gripper_box": 0,
+        "receiver_gripper_box": 0,
+        "box_basket": 4,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "robot_obstacle": 0,
+        "box_obstacle": 0,
+        "total_contacts": 90
+      },
+      "receiver_base": [
+        1.38,
+        -0.48,
+        0.33651
+      ],
+      "traffic_base": [
+        -0.197,
+        -1.05021,
+        0.32815
+      ],
+      "box_pos": [
+        0.10714,
+        0.55392,
+        0.56215
+      ],
+      "clearance": {
+        "min_robot_spacing_m": 1.583,
+        "min_obstacle_clearance_m": 0.2307
+      }
+    },
+    {
+      "time_s": 2.0,
+      "sender_base": [
+        0.41633,
+        0.5025,
+        0.29951
+      ],
+      "contacts": {
+        "gripper_box": 0,
+        "receiver_gripper_box": 0,
+        "box_basket": 4,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "robot_obstacle": 0,
+        "box_obstacle": 0,
+        "total_contacts": 83
+      },
+      "receiver_base": [
+        1.38,
+        -0.48,
+        0.3368
+      ],
+      "traffic_base": [
+        -0.04675,
+        -1.06095,
+        0.34451
+      ],
+      "box_pos": [
+        0.33658,
+        0.49611,
+        0.57851
+      ],
+      "clearance": {
+        "min_robot_spacing_m": 1.3762,
+        "min_obstacle_clearance_m": 0.2926
+      }
+    },
+    {
+      "time_s": 2.2,
+      "sender_base": [
+        0.63089,
+        0.44844,
+        0.28875
+      ],
+      "contacts": {
+        "gripper_box": 0,
+        "receiver_gripper_box": 0,
+        "box_basket": 0,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "robot_obstacle": 0,
+        "box_obstacle": 0,
+        "total_contacts": 87
+      },
+      "receiver_base": [
+        1.38,
+        -0.48,
+        0.3347
+      ],
+      "traffic_base": [
+        0.21359,
+        -1.07954,
+        0.33375
+      ],
+      "box_pos": [
+        0.55997,
+        0.13687,
+        0.531
+      ],
+      "clearance": {
+        "min_robot_spacing_m": 1.193,
+        "min_obstacle_clearance_m": 0.414
+      }
+    },
+    {
+      "time_s": 2.4,
+      "sender_base": [
+        0.82312,
+        0.4,
+        0.28156
+      ],
+      "contacts": {
+        "gripper_box": 10,
+        "receiver_gripper_box": 10,
+        "box_basket": 0,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "robot_obstacle": 0,
+        "box_obstacle": 0,
+        "total_contacts": 93
+      },
+      "receiver_base": [
+        1.37968,
+        -0.47994,
+        0.32456
+      ],
+      "traffic_base": [
+        0.52968,
+        -1.04682,
+        0.32656
+      ],
+      "box_pos": [
+        0.5784,
+        -0.32127,
+        0.46594
+      ],
+      "clearance": {
+        "min_robot_spacing_m": 1.0217,
+        "min_obstacle_clearance_m": 0.5552
+      }
+    },
+    {
+      "time_s": 2.6,
+      "sender_base": [
+        0.9856,
+        0.35906,
+        0.29844
+      ],
+      "contacts": {
+        "gripper_box": 20,
+        "receiver_gripper_box": 20,
+        "box_basket": 0,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "robot_obstacle": 0,
+        "box_obstacle": 0,
+        "total_contacts": 100
+      },
+      "receiver_base": [
+        1.30285,
+        -0.46457,
+        0.34144
+      ],
+      "traffic_base": [
+        0.72222,
+        -1.02619,
+        0.34344
+      ],
+      "box_pos": [
+        0.38193,
+        -0.33498,
+        0.71394
+      ],
+      "clearance": {
+        "min_robot_spacing_m": 0.8078,
+        "min_obstacle_clearance_m": 0.689
+      }
+    },
+    {
+      "time_s": 2.8,
+      "sender_base": [
+        1.11086,
+        0.3275,
+        0.29125
+      ],
+      "contacts": {
+        "gripper_box": 0,
+        "receiver_gripper_box": 0,
+        "box_basket": 0,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "robot_obstacle": 0,
+        "box_obstacle": 0,
+        "total_contacts": 87
+      },
+      "receiver_base": [
+        1.04789,
+        -0.43421,
+        0.33425
+      ],
+      "traffic_base": [
+        0.7798,
+        -1.02002,
+        0.33625
+      ],
+      "box_pos": [
+        0.82574,
+        -0.40895,
+        1.08429
+      ],
+      "clearance": {
+        "min_robot_spacing_m": 0.6442,
+        "min_obstacle_clearance_m": 0.7743
+      }
+    },
+    {
+      "time_s": 3.0,
+      "sender_base": [
+        1.19147,
+        0.30719,
+        0.28049
+      ],
+      "contacts": {
+        "gripper_box": 0,
+        "receiver_gripper_box": 0,
+        "box_basket": 0,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "robot_obstacle": 0,
+        "box_obstacle": 0,
+        "total_contacts": 80
+      },
+      "receiver_base": [
+        0.93014,
+        -0.42113,
+        0.32349
+      ],
+      "traffic_base": [
+        0.78,
+        -1.02,
+        0.32549
+      ],
+      "box_pos": [
+        0.98811,
+        -0.42219,
+        0.64906
+      ],
+      "clearance": {
+        "min_robot_spacing_m": 0.6174,
+        "min_obstacle_clearance_m": 0.661
+      }
+    }
+  ]
+}

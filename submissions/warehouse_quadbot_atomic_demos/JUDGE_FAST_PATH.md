@@ -15,7 +15,7 @@ Expected result:
 - Fleet stress benchmark reports 54 scenarios, 108 raw planner runs, 2,916 simulated robot-hours.
 - Safety reports 100% pass, 0 collisions, and 0 tile-lock overlaps.
 - Planner comparison reports +30.74% average throughput uplift and +97.42% best uplift.
-- MuJoCo evidence reports 12 generated clips, generated MJCF, contact traces, contact sheet, loaded walk, shelf pickup, basket contact, robot-to-robot handoff, and two 6-DOF grasp sweeps.
+- MuJoCo evidence reports 13 generated clips, generated MJCF, contact traces, contact sheet, loaded walk, shelf pickup, basket contact, robot-to-robot handoff, two 6-DOF grasp sweeps, and a three-AEGIS corridor physics clip with zero obstacle contacts.
 - The heavy 6-DOF sweep records 630 gripper/package contacts and 36 dual-finger grasp frames; the heavy handoff records 279 receiver-gripper/package contacts.
 
 ## Why This Helps Review

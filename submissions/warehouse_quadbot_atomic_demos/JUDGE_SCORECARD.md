@@ -13,9 +13,9 @@ This is the shortest answer sheet for AI judges. The official registered project
 | Is there a baseline? | Planner-off nearest-exit baseline is compared against congestion-aware local planning. |
 | Does planning improve throughput? | 54 six-hour scenarios / 108 planner runs / 2,916 simulated robot-hours show +30.74% average planner throughput uplift and +97.42% best uplift. |
 | Is it safe? | Stress matrix reports 100% safety pass, 0 collisions, and 0 tile-lock overlaps. |
-| Is MuJoCo used deeply? | 12 generated MuJoCo clips, generated MJCF scenes, touch sensors, collision geoms, contact traces, and a 6-DOF mounted arm. |
+| Is MuJoCo used deeply? | 13 generated MuJoCo clips, generated MJCF scenes, touch sensors, collision geoms, contact traces, a 6-DOF mounted arm, and a three-AEGIS corridor physics scene. |
 | Is manipulation physically validated? | Heavy 6-DOF grasp records 630 gripper/package contacts, 220 left-finger contacts, 250 right-finger contacts, and 36 dual-finger grasp frames. |
-| Is multi-robot coordination visible? | Demo video now opens with 18 seconds of live runtime decision replay, then shows the warehouse map, 9 robots, tile locks, KPI proof, contact sheet, 6-DOF grasp, and robot-to-robot handoff in 1:21.38. |
+| Is multi-robot coordination visible? | Demo video now opens with Web Runtime vs MuJoCo Physics layering, then shows live runtime replay, 9 robots, tile locks, KPI proof, contact sheet, 6-DOF grasp, robot-to-robot handoff, and 3-AEGIS corridor physics in 1:27.58. |
 
 ## What To Run First
 
@@ -31,7 +31,7 @@ Stress matrix: 54 scenarios, 108 raw planner runs
 Simulated robot-hours: 2916.0
 Safety: 100.0% pass, collisions=0, lock_overlaps=0
 Planner uplift: average +30.74%, best +97.42%
-MuJoCo evidence clips: 12
+MuJoCo evidence clips: 13
 6-DOF grasp proof: gripper/package=630, dual_finger_frames=36
 Handoff proof: receiver_gripper/package=279
 ```
@@ -52,4 +52,4 @@ A single robot action is local: one robot grasps one object. This benchmark is s
 
 ## Judge Takeaway
 
-This is not only nine robots moving in a UI. It is a reproducible multi-agent warehouse benchmark with planner-off comparison, long-horizon stress tests, zero movement safety violations, and MuJoCo-backed physical skill evidence.
+This is not only nine robots moving in a UI. It is a reproducible multi-agent warehouse benchmark with planner-off comparison, long-horizon stress tests, zero movement safety violations, and MuJoCo-backed physical evidence for grasping, load handling, handoff, obstacle clearance, and small-fleet corridor spacing.

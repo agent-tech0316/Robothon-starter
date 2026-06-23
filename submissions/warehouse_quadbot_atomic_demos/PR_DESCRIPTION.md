@@ -11,9 +11,9 @@ Registration UUID: 13b27675-9c26-49df-9014-cb31f33f9df8
 | Safety | 100% pass, 0 collisions, 0 tile-lock overlaps |
 | Planner value | +30.74% average throughput uplift, +97.42% best uplift vs planner-off baseline |
 | High-load result | 91 / 140 orders, 364 orders/hour, 0 movement safety violations |
-| MuJoCo depth | 12 evidence clips, generated MJCF, touch sensors, collision geoms, contact traces |
+| MuJoCo depth | 13 evidence clips, generated MJCF, touch sensors, collision geoms, contact traces, 3-robot corridor physics |
 | 6-DOF grasp proof | 630 gripper/package contacts, 220 left-finger contacts, 250 right-finger contacts, 36 dual-finger grasp frames |
-| Demo | 1:21.38 AI-judge cut with expanded live runtime decision replay, benchmark proof, contact sheet, 6-DOF grasp, and handoff |
+| Demo | 1:27.58 AI-judge cut with Web/MuJoCo layered validation, expanded live runtime decision replay, and 3-robot corridor physics, benchmark proof, contact sheet, 6-DOF grasp, and handoff |
 
 Run first: `python examples/run_agentech_judge_review.py`. Read first: `submissions/warehouse_quadbot_atomic_demos/JUDGE_SCORECARD.md`.
 
@@ -25,11 +25,11 @@ The core challenge is fleet-level coordination: one robot can move a parcel, but
 
 Judge-facing distinction: this is not only a multi-robot clip. It is a scalable warehouse benchmark. MuJoCo proves the atomic robot skills are physically plausible; the runtime proves that fleet decisions improve throughput under congestion, SKU-weight variation, pick difficulty, and long-horizon load.
 
-Latest judge fast path: `python examples/run_agentech_judge_review.py` prints artifact readiness, 54-scenario stress benchmark results, medium/high runtime metrics, 12 MuJoCo evidence clips, 6-DOF grasp contact proof, and rubric mapping without requiring the dashboard UI.
+Latest judge fast path: `python examples/run_agentech_judge_review.py` prints artifact readiness, 54-scenario stress benchmark results, medium/high runtime metrics, 13 MuJoCo evidence clips, 6-DOF grasp contact proof, 3-robot corridor physics, and rubric mapping without requiring the dashboard UI.
 
 # Robot Platform
 
-Faraday Future AEGIS quadruped, with a BASE_LINK-mounted basket and a Futurist-right-arm-derived six-axis front manipulator. MuJoCo evidence clips validate walking, payload carrying, shelf pickup, basket contact, robot-to-robot handoff, and new 6-DOF overhead grasp sweeps with wrist roll/tool yaw and fingertip/package contacts.
+Faraday Future AEGIS quadruped, with a BASE_LINK-mounted basket and a Futurist-right-arm-derived six-axis front manipulator. MuJoCo evidence clips validate walking, payload carrying, shelf pickup, basket contact, robot-to-robot handoff, 6-DOF overhead grasp sweeps, and a new three-AEGIS corridor scene with loaded obstacle avoidance.
 
 # Task Goal
 
@@ -46,14 +46,14 @@ The runtime uses four-direction movement, atomic source+destination locks, deadl
 - Warehouse optimization framed as a mission/workflow/skill-graph runtime rather than low-level robot control.
 - Fleet-level benchmark: 9 robots must share discrete aisles, reserve tiles, avoid deadlocks, handle priority pressure, and improve throughput together.
 - Local planner multi-port conveyor selection improves high-load throughput from 64/hr planner-off to 364/hr local (+468.8%) while preserving zero movement safety violations.
-- MuJoCo used as physical evidence for atomic skills while fleet planning stays in a scalable tile-level simulator.
+- MuJoCo used as physical evidence for grasp/load/obstacle/small-fleet physics while the web runtime handles scalable agentic planning, congestion analysis, route optimization, and throughput benchmarks.
 - MuJoCo evidence scorecard makes physical validation inspectable: joints, actuators, sensors, contact counters, payload response, and two-robot handoff scene depth.
-- Added two extra judge-facing MuJoCo videos beyond the main demo: `six_dof_grasp_sweep_wood.mp4` and `six_dof_grasp_sweep_metal.mp4`, showing a six-axis arm carrying parcels through an overhead arc while wrist roll/tool yaw reorient the package.
+- Added judge-facing MuJoCo videos beyond the main demo: `six_dof_grasp_sweep_wood.mp4`, `six_dof_grasp_sweep_metal.mp4`, and `fleet_physics_corridor.mp4`, showing six-axis parcel handling plus three-AEGIS loaded corridor avoidance.
 - Heavy 6-DOF grasp evidence records 630 gripper/package contacts, 220 left-finger contacts, 250 right-finger contacts, and 36 dual-finger grasp frames; the heavy handoff records 279 receiver-gripper/package contacts.
 - Runtime snapshots expose robot state, order state, movement locks, rack-blocking, congestion, conveyor door/unload tiles, and KPI metrics directly to the dashboard.
 - One-command AI judge fast path reduces review friction and directly addresses the prior UI-complexity feedback.
-- New default AI Decision Board makes scheduler intent visible: selected robot, reserved tile lock, next skill, and the text decision are shown above the live map.
-- Default simplified UI mode directly addresses prior judge feedback: first screen now shows only throughput, safety, MuJoCo proof, AI decision, and the live map; dense ops panels are one click away.
+- New default AI Decision Board plus tabbed Agentic Planner graph/table/text view makes scheduler intent visible: selected robot, reserved tile lock, next skill, mission/workflow/skill/runtime/KPI path, and text decision are shown above the live map.
+- Default simplified UI mode directly addresses prior judge feedback: first screen now shows throughput, safety, MuJoCo proof, Agentic Planner graph, AI decision, and the live map; dense ops panels are one click away.
 - Dashboard benchmark proof strip exposes the medium planner-off baseline, local-planner result, and zero safety violations in the first KPI panel.
 - Simplified Judge Review Path reduces UI scanning cost by surfacing fleet size, planner uplift, safety, replans, and MuJoCo skill proof in one narrow rail.
 - Multi-wall outbound model uses four exterior conveyor ports; each belt sits outside the warehouse boundary with an outer roll-up door line and one valid in-warehouse edge unload tile, giving the planner real exit-selection pressure instead of a broad fake drop zone.
@@ -77,11 +77,12 @@ Safety violations include blocked tiles, non-cardinal moves, robot collisions, a
 
 Final 1-3 minute demo video: `submissions/warehouse_quadbot_atomic_demos/demo.mp4`
 
-The final video is now a 1:21.38 AI-judge review cut. The first 18 seconds are expanded live runtime decision footage: 9 robots moving, tile locks, AI decision text, selected robot, next skill, order pressure, KPI proof, then 54-scenario benchmark numbers, contact-sheet evidence, and 6-DOF MuJoCo grasp/handoff proof.
+The final video is now a 1:27.58 AI-judge review cut. The final cut opens with a Web Runtime vs MuJoCo Physics title card, then live runtime decision footage: 9 robots moving, tile locks, AI decision text, selected robot, next skill, order pressure, KPI proof, 54-scenario benchmark numbers, contact-sheet evidence, 6-DOF MuJoCo grasp/handoff proof, and the new 3-AEGIS corridor physics clip.
 
 Included evidence clips:
 
 - `submissions/warehouse_quadbot_atomic_demos/outputs/runtime_live_decision_replay.mp4`
+- `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/fleet_physics_corridor.mp4`
 - `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/*.mp4`
 - `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/six_dof_grasp_sweep_wood.mp4`
 - `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/six_dof_grasp_sweep_metal.mp4`
@@ -112,4 +113,4 @@ http://127.0.0.1:8765/submissions/warehouse_quadbot_atomic_demos/ui/index.html
 
 Clean-copy validation passed with Python 3.12: dependency install, runtime data generation, medium benchmark run, pytest smoke tests, MuJoCo shelf-pick smoke generation, and HTTP resource checks for UI/runtime/video artifacts.
 
-Final demo video is included as `submissions/warehouse_quadbot_atomic_demos/demo.mp4`; the latest 1:21.38 judge-cut video audit passed locally with expanded live runtime footage.
+Final demo video is included as `submissions/warehouse_quadbot_atomic_demos/demo.mp4`; the latest 1:27.58 judge-cut video audit passed locally with layered Web/MuJoCo validation, expanded live runtime footage, and 3-robot MuJoCo corridor physics.

@@ -80,7 +80,7 @@ def main() -> int:
 
     print("MuJoCo physical evidence")
     print(f"- Evidence clips: {len(clips)}")
-    print("- Representative scenes: shelf pickup, loaded walk, basket contact, two-robot handoff, 6-DOF grasp sweep")
+    print("- Representative scenes: shelf pickup, loaded walk, basket contact, two-robot handoff, 6-DOF grasp sweep, 3-robot corridor physics")
     print(f"- 6-DOF grasp proof: gripper/package={six_contacts.get('gripper_package', 0)}, dual_finger_frames={six_contacts.get('dual_finger_grasp_frames', 0)}")
     print(f"- Handoff proof: receiver_gripper/package={handoff_contacts.get('package_receiver_gripper', 0)}")
     print("- Inspectable assets: generated MJCF, contact traces, contact sheet, MP4 clips")

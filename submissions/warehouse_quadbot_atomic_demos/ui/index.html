@@ -186,6 +186,35 @@
               <span><small>MuJoCo Proof</small><b>clips + contacts</b></span>
               <span><small>Review Command</small><b>run_agentech_judge_review.py</b></span>
             </div>
+            <div class="judge-planner-board" aria-label="Agentic planner graph">
+              <div class="planner-tabbar" role="tablist" aria-label="Planner views">
+                <button class="planner-tab active" data-planner-tab="graph" type="button">Graph</button>
+                <button class="planner-tab" data-planner-tab="table" type="button">Table</button>
+                <button class="planner-tab" data-planner-tab="text" type="button">Text</button>
+              </div>
+              <div class="planner-panel active" data-planner-panel="graph">
+                <div class="planner-graph-line" aria-hidden="true">
+                  <span>Mission</span><i></i><span>Workflow</span><i></i><span>Skill Graph</span><i></i><span>Runtime</span><i></i><span>KPI</span>
+                </div>
+                <div class="planner-graph-metrics">
+                  <span><small>Orders</small><b id="plannerMetricOrders">91/140</b></span>
+                  <span><small>Locks</small><b id="plannerMetricLocks">18</b></span>
+                  <span><small>Replans</small><b id="plannerMetricReplans">07</b></span>
+                </div>
+              </div>
+              <div class="planner-panel" data-planner-panel="table">
+                <table class="planner-table">
+                  <tbody>
+                    <tr><th>Input</th><td id="plannerTableInput">High-load orders + rack obstacles</td></tr>
+                    <tr><th>Decision</th><td id="plannerTableDecision">Reserve source/destination tiles</td></tr>
+                    <tr><th>Output</th><td id="plannerTableOutput">0 safety violations</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="planner-panel" data-planner-panel="text">
+                <p id="plannerTextSummary">The planner converts order pressure into robot assignment, route-window reservations, skill execution, and throughput metrics.</p>
+              </div>
+            </div>
             <div class="judge-decision-board" aria-label="Current AI planner decision">
               <span class="kicker">AI Decision Board</span>
               <strong id="judgeDecisionText">Assign Q-03 to metal priority order.</strong>
@@ -362,6 +391,6 @@
       </main>
     </div>
 
-    <script src="./app.js?v=ai-decision-board-v1"></script>
+    <script src="./app.js?v=planner-graph-polish-v1"></script>
   </body>
 </html>

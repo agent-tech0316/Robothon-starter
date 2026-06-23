@@ -73,6 +73,13 @@ const els = {
   judgeDecisionRobot: document.getElementById("judgeDecisionRobot"),
   judgeDecisionLock: document.getElementById("judgeDecisionLock"),
   judgeDecisionSkill: document.getElementById("judgeDecisionSkill"),
+  plannerMetricOrders: document.getElementById("plannerMetricOrders"),
+  plannerMetricLocks: document.getElementById("plannerMetricLocks"),
+  plannerMetricReplans: document.getElementById("plannerMetricReplans"),
+  plannerTableInput: document.getElementById("plannerTableInput"),
+  plannerTableDecision: document.getElementById("plannerTableDecision"),
+  plannerTableOutput: document.getElementById("plannerTableOutput"),
+  plannerTextSummary: document.getElementById("plannerTextSummary"),
   fleetMode: document.getElementById("fleetMode"),
   robotStatusList: document.getElementById("robotStatusList"),
   orderTable: document.getElementById("orderTable"),
@@ -2658,6 +2665,13 @@ function updateDom() {
   if (els.judgeDecisionRobot) els.judgeDecisionRobot.textContent = judgeDecision.robot;
   if (els.judgeDecisionLock) els.judgeDecisionLock.textContent = judgeDecision.lock;
   if (els.judgeDecisionSkill) els.judgeDecisionSkill.textContent = judgeDecision.skill;
+  if (els.plannerMetricOrders) els.plannerMetricOrders.textContent = `${completedOrders}/${createdRate ? Math.max(completedOrders, Math.round(createdRate * 0.35)) : "140"}`;
+  if (els.plannerMetricLocks) els.plannerMetricLocks.textContent = String(tileLocks).padStart(2, "0");
+  if (els.plannerMetricReplans) els.plannerMetricReplans.textContent = String(replanCount).padStart(2, "0");
+  if (els.plannerTableInput) els.plannerTableInput.textContent = `${capitalize(state.load)} load / ${pendingOrders} pending / ${congestion} congestion signals`;
+  if (els.plannerTableDecision) els.plannerTableDecision.textContent = `${judgeDecision.robot} reserves ${judgeDecision.lock}, then runs ${judgeDecision.skill}`;
+  if (els.plannerTableOutput) els.plannerTableOutput.textContent = `${Math.round(completedRate)}/hr, ${safetyViolations} safety violations, ${Math.round(utilization)}% utilization`;
+  if (els.plannerTextSummary) els.plannerTextSummary.textContent = `Planner graph: mission orders become workflow steps, skill-graph actions, tile-lock reservations, and KPI updates. Current decision: ${judgeDecision.text}`;
   if (els.fleetMode) els.fleetMode.textContent = state.load === "high" ? "Surge" : state.load === "low" ? "Economy" : "Balanced";
   if (els.zoneHealth) els.zoneHealth.textContent = healthBad ? "Check" : (congestion ? "Busy" : "Clear");
   if (els.skuMix) els.skuMix.textContent = state.load === "high" ? "Heavy Mix" : state.load === "low" ? "Light Mix" : "Live Mix";
@@ -3188,6 +3202,14 @@ function bindEvents() {
       state.log.push(state.planner ? "Agentic planner enabled." : "Planner switched to manual queue mode.");
     });
   }
+
+  document.querySelectorAll("[data-planner-tab]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const tab = button.dataset.plannerTab;
+      document.querySelectorAll("[data-planner-tab]").forEach((node) => node.classList.toggle("active", node === button));
+      document.querySelectorAll("[data-planner-panel]").forEach((panel) => panel.classList.toggle("active", panel.dataset.plannerPanel === tab));
+    });
+  });
 
   canvas.addEventListener("pointerdown", handlePointerDown);
   canvas.addEventListener("pointermove", handlePointerMove);

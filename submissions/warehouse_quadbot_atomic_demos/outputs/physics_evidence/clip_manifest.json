@@ -1,10 +1,11 @@
 {
   "project": "Warehouse Quadbot MuJoCo Physics Evidence",
-  "purpose": "Short UI-ready clips showing robot state, 6-DOF arm/gripper collision evidence, basket contact, shelf pickup, handoff, payload-dependent gait, and multi-angle fingertip grasp validation.",
+  "purpose": "Short UI-ready clips showing robot state, 6-DOF arm/gripper collision evidence, basket contact, shelf pickup, handoff, payload-dependent gait, multi-angle fingertip grasp validation, and a three-AEGIS fleet physics corridor.",
   "references": {
     "arm_layout": "UR5e-style six-axis manipulator hierarchy: base yaw, shoulder pitch, elbow pitch, wrist pitch, wrist roll, tool yaw.",
     "gripper_layout": "Panda/Robotiq-inspired two-finger gripper with fingertip collision pads and touch sites.",
-    "new_validation_clips": "six_dof_grasp_sweep_wood and six_dof_grasp_sweep_metal demonstrate overhead shelf-to-basket arcs, wrist roll/tool yaw, parcel orientation tracking, and dual-finger contact counters."
+    "new_validation_clips": "six_dof_grasp_sweep_wood and six_dof_grasp_sweep_metal demonstrate overhead shelf-to-basket arcs, wrist roll/tool yaw, parcel orientation tracking, and dual-finger contact counters.",
+    "fleet_physics_corridor": "Three AEGIS robots in MuJoCo share a narrow corridor while one carries a 4.0kg metal parcel; the clip records gripper/package contacts, basket contacts, obstacle clearance, and zero obstacle contacts."
   },
   "clips": [
     {
@@ -751,6 +752,56 @@
         "package_shelf": 0,
         "package_receiver_gripper": 279,
         "total_contacts": 3213
+      }
+    },
+    {
+      "name": "fleet_physics_corridor",
+      "kind": "fleet_physics",
+      "description": "Three AEGIS robots in one MuJoCo corridor: loaded robot avoids an obstacle, another robot waits for the handoff window, and a traffic robot clears the lower lane.",
+      "video": "outputs/physics_evidence/fleet_physics_corridor.mp4",
+      "trajectory": "outputs/physics_evidence/fleet_physics_corridor_trajectory.json",
+      "duration_s": 3.2,
+      "fps": 30,
+      "payload": {
+        "key": "metal",
+        "label": "heavy metal parcel",
+        "mass_kg": 4.0,
+        "difficulty": "hard"
+      },
+      "mujoco_depth": {
+        "quadruped_leg_joints": 36,
+        "arm_dof_per_robot": 7,
+        "gripper_slide_joints_per_robot": 2,
+        "collision_pairs_tracked": [
+          "gripper_box",
+          "receiver_gripper_box",
+          "box_basket",
+          "robot_obstacle",
+          "box_obstacle",
+          "total_contacts"
+        ],
+        "sensors": [
+          "leg jointpos",
+          "Futurist right-arm jointpos",
+          "gripper framepos",
+          "basket framepos",
+          "left/right finger touch",
+          "basket touch"
+        ],
+        "actuators": "position actuators on three AEGIS leg sets, three mounted arms, and three grippers",
+        "extra_physics_validation": "multi-robot spacing, obstacle clearance, loaded package transfer, gripper contact, basket contact, and zero obstacle contacts"
+      },
+      "contact_totals": {
+        "gripper_box": 458,
+        "receiver_gripper_box": 192,
+        "box_basket": 190,
+        "robot_obstacle": 0,
+        "box_obstacle": 0,
+        "total_contacts": 8907
+      },
+      "fleet_physics_metrics": {
+        "min_robot_spacing_m": 0.6161,
+        "min_obstacle_clearance_m": 0.6513
       }
     }
   ]
