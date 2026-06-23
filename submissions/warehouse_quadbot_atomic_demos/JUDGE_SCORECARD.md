@@ -15,7 +15,7 @@ This is the shortest answer sheet for AI judges. The official registered project
 | Is it safe? | Stress matrix reports 100% safety pass, 0 collisions, and 0 tile-lock overlaps. |
 | Is MuJoCo used deeply? | 12 generated MuJoCo clips, generated MJCF scenes, touch sensors, collision geoms, contact traces, and a 6-DOF mounted arm. |
 | Is manipulation physically validated? | Heavy 6-DOF grasp records 630 gripper/package contacts, 220 left-finger contacts, 250 right-finger contacts, and 36 dual-finger grasp frames. |
-| Is multi-robot coordination visible? | Demo video shows the live warehouse map, 9 robots, tile locks, KPI proof, contact sheet, 6-DOF grasp, and robot-to-robot handoff in 1:03.37. |
+| Is multi-robot coordination visible? | Demo video now opens with 18 seconds of live runtime decision replay, then shows the warehouse map, 9 robots, tile locks, KPI proof, contact sheet, 6-DOF grasp, and robot-to-robot handoff in 1:21.38. |
 
 ## What To Run First
 

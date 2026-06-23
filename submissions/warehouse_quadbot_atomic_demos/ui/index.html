@@ -186,6 +186,15 @@
               <span><small>MuJoCo Proof</small><b>clips + contacts</b></span>
               <span><small>Review Command</small><b>run_agentech_judge_review.py</b></span>
             </div>
+            <div class="judge-decision-board" aria-label="Current AI planner decision">
+              <span class="kicker">AI Decision Board</span>
+              <strong id="judgeDecisionText">Assign Q-03 to metal priority order.</strong>
+              <div class="judge-decision-chips">
+                <span><small>Robot</small><b id="judgeDecisionRobot">Q-03</b></span>
+                <span><small>Tile Lock</small><b id="judgeDecisionLock">T7,5</b></span>
+                <span><small>Next Skill</small><b id="judgeDecisionSkill">shelf_pick</b></span>
+              </div>
+            </div>
             <button id="detailModeBtn" class="command icon-step judge-detail-toggle" type="button">Show Ops Detail</button>
           </section>
 
@@ -353,6 +362,6 @@
       </main>
     </div>
 
-    <script src="./app.js?v=event-replay-rack-led-v1"></script>
+    <script src="./app.js?v=ai-decision-board-v1"></script>
   </body>
 </html>

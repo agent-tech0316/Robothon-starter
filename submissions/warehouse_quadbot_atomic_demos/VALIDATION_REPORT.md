@@ -143,7 +143,7 @@ Final demo video was integrated after recording:
 - Source located from the user desktop export, then replaced by a tighter AI-judge review cut.
 - Re-edited to combine UI runtime footage, benchmark title cards, MuJoCo contact sheet, 6-DOF grasp evidence, and handoff evidence.
 - Output: `submissions/warehouse_quadbot_atomic_demos/demo.mp4`
-- Properties: 1:03.37, 1280x720, H.264 video, AAC audio, approximately 8.7 MB.
+- Properties: 1:21.38, 1280x720, MP4 video, approximately 37.9 MB. The opening 18 seconds are live runtime decision replay.
 - README, PR description, manifest, write-up, and checklist were updated to reference the file.
 
 ## Remaining Final Check

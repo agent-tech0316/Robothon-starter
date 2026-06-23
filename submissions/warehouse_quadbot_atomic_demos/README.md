@@ -19,7 +19,7 @@ UUID: `13b27675-9c26-49df-9014-cb31f33f9df8`
 | High-load result | 91 / 140 orders, 364 orders/hour, 0 movement safety violations |
 | MuJoCo depth | 12 evidence clips, generated MJCF, touch sensors, collision geoms, contact traces |
 | 6-DOF grasp proof | 630 gripper/package contacts, 220 left-finger contacts, 250 right-finger contacts, 36 dual-finger grasp frames |
-| Demo | 1:03.37 AI-judge cut with runtime UI, benchmark proof, contact sheet, 6-DOF grasp, and handoff |
+| Demo | 1:21.38 AI-judge cut with expanded live runtime decision replay, benchmark proof, contact sheet, 6-DOF grasp, and handoff |
 
 Read first: [`JUDGE_SCORECARD.md`](JUDGE_SCORECARD.md). Run first: `python examples/run_agentech_judge_review.py`.
 
@@ -41,14 +41,15 @@ python examples/run_agentech_judge_review.py
 
 This prints the artifact check, fleet stress benchmark, medium/high runtime metrics, MuJoCo evidence count, and rubric mapping in one terminal summary. Details are in `JUDGE_FAST_PATH.md`.
 
-The dashboard also opens in simplified judge mode by default: the first screen shows throughput, safety, MuJoCo proof, and the live warehouse map; detailed operations panels are one click away.
+The dashboard also opens in simplified judge mode by default: the first screen shows throughput, safety, MuJoCo proof, the live warehouse map, and a dynamic AI Decision Board showing robot assignment, tile lock, and next skill; detailed operations panels are one click away.
 
 ## Demo Video
 
 Final 1-3 minute demo video: [`demo.mp4`](demo.mp4).
 
-The final demo video is included directly in this submission as `demo.mp4` (1:03.37, 720p H.264/AAC, 8.7 MB). It is paced as an AI-judge review cut: project identity, 9 robots sharing aisles, runtime KPI proof, 54-scenario benchmark numbers, contact-sheet evidence, and 6-DOF MuJoCo grasp/handoff proof. Additional MuJoCo evidence clips are included separately for physical inspection:
+The final demo video is included directly in this submission as `demo.mp4` (1:21.38, 720p MP4, 37.9 MB). It was recut in response to judge feedback: the opening 18 seconds now show live runtime decision replay with 9 robots, tile locks, AI planner decisions, KPI proof, and order pressure before moving into contact-sheet evidence and 6-DOF MuJoCo grasp/handoff proof. Additional evidence clips are included separately for physical inspection:
 
+- Live runtime decision replay: `outputs/runtime_live_decision_replay.mp4`
 - MuJoCo contact sheet: `outputs/physics_evidence/physics_evidence_contact_sheet.png`
 - New 6-DOF grasp videos: `outputs/physics_evidence/six_dof_grasp_sweep_wood.mp4` and `outputs/physics_evidence/six_dof_grasp_sweep_metal.mp4`
 - Atomic action preview sheet: `outputs/preview_contact_sheet.png`
@@ -193,7 +194,7 @@ Primary metrics:
 - The new heavy 6-DOF grasp sweep records 630 gripper/package contacts, 220 left-finger contacts, 250 right-finger contacts, and 36 dual-finger grasp frames.
 - The UI binds to generated runtime JSON and animates runtime-linked robot movement without closing open routes or using mock-only phase motion.
 - The first dashboard KPI panel now shows the high-load benchmark proof directly: 64/hr planner-off baseline, 364/hr local planner, and 0 movement safety violations.
-- The UI now includes a simplified Judge Review Path so evaluators can see fleet size, throughput uplift, safety, replans, and MuJoCo-backed skills without decoding the full operations dashboard.
+- The UI now includes a simplified Judge Review Path plus an AI Decision Board, so evaluators can see which robot was chosen, which tile was reserved, which skill runs next, and why throughput/safety metrics change without decoding the full operations dashboard.
 - The accelerated fleet stress benchmark runs 54 six-hour nominal/aisle-surge scenarios in about 7.7 wall-clock seconds, achieving 100% safety pass rate and +30.74% average planner throughput uplift.
 
 ## Installation

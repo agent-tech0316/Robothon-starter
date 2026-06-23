@@ -69,6 +69,10 @@ const els = {
   replanCount: document.getElementById("replanCount"),
   leftTileLocks: document.getElementById("leftTileLocks"),
   schedulerDecision: document.getElementById("schedulerDecision"),
+  judgeDecisionText: document.getElementById("judgeDecisionText"),
+  judgeDecisionRobot: document.getElementById("judgeDecisionRobot"),
+  judgeDecisionLock: document.getElementById("judgeDecisionLock"),
+  judgeDecisionSkill: document.getElementById("judgeDecisionSkill"),
   fleetMode: document.getElementById("fleetMode"),
   robotStatusList: document.getElementById("robotStatusList"),
   orderTable: document.getElementById("orderTable"),
@@ -713,6 +717,42 @@ function currentRuntimeLockTilePoints() {
 function runtimeLockCount(snapshot) {
   if (state.runtimeEvents.length) return currentRuntimeLockTileIds().size;
   return snapshot ? uniqueRuntimeLockTiles(snapshot) : state.robots.length * 2 + (state.load === "high" ? 7 : state.load === "low" ? 2 : 4);
+}
+
+function nextSkillForRobotStatus(status, deniedMoves) {
+  if (status === "LOADING") return "shelf_pick";
+  if (status === "UNLOADING") return "drop_off";
+  if (status === "EXCHANGE" || status === "HANDOFF") return "handoff";
+  if (status === "WAITING" || status === "BLOCKED" || deniedMoves.length) return "replan";
+  return "route_lock";
+}
+
+function currentJudgeDecision(snapshot, runtime, movementLocks) {
+  const deniedMoves = movementLocks.denied_moves || [];
+  const grantedMoves = movementLocks.granted_moves || [];
+  const activeRobot = state.robots.find((robot) => {
+    const status = robotStatus(robot);
+    return robot.currentOrder && robot.currentOrder !== "-" && status !== "IDLE";
+  }) || state.robots[0] || {};
+  const status = robotStatus(activeRobot || {});
+  const lockTile = activeRobot.lockTiles?.[0]
+    || grantedMoves.find((move) => move.robot_id === activeRobot.id)?.destination_tile
+    || deniedMoves.find((move) => move.robot_id === activeRobot.id)?.destination_tile
+    || grantedMoves[0]?.destination_tile
+    || activeRobot.tileId
+    || "T_00_00";
+  const skill = nextSkillForRobotStatus(status, deniedMoves);
+  const order = activeRobot.currentOrder && activeRobot.currentOrder !== "-" ? activeRobot.currentOrder : "next priority order";
+  const baseText = runtime.latest_decision || state.log[state.log.length - 1] || "Planner is selecting the next safe route.";
+  const readableText = deniedMoves.length
+    ? `Hold ${activeRobot.id || "fleet"}: ${compactTileLabel(lockTile)} is occupied, replan before moving ${order}.`
+    : `${baseText} Next: ${activeRobot.id || "fleet"} reserves ${compactTileLabel(lockTile)} for ${order}.`;
+  return {
+    text: readableText,
+    robot: activeRobot.id || "FLEET",
+    lock: compactTileLabel(lockTile),
+    skill,
+  };
 }
 
 function runtimeEventHomeTiles(events) {
@@ -2612,7 +2652,12 @@ function updateDom() {
   if (els.deadlockCount) els.deadlockCount.textContent = `${String(deadlockCount).padStart(2, "0")}`;
   if (els.replanCount) els.replanCount.textContent = `${String(replanCount).padStart(2, "0")}`;
   if (els.leftTileLocks) els.leftTileLocks.textContent = `${String(tileLocks).padStart(2, "0")}`;
+  const judgeDecision = currentJudgeDecision(snapshot, runtime, movementLocks);
   if (els.schedulerDecision) els.schedulerDecision.textContent = runtime.latest_decision || state.log[state.log.length - 1] || "Awaiting runtime event.";
+  if (els.judgeDecisionText) els.judgeDecisionText.textContent = judgeDecision.text;
+  if (els.judgeDecisionRobot) els.judgeDecisionRobot.textContent = judgeDecision.robot;
+  if (els.judgeDecisionLock) els.judgeDecisionLock.textContent = judgeDecision.lock;
+  if (els.judgeDecisionSkill) els.judgeDecisionSkill.textContent = judgeDecision.skill;
   if (els.fleetMode) els.fleetMode.textContent = state.load === "high" ? "Surge" : state.load === "low" ? "Economy" : "Balanced";
   if (els.zoneHealth) els.zoneHealth.textContent = healthBad ? "Check" : (congestion ? "Busy" : "Clear");
   if (els.skuMix) els.skuMix.textContent = state.load === "high" ? "Heavy Mix" : state.load === "low" ? "Light Mix" : "Live Mix";

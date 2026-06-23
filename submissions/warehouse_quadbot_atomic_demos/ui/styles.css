@@ -2560,11 +2560,11 @@ meter::-webkit-meter-optimum-value {
 
 .judge-simple-card {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(920px, 1.8fr) max-content;
-  gap: 18px;
+  grid-template-columns: minmax(0, 1.05fr) minmax(760px, 1.35fr) minmax(520px, 0.85fr) max-content;
+  gap: 16px;
   align-items: stretch;
   margin: 0 24px;
-  min-height: 192px;
+  min-height: 212px;
   border: 2px solid rgba(92, 221, 97, 0.34);
   background:
     linear-gradient(180deg, rgba(92, 221, 97, 0.08), transparent 48%),
@@ -2631,6 +2631,55 @@ meter::-webkit-meter-optimum-value {
   line-height: 1.05;
   overflow-wrap: anywhere;
   text-shadow: var(--type-shadow-strong);
+}
+
+.judge-decision-board {
+  display: grid;
+  align-content: center;
+  gap: 12px;
+  min-width: 0;
+  border: 2px solid rgba(50, 201, 244, 0.34);
+  background:
+    linear-gradient(180deg, rgba(50, 201, 244, 0.1), transparent 48%),
+    rgba(4, 10, 14, 0.82);
+  padding: 16px;
+  box-shadow: inset -4px -4px 0 rgba(0, 0, 0, 0.3);
+  text-transform: uppercase;
+  clip-path: polygon(0 7px, 7px 0, calc(100% - 7px) 0, 100% 7px, 100% calc(100% - 7px), calc(100% - 7px) 100%, 7px 100%, 0 calc(100% - 7px));
+}
+
+.judge-decision-board > strong {
+  color: var(--text);
+  font-size: 24px;
+  line-height: 1.18;
+  text-shadow: var(--type-shadow-strong);
+}
+
+.judge-decision-chips {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.judge-decision-chips span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.035);
+  padding: 10px;
+}
+
+.judge-decision-chips small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.judge-decision-chips b {
+  color: var(--cyan);
+  font-size: 18px;
+  line-height: 1;
+  overflow-wrap: anywhere;
 }
 
 .judge-detail-toggle {
