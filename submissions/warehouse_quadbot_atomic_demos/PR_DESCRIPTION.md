@@ -28,23 +28,24 @@ The runtime uses four-direction movement, atomic source+destination locks, deadl
 
 - Warehouse optimization framed as a mission/workflow/skill-graph runtime rather than low-level robot control.
 - Fleet-level benchmark: 9 robots must share discrete aisles, reserve tiles, avoid deadlocks, handle priority pressure, and improve throughput together.
-- Local planner route-window reservation improves medium throughput by +12.5% versus planner-off while preserving zero movement safety violations.
+- Local planner multi-port conveyor selection improves high-load throughput from 64/hr planner-off to 364/hr local (+468.8%) while preserving zero movement safety violations.
 - MuJoCo used as physical evidence for atomic skills while fleet planning stays in a scalable tile-level simulator.
 - MuJoCo evidence scorecard makes physical validation inspectable: joints, actuators, sensors, contact counters, payload response, and two-robot handoff scene depth.
-- Runtime snapshots expose robot state, order state, movement locks, rack-blocking, congestion, and KPI metrics directly to the dashboard.
+- Runtime snapshots expose robot state, order state, movement locks, rack-blocking, congestion, conveyor door/unload tiles, and KPI metrics directly to the dashboard.
 - One-command AI judge fast path reduces review friction and directly addresses the prior UI-complexity feedback.
 - Default simplified UI mode directly addresses prior judge feedback: first screen now shows only throughput, safety, MuJoCo proof, and the live map; dense ops panels are one click away.
 - Dashboard benchmark proof strip exposes the medium planner-off baseline, local-planner result, and zero safety violations in the first KPI panel.
 - Simplified Judge Review Path reduces UI scanning cost by surfacing fleet size, planner uplift, safety, replans, and MuJoCo skill proof in one narrow rail.
+- Multi-wall outbound model uses four exterior conveyor ports; each belt sits outside the warehouse boundary with an outer roll-up door line and one valid in-warehouse edge unload tile, giving the planner real exit-selection pressure instead of a broad fake drop zone.
 - Accelerated fleet stress benchmark runs 54 six-hour nominal/aisle-surge scenarios / 108 raw planner runs / 2,916 simulated robot-hours in about 7.7 seconds, with 100% safety pass rate and +30.74% average planner throughput uplift.
 
 # Benchmark Results
 
 | Load | Completed / Created | Throughput | Avg lock wait | Safety violations |
 | --- | ---: | ---: | ---: | ---: |
-| Low | 25 / 27 | 100/hr | 3.44 ticks | 0 |
-| Medium | 81 / 84 | 324/hr | 41.78 ticks | 0 |
-| High | 124 / 140 | 496/hr | 120.67 ticks | 0 |
+| Low | 24 / 27 | 96/hr | 2.89 ticks | 0 |
+| Medium | 77 / 84 | 308/hr | 30.67 ticks | 0 |
+| High | 91 / 140 | 364/hr | 38.56 ticks | 0 |
 
 Safety violations include blocked tiles, non-cardinal moves, robot collisions, and lock overlaps.
 

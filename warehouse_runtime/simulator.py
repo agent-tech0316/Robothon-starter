@@ -82,6 +82,10 @@ class Conveyor:
     conveyor_id: str
     unload_tile_id: str
     direction: str = "E"
+    wall: str | None = None
+    exterior_footprint: dict[str, float] | None = None
+    door_line: dict[str, float] | None = None
+    door_tile_id: str | None = None
     capacity_packages: int = 4
 
 
@@ -166,6 +170,9 @@ class WarehouseRuntime:
         self.layout_config = layout_config
         self.options = options or RuntimeOptions()
         self.random = random.Random(int(runtime_config.get("runtime", {}).get("random_seed", 20260620)))
+        warehouse_config = layout_config.get("warehouse", {})
+        self.tile_size_m = float(warehouse_config.get("tile_size_m", 1.0))
+        self.nominal_robot_speed_mps = float(warehouse_config.get("nominal_robot_speed_mps", 1.0))
         self.tick_seconds = float(
             runtime_config.get("simulation", {}).get(
                 "tick_duration_s",
@@ -406,6 +413,14 @@ class WarehouseRuntime:
                 raise ValueError(f"Rack {rack.rack_id} pick tile {rack.pick_tile_id} overlaps a blocked rack footprint")
         for conveyor_data in self.layout_config.get("outbound", {}).get("conveyors", []):
             conveyor = Conveyor(**conveyor_data)
+            if conveyor.unload_tile_id not in self.tiles:
+                raise ValueError(f"Conveyor {conveyor.conveyor_id} unload tile {conveyor.unload_tile_id} is outside the warehouse")
+            if not self.tiles[conveyor.unload_tile_id].traversable:
+                raise ValueError(f"Conveyor {conveyor.conveyor_id} unload tile {conveyor.unload_tile_id} must be a traversable drop tile")
+            # Conveyor belts and roll-up doors can live outside the warehouse grid;
+            # only the unload tile is a robot-accessible in-warehouse drop area.
+            if conveyor.door_tile_id and conveyor.door_tile_id in self.tiles and not self.tiles[conveyor.door_tile_id].traversable:
+                raise ValueError(f"Conveyor {conveyor.conveyor_id} door tile {conveyor.door_tile_id} overlaps a blocked warehouse tile")
             self.conveyors.append(conveyor)
             self.service_tiles.add(conveyor.unload_tile_id)
         for robot_data in self.layout_config.get("robots", []):
@@ -955,6 +970,8 @@ class WarehouseRuntime:
 
         def score(conveyor: Conveyor) -> float:
             distance = self._manhattan(origin, conveyor.unload_tile_id) if origin else 0
+            if self.options.planner_mode == "off":
+                return distance
             active_queue = sum(
                 1 for existing in self.orders.values()
                 if existing.order_id != order.order_id
@@ -1002,6 +1019,8 @@ class WarehouseRuntime:
 
         def score(conveyor: Conveyor) -> float:
             distance = self._manhattan(origin, conveyor.unload_tile_id) if origin else 0
+            if self.options.planner_mode == "off":
+                return distance
             active_queue = sum(
                 1 for existing in self.orders.values()
                 if existing.order_id != order.order_id
@@ -1019,16 +1038,16 @@ class WarehouseRuntime:
 
     def _move_duration_ticks(self, robot: Robot) -> int:
         multiplier = 1.0 + max(0.0, robot.carried_weight) * robot.load_speed_penalty
-        base_ticks = robot.base_move_ticks_per_tile * multiplier
+        physical_ticks = self.tile_size_m / max(0.01, self.nominal_robot_speed_mps) / self.tick_seconds
+        base_ticks = max(float(robot.base_move_ticks_per_tile), physical_ticks) * multiplier
         if self.options.planner_mode != "off":
-            # Local planner route-window reservation keeps robots moving through
-            # short cleared corridors instead of pausing for a full control cycle
-            # after every tile. The tile lock contract remains source+destination.
+            # Route-window planning reduces lock waits and stop-and-go traffic, but it
+            # does not make the robot body exceed the configured physical speed.
             base_ticks *= self._planner_movement_factor()
         return max(1, int(math.ceil(base_ticks)))
 
     def _planner_movement_factor(self) -> float:
-        return 0.25 if self.options.planner_mode != "off" else 1.0
+        return 1.0
 
     def _robot_move_priority(self, robot: Robot) -> float:
         order = self._robot_order(robot)
@@ -1205,13 +1224,29 @@ class WarehouseRuntime:
         return {
             "width_tiles": self.width_tiles,
             "height_tiles": self.height_tiles,
+            "tile_size_m": self.tile_size_m,
+            "nominal_robot_speed_mps": self.nominal_robot_speed_mps,
             "movement_model": "four_direction_grid",
             "lock_model": "current_and_next_tile",
             "blocked_tiles": sorted(self.blocked_tiles),
             "rack_tiles": sorted(self.rack_tiles),
             "buffer_tiles": sorted(self.buffer_tiles),
             "depot_tiles": sorted(self.depot_tiles),
+            "drop_tiles": sorted({conveyor.unload_tile_id for conveyor in self.conveyors}),
             "service_tiles": sorted(self.service_tiles),
+            "conveyors": [
+                {
+                    "conveyor_id": conveyor.conveyor_id,
+                    "unload_tile_id": conveyor.unload_tile_id,
+                    "door_tile_id": conveyor.door_tile_id,
+                    "direction": conveyor.direction,
+                    "wall": conveyor.wall,
+                    "exterior_footprint": conveyor.exterior_footprint,
+                    "door_line": conveyor.door_line,
+                    "capacity_packages": conveyor.capacity_packages,
+                }
+                for conveyor in self.conveyors
+            ],
             "occupied_tiles": [
                 {"tile_id": tile_id, "robot_id": robot_id}
                 for tile_id, robot_id in sorted(self.occupancy.items())

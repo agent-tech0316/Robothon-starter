@@ -76,7 +76,7 @@ def main() -> int:
     print("- Runnability: one-command stdlib review plus documented install/run paths")
     print("- MuJoCo depth: joints, actuators, sensors, collision geoms, touch contact traces")
     print("- Task design: warehouse order fulfillment under load, SKU weight, pick difficulty, congestion")
-    print("- Control: local route-window planner versus planner-off baseline")
+    print("- Control: congestion-aware multi-port planner versus nearest-exit planner-off baseline")
     print("- Engineering quality: runtime schemas, configs, event logs, reproducible JSON artifacts")
     print("- Presentation: short demo video plus simplified judge fast path")
     print("- Innovation: multi-agent warehouse optimization with MuJoCo-backed atomic skills")

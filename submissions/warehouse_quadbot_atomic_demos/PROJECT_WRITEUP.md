@@ -32,11 +32,11 @@ The robot platform is the Faraday Future AEGIS quadruped using `assets/Aegis/urd
 
 # Environment
 
-The runtime warehouse is a 20 x 14 discrete tile grid. Rack footprint tiles are hard obstacles. Service tiles sit beside racks, depot tiles seed robot starts, and outbound tiles represent conveyor dropoff. Movement is four-directional only.
+The runtime warehouse is a 20 x 14 discrete tile grid. Rack footprint tiles are hard obstacles. A 3 x 3 corner depot seeds the 9-robot fleet, and four wall-facing outbound conveyor ports create realistic exit choices. Each conveyor belt is exterior to the warehouse boundary; the roll-up door is on the outside end of the belt, and exactly one edge tile inside the warehouse is the legal unload/drop area. Movement is four-directional only.
 
 # Task Description
 
-Robots fulfill outbound orders by selecting rack tasks, reserving tile movement, navigating to service tiles, executing shelf pickup, carrying SKU payloads, unloading to outbound conveyors, and recovering from congestion. SKU weight and difficulty change load behavior and service time.
+Robots fulfill outbound orders by selecting rack tasks, reserving tile movement, navigating to service tiles, executing shelf pickup, carrying SKU payloads, unloading only at valid conveyor unload tiles, and recovering from congestion. SKU weight and difficulty change load behavior and service time.
 
 # Agentic Workflow Design
 
@@ -69,15 +69,15 @@ Headline stress result: 100% safety pass rate, 0 collision violations, 0 tile-lo
 
 ## Baseline Comparison
 
-The deterministic medium benchmark includes a planner-off baseline and a local-planner result. Planner-off completes 72 of 84 orders at 288 orders/hour with 120.06 average completion ticks. Local route-window reservation completes 81 of 84 orders at 324 orders/hour with 42.30 average completion ticks. That is +12.5% throughput and -64.8% average completion time while keeping blocked-tile, route-cardinality, collision, and lock-overlap violations at 0.
+The deterministic high-load benchmark includes a planner-off baseline and a local-planner result. Planner-off uses nearest-exit selection and completes only 16 of 140 orders at 64 orders/hour because robots overload the same conveyor path. Local planning uses congestion-aware multi-port conveyor selection and completes 91 of 140 orders at 364 orders/hour. That is +468.8% throughput and -94.5% average lock wait while keeping blocked-tile, route-cardinality, collision, and lock-overlap violations at 0.
 
 # Metrics
 
 | Load | Created | Completed | Active | Throughput | Avg completion | Avg lock wait | Utilization | Violations |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Low | 27 | 25 | 2 | 100/hr | 36.36 | 3.44 | 13.4% | 0 |
-| Medium | 84 | 81 | 3 | 324/hr | 42.30 | 41.78 | 48.4% | 0 |
-| High | 140 | 124 | 16 | 496/hr | 63.29 | 120.67 | 77.4% | 0 |
+| Low | 27 | 24 | 3 | 96/hr | 56.04 | 2.89 | 20.4% | 0 |
+| Medium | 84 | 77 | 7 | 308/hr | 70.83 | 30.67 | 72.9% | 0 |
+| High | 140 | 91 | 49 | 364/hr | 104.53 | 38.56 | 89.2% | 0 |
 
 Tracked safety counters: blocked-tile route violations, route cardinality violations, robot collisions, and lock overlap violations.
 
@@ -89,6 +89,7 @@ Tracked safety counters: blocked-tile route violations, route cardinality violat
 - Deadlock recovery and replanning counters
 - SKU weight/difficulty model
 - Runtime snapshots, metrics, and event streams
+- Multi-wall exterior conveyor ports with explicit exterior footprints, outer door lines, and unique in-warehouse unload tiles
 - Mission-control dashboard with runtime-linked robot animation
 - MuJoCo evidence clips for walking, payload carrying, shelf pickup, and handoff
 
@@ -103,7 +104,7 @@ Tracked safety counters: blocked-tile route violations, route cardinality violat
 
 # Results
 
-The current medium profile completes 81 of 84 orders and reaches 324 orders/hour. High load completes 124 of 140 orders and reaches 496 orders/hour while preserving zero collision and zero lock-overlap violations. The accelerated fleet stress benchmark adds 54 six-hour nominal/aisle-surge scenarios with 100% safety pass rate and +30.74% average planner throughput uplift. MuJoCo evidence clips include contact counters for package/gripper, package/basket, package/shelf, and handoff interactions.
+The current medium profile completes 77 of 84 orders and reaches 308 orders/hour. High load completes 91 of 140 orders and reaches 364 orders/hour while preserving zero collision and zero lock-overlap violations. The accelerated fleet stress benchmark adds 54 six-hour nominal/aisle-surge scenarios with 100% safety pass rate and +30.74% average planner throughput uplift. MuJoCo evidence clips include contact counters for package/gripper, package/basket, package/shelf, and handoff interactions.
 
 # Current Limitations
 

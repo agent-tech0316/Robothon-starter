@@ -20,7 +20,7 @@ Expected result:
 
 The project has two layers:
 
-- The warehouse runtime proves multi-agent decision quality: route locks, congestion, planner-off baseline, local planner uplift, throughput, wait time, and safety counters.
+- The warehouse runtime proves multi-agent decision quality: route locks, congestion, planner-off baseline, local multi-port conveyor planning uplift, throughput, wait time, and safety counters.
 - MuJoCo proves low-level physical plausibility: quadruped joints, mounted arm, actuated gripper, collision geoms, touch sensors, and payload-dependent motion evidence.
 
 The dashboard remains available at:

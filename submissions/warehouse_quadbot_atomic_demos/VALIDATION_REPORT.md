@@ -44,14 +44,14 @@ HTTP resources checked successfully from the clean-copy server:
 
 ## Runtime Validation Result
 
-Medium-load local planner run completed successfully after route-window reservation with:
+Medium-load local planner run completed successfully after congestion-aware multi-port conveyor selection with:
 
 - Created orders: 84
-- Completed orders: 81
-- Throughput: 324 orders/hour
-- Average completion: 42.30 ticks
-- Average lock wait: 41.78 ticks
-- Robot utilization: 48.4%
+- Completed orders: 77
+- Throughput: 308 orders/hour
+- Average completion: 70.83 ticks
+- Average lock wait: 30.67 ticks
+- Robot utilization: 72.9%
 - Blocked-tile route violations: 0
 - Route cardinality violations: 0
 - Collision violations: 0

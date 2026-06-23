@@ -114,24 +114,103 @@ const shelvesSeed = [
 ];
 
 const zones = [
-  { id: "DEPOT", x: 0, y: 9, w: 2, d: 2, color: "#38cae8" },
-  { id: "PACK", x: 10, y: 10, w: 2, d: 1, color: "#5cdd61" },
-  { id: "OUTBOUND", x: 14, y: 10, w: 2, d: 1, color: "#5cdd61" },
+  { id: "DEPOT", x: 0, y: 11, w: 3, d: 3, color: "#38cae8" },
   { id: "CHARGE", x: 0, y: 0, w: 2, d: 1, color: "#38cae8" },
 ];
 
 const ledTiles = {
-  rest: [[0, 9], [1, 9], [0, 10], [1, 10]],
-  delivery: [[14, 10], [15, 10], [14, 11], [15, 11]],
+  rest: [[0, 11], [1, 11], [2, 11], [0, 12], [1, 12], [2, 12], [0, 13], [1, 13], [2, 13]],
+  delivery: [[19, 11], [16, 13], [16, 0], [0, 6]],
   route: [[4, 5], [5, 5]],
   congestion: [[5, 5]],
   pick: [[4, 2], [7, 2]],
 };
 
+const fallbackConveyors = [
+  { conveyor_id: "CONV_EAST_01", unload_tile_id: "T_19_11", direction: "E", wall: "east", exterior_footprint: { x: 20, y: 11, w: 2, d: 1 }, door_line: { x1: 22, y1: 11, x2: 22, y2: 12 } },
+  { conveyor_id: "CONV_SOUTH_01", unload_tile_id: "T_16_13", direction: "S", wall: "south", exterior_footprint: { x: 16, y: 14, w: 1, d: 2 }, door_line: { x1: 16, y1: 16, x2: 17, y2: 16 } },
+  { conveyor_id: "CONV_NORTH_01", unload_tile_id: "T_16_00", direction: "N", wall: "north", exterior_footprint: { x: 16, y: -2, w: 1, d: 2 }, door_line: { x1: 16, y1: -2, x2: 17, y2: -2 } },
+  { conveyor_id: "CONV_WEST_01", unload_tile_id: "T_00_06", direction: "W", wall: "west", exterior_footprint: { x: -2, y: 6, w: 2, d: 1 }, door_line: { x1: -2, y1: 6, x2: -2, y2: 7 } },
+];
+
 const facilitySprites = [
   { id: "SERVER", category: "visual", sprite: () => `computer_terminal_1x1_s_frame_${String(animationFrame()).padStart(2, "0")}`, x: 1, y: 2, depth: 4.0, label: "ORDERS", color: "#38cae8" },
-  { id: "EXIT-E", category: "visual", sprite: () => `exit_gate_conveyor_3x1_e_frame_${String(animationFrame()).padStart(2, "0")}`, x: 15.5, y: 11, depth: 28.5, label: "EXIT", color: "#5cdd61" },
 ];
+
+function conveyorDirection(conveyor) {
+  const direction = String(conveyor?.direction || conveyor?.wall || "E").trim().toLowerCase()[0] || "e";
+  return ["e", "s", "w", "n"].includes(direction) ? direction : "e";
+}
+
+function conveyorUnloadPoint(conveyor) {
+  return tileIdToPoint(conveyor?.unload_tile_id) || [0, 0];
+}
+
+function conveyorExteriorFootprint(conveyor, direction, unload) {
+  const raw = conveyor?.exterior_footprint;
+  if (raw && Number.isFinite(Number(raw.x)) && Number.isFinite(Number(raw.y))) {
+    return {
+      x: Number(raw.x),
+      y: Number(raw.y),
+      w: Math.max(0.25, Number(raw.w || raw.width || 1)),
+      d: Math.max(0.25, Number(raw.d || raw.depth || 1)),
+    };
+  }
+  const length = Math.max(1, Number(conveyor?.length_tiles || 2));
+  if (direction === "e") return { x: unload[0] + 1, y: unload[1], w: length, d: 1 };
+  if (direction === "w") return { x: unload[0] - length, y: unload[1], w: length, d: 1 };
+  if (direction === "s") return { x: unload[0], y: unload[1] + 1, w: 1, d: length };
+  return { x: unload[0], y: unload[1] - length, w: 1, d: length };
+}
+
+function conveyorAnchorFromFootprint(direction, footprint) {
+  if (direction === "e") return { x: footprint.x + footprint.w + 0.2, y: footprint.y + footprint.d * 0.74 };
+  if (direction === "w") return { x: footprint.x + 0.8, y: footprint.y + footprint.d * 0.74 };
+  if (direction === "s") return { x: footprint.x + footprint.w * 0.74, y: footprint.y + footprint.d + 0.2 };
+  return { x: footprint.x + footprint.w * 0.74, y: footprint.y + 0.8 };
+}
+
+function conveyorDoorLine(conveyor, direction, footprint) {
+  const raw = conveyor?.door_line;
+  if (raw && [raw.x1, raw.y1, raw.x2, raw.y2].every((value) => Number.isFinite(Number(value)))) {
+    return { x1: Number(raw.x1), y1: Number(raw.y1), x2: Number(raw.x2), y2: Number(raw.y2) };
+  }
+  if (direction === "e") return { x1: footprint.x + footprint.w, y1: footprint.y, x2: footprint.x + footprint.w, y2: footprint.y + footprint.d };
+  if (direction === "w") return { x1: footprint.x, y1: footprint.y, x2: footprint.x, y2: footprint.y + footprint.d };
+  if (direction === "s") return { x1: footprint.x, y1: footprint.y + footprint.d, x2: footprint.x + footprint.w, y2: footprint.y + footprint.d };
+  return { x1: footprint.x, y1: footprint.y, x2: footprint.x + footprint.w, y2: footprint.y };
+}
+
+function conveyorVisualFromRuntime(conveyor, index = 0) {
+  const direction = conveyorDirection(conveyor);
+  const unload = conveyorUnloadPoint(conveyor);
+  const footprint = conveyorExteriorFootprint(conveyor, direction, unload);
+  const anchor = conveyorAnchorFromFootprint(direction, footprint);
+  return {
+    id: conveyor?.conveyor_id || `CONV-${index + 1}`,
+    category: "visual",
+    sprite: () => `exit_gate_conveyor_3x1_${direction}_frame_${String(animationFrame()).padStart(2, "0")}`,
+    x: anchor.x,
+    y: anchor.y,
+    depth: Math.max(unload[0] + unload[1], footprint.x + footprint.y + footprint.w + footprint.d) + 22 + index * 0.01,
+    label: "BELT",
+    color: "#5cdd61",
+    shadow: { x: footprint.x, y: footprint.y, w: footprint.w, d: footprint.d },
+    doorLine: conveyorDoorLine(conveyor, direction, footprint),
+  };
+}
+
+function runtimeConveyors() {
+  const conveyors = state.runtimeSnapshot?.warehouse?.conveyors || [];
+  return conveyors.length ? conveyors : fallbackConveyors;
+}
+
+function activeFacilitySprites() {
+  return [
+    ...facilitySprites,
+    ...runtimeConveyors().map((conveyor, index) => conveyorVisualFromRuntime(conveyor, index)),
+  ];
+}
 
 function makeOrthRoute(points) {
   const route = [];
@@ -202,8 +281,8 @@ function cloneData(value) {
 const state = {
   running: true,
   planner: true,
-  speed: 10,
-  load: "medium",
+  speed: 1,
+  load: "high",
   simTime: 9300,
   tick: 0,
   focusSkill: "shelf_pick",
@@ -219,6 +298,13 @@ const state = {
   runtimeLinked: false,
   runtimeSnapshot: null,
   runtimeMetrics: null,
+  runtimeEvents: [],
+  runtimeEventIndex: 0,
+  runtimeReplayStartTick: 0,
+  runtimeReplayEndTick: 0,
+  runtimeReplayTick: 0,
+  runtimeOrderBook: new Map(),
+  runtimeActiveLocks: new Map(),
   runtimeBlockedTiles: new Set(),
   runtimeOccupiedTiles: new Map(),
   orders: cloneData(orderSeed),
@@ -316,6 +402,7 @@ function difficultyFromLabel(value) {
 function statusFromRuntime(status, robot = {}) {
   const value = String(status || "").toLowerCase();
   if (["ready", "idle"].includes(value)) return "IDLE";
+  if (value.includes("handoff") || value.includes("exchange")) return "EXCHANGE";
   if (["picking", "loading"].includes(value)) return "LOADING";
   if (["unloading", "unloading_at_conveyor"].includes(value)) return "UNLOADING";
   if (["waiting_for_tile_lock", "blocked", "error"].includes(value)) return robot.waitTicks > 0 ? "BLOCKED" : "WAITING";
@@ -448,13 +535,12 @@ function occupiedRuntimeTileMap(snapshot) {
 function ledTilesFromRuntime(snapshot) {
   const denied = snapshot?.movement_locks?.denied_moves || [];
   const rackPickTiles = (snapshot?.shelves || []).flatMap((shelf) => shelf.pick_tiles || []);
-  const deliveryTiles = (snapshot?.warehouse?.service_tiles || [])
-    .map((tile) => tileIdToPoint(tile))
-    .filter(Boolean)
-    .filter(([x, y]) => x >= Math.max(0, (snapshot?.warehouse?.width_tiles || grid.cols) - 4) || y >= Math.max(0, (snapshot?.warehouse?.height_tiles || grid.rows) - 2));
+  const dropTileIds = (snapshot?.warehouse?.drop_tiles?.length
+    ? snapshot.warehouse.drop_tiles
+    : (snapshot?.warehouse?.conveyors || []).map((conveyor) => conveyor.unload_tile_id));
   return {
-    rest: (snapshot?.warehouse?.depot_tiles || []).slice(0, 4).map(tileIdToPoint).filter(Boolean),
-    delivery: deliveryTiles.slice(0, 6),
+    rest: (snapshot?.warehouse?.depot_tiles || []).map(tileIdToPoint).filter(Boolean),
+    delivery: dropTileIds.map((tile) => tileIdToPoint(tile)).filter(Boolean),
     route: (snapshot?.movement_locks?.granted_moves || []).map((move) => tileIdToPoint(move.destination_tile)).filter(Boolean),
     congestion: denied.map((move) => tileIdToPoint(move.destination_tile)).filter(Boolean),
     pick: rackPickTiles.slice(0, 4).map(tileIdToPoint).filter(Boolean),
@@ -469,6 +555,437 @@ async function fetchJsonOrNull(url) {
   } catch {
     return null;
   }
+}
+
+async function fetchTextOrNull(url) {
+  try {
+    const response = await fetch(url, { cache: "no-store" });
+    if (!response.ok) return null;
+    return await response.text();
+  } catch {
+    return null;
+  }
+}
+
+function parseRuntimeEvents(text) {
+  if (!text) return [];
+  return text
+    .split(/\n+/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      try {
+        return JSON.parse(line);
+      } catch {
+        return null;
+      }
+    })
+    .filter(Boolean)
+    .sort((a, b) => Number(a.tick || 0) - Number(b.tick || 0));
+}
+
+function pushRuntimeLog(message) {
+  if (!message) return;
+  state.log.push(message);
+  if (state.log.length > 22) state.log.shift();
+}
+
+function runtimeOrderPriority(label) {
+  const value = String(label || "").toLowerCase();
+  if (value.includes("high")) return "P1";
+  if (value.includes("low")) return "P3";
+  return "P2";
+}
+
+function runtimeOrderWeightFromSku(sku) {
+  const value = String(sku || "").toUpperCase();
+  if (value.includes("HEAVY") || value.includes("METAL")) return 4.0;
+  if (value.includes("WOOD") || value.includes("MEDICAL") || value.includes("BIN")) return 2.0;
+  return 0.8;
+}
+
+function runtimeOrderDifficultyFromSku(sku) {
+  const value = String(sku || "").toUpperCase();
+  if (value.includes("HEAVY") || value.includes("METAL")) return "hard";
+  if (value.includes("WOOD") || value.includes("MEDICAL") || value.includes("BIN")) return "med";
+  return "easy";
+}
+
+function parseCreatedOrder(message, payload = {}) {
+  const match = /Created\s+(\S+)\s+(\S+)\s+(\S+)\./.exec(message || "");
+  const orderId = payload.order_id || match?.[1] || "ORD-RUNTIME";
+  const sku = match?.[2] || "SKU_CARD_SMALL";
+  const priorityLabel = match?.[3] || "normal";
+  return { orderId, sku, priorityLabel };
+}
+
+function parseAssignedTarget(message) {
+  const match = /for\s+(T_\d+_\d+)\./.exec(message || "");
+  return normalizeTileId(match?.[1]);
+}
+
+function parseLockTile(message) {
+  const match = /tile\s+(T_\d+_\d+)/.exec(message || "");
+  return normalizeTileId(match?.[1]);
+}
+
+function parsePickedSku(message) {
+  const match = /picked\s+([A-Z0-9_]+)/.exec(message || "");
+  return match?.[1] || null;
+}
+
+function upsertRuntimeOrder(orderId, patch = {}) {
+  if (!orderId) return null;
+  const existing = state.runtimeOrderBook.get(orderId) || {
+    id: orderId,
+    priority: "P2",
+    difficulty: "easy",
+    weight: 0.8,
+    robot: "-",
+    age: 0,
+    status: "pending",
+    sku: "SKU_CARD_SMALL",
+    createdTick: state.runtimeReplayTick || state.runtimeReplayStartTick || 0,
+  };
+  const next = { ...existing, ...patch };
+  state.runtimeOrderBook.set(orderId, next);
+  return next;
+}
+
+function syncRuntimeOrderRows() {
+  const now = state.runtimeReplayTick || state.tick || 0;
+  const statusRank = {
+    picking: 0,
+    dropping: 1,
+    handoff: 2,
+    navigating_to_conveyor: 3,
+    navigating_to_rack: 4,
+    assigned: 5,
+    pending: 6,
+    completed: 9,
+  };
+  state.orders = Array.from(state.runtimeOrderBook.values())
+    .map((order) => ({
+      id: order.id,
+      priority: order.priority || "P2",
+      difficulty: difficultyFromLabel(order.difficulty),
+      weight: Number(order.weight || 0.8),
+      robot: order.robot || "-",
+      age: Math.max(0, Math.floor(now - Number(order.createdTick || now))),
+      status: order.status || "pending",
+    }))
+    .sort((a, b) => (statusRank[a.status] ?? 7) - (statusRank[b.status] ?? 7) || b.age - a.age)
+    .slice(0, 36);
+}
+
+function findRuntimeRobot(robotId) {
+  return state.robots.find((robot) => robot.id === robotId) || null;
+}
+
+function setRuntimeActiveLock(tileId, robotId, reason, untilTick) {
+  const id = normalizeTileId(tileId);
+  if (!id) return;
+  state.runtimeActiveLocks.set(id, { robotId, reason: reason || "reserved", untilTick });
+}
+
+function pruneRuntimeActiveLocks() {
+  const now = state.runtimeReplayTick || state.tick || 0;
+  Array.from(state.runtimeActiveLocks.entries()).forEach(([tileId, lock]) => {
+    if (Number(lock.untilTick || 0) < now) state.runtimeActiveLocks.delete(tileId);
+  });
+}
+
+function currentRuntimeLockTileIds() {
+  pruneRuntimeActiveLocks();
+  const tiles = new Set();
+  state.runtimeActiveLocks.forEach((_, tileId) => tiles.add(tileId));
+  state.robots.forEach((robot) => (robot.lockTiles || []).forEach((tileId) => {
+    const id = normalizeTileId(tileId);
+    if (id) tiles.add(id);
+  }));
+  return tiles;
+}
+
+function currentRuntimeLockTilePoints() {
+  return Array.from(currentRuntimeLockTileIds()).map(tileIdToPoint).filter(Boolean);
+}
+
+function runtimeLockCount(snapshot) {
+  if (state.runtimeEvents.length) return currentRuntimeLockTileIds().size;
+  return snapshot ? uniqueRuntimeLockTiles(snapshot) : state.robots.length * 2 + (state.load === "high" ? 7 : state.load === "low" ? 2 : 4);
+}
+
+function runtimeEventHomeTiles(events) {
+  const homes = {};
+  events.forEach((event) => {
+    if (event.event_type !== "robot.moved") return;
+    const robotId = event.payload?.robot_id;
+    const source = normalizeTileId(event.payload?.source);
+    if (robotId && source && !homes[robotId]) homes[robotId] = source;
+  });
+  return homes;
+}
+
+function resetRuntimeRobotForReplay(robot, homeTileId, index) {
+  const fallback = `T_${String(index).padStart(2, "0")}_${String(Math.max(0, grid.rows - 1)).padStart(2, "0")}`;
+  const tileId = normalizeTileId(homeTileId) || normalizeTileId(robot.tileId) || fallback;
+  const center = tileCenterOrNull(tileId) || [0.5, 0.5];
+  robot.route = [center];
+  robot.routeTiles = [tileId];
+  robot.routeClosed = false;
+  robot.phase = 0;
+  robot.carrying = false;
+  robot.runtimeStatus = "ready";
+  robot.status = "IDLE";
+  robot.tileId = tileId;
+  robot.nextTileId = null;
+  robot.currentOrder = "-";
+  robot.currentTarget = "-";
+  robot.nextTarget = "-";
+  robot.carriedSku = "-";
+  robot.carriedWeight = "-";
+  robot.carriedMaterial = "cardboard";
+  robot.waitTicks = 0;
+  robot.lockTiles = [tileId];
+  robot.lockPressurePct = 24;
+  robot.visualPose = staticRuntimePose(robot);
+  robot.visualTileId = tileId;
+  robot.motionDirection = 1;
+  robot.motion = null;
+  state.runtimeOccupiedTiles.set(tileId, robot.id);
+}
+
+function runtimeWarmStartTick(events) {
+  const seenRobots = new Set();
+  const targetRobotCount = state.load === "high" ? Math.min(9, state.robots.length) : Math.min(6, state.robots.length);
+  let firstAssignedTick = null;
+  for (const event of events) {
+    const type = event.event_type || "";
+    const robotId = event.payload?.robot_id;
+    if (firstAssignedTick === null && type === "order.assigned") firstAssignedTick = Number(event.tick || 0);
+    if (robotId && ["order.assigned", "robot.moved", "skill.started", "robot.lock_wait"].includes(type)) {
+      seenRobots.add(robotId);
+      if (seenRobots.size >= targetRobotCount) return Number(event.tick || 0);
+    }
+  }
+  return firstAssignedTick ?? Number(events[0]?.tick || 0);
+}
+
+function initializeRuntimeReplay(events, logMessage) {
+  if (!events.length) return;
+  state.runtimeEvents = events;
+  state.runtimeEventIndex = 0;
+  state.runtimeReplayStartTick = runtimeWarmStartTick(events);
+  state.runtimeReplayEndTick = Number(events[events.length - 1].tick || state.runtimeReplayStartTick);
+  state.runtimeReplayTick = state.runtimeReplayStartTick;
+  state.tick = state.runtimeReplayStartTick;
+  state.simTime = state.runtimeReplayStartTick;
+  state.runtimeOrderBook = new Map();
+  state.runtimeActiveLocks = new Map();
+  state.runtimeOccupiedTiles = new Map();
+  state.log = [logMessage || `Runtime event replay loaded with ${events.length} events.`];
+
+  const homes = runtimeEventHomeTiles(events);
+  state.robots.forEach((robot, index) => resetRuntimeRobotForReplay(robot, homes[robot.id], index));
+  applyRuntimeEventsThrough(state.runtimeReplayStartTick);
+  syncRuntimeOrderRows();
+}
+
+function applyRuntimeEvents(eventsText) {
+  const events = parseRuntimeEvents(eventsText);
+  if (!events.length) {
+    state.runtimeEvents = [];
+    state.runtimeEventIndex = 0;
+    state.runtimeReplayStartTick = 0;
+    state.runtimeReplayEndTick = 0;
+    state.runtimeReplayTick = 0;
+    state.runtimeOrderBook = new Map();
+    state.runtimeActiveLocks = new Map();
+    return;
+  }
+  initializeRuntimeReplay(events, `Runtime event replay loaded: ${events.length} events.`);
+}
+
+function restartRuntimeEventReplay() {
+  const events = state.runtimeEvents.slice();
+  initializeRuntimeReplay(events, "Runtime event replay restarted from the first order.");
+}
+
+function motionDurationForRobot(robot, eventTick) {
+  const nextMove = state.runtimeEvents.slice(state.runtimeEventIndex + 1).find((event) => (
+    event.event_type === "robot.moved" && event.payload?.robot_id === robot.id
+  ));
+  const nextGap = nextMove ? Number(nextMove.tick || eventTick) - Number(eventTick || 0) : 2;
+  const physicalCap = robot.carrying ? 3 : 2;
+  return clamp(nextGap, 1, physicalCap);
+}
+
+function setRobotMotionFromEvent(robot, event) {
+  const source = normalizeTileId(event.payload?.source);
+  const destination = normalizeTileId(event.payload?.destination);
+  if (!source || !destination) return;
+  const segment = runtimeSegmentFromTiles(robot, source, destination, { visualOnly: true, allowOccupied: true });
+  if (!segment) return;
+
+  const eventTick = Number(event.tick || state.runtimeReplayTick || 0);
+  segment.startTick = eventTick;
+  segment.durationTicks = motionDurationForRobot(robot, eventTick);
+  segment.progress = 0;
+  robot.motion = segment;
+  robot.tileId = source;
+  robot.visualTileId = source;
+  robot.nextTileId = destination;
+  robot.route = [segment.source, segment.destination];
+  robot.routeTiles = [source, destination];
+  robot.runtimeStatus = "moving";
+  robot.status = "MOVING";
+  robot.waitTicks = 0;
+  robot.lockTiles = [source, destination];
+  robot.lockPressurePct = clamp((robot.lockPressurePct || 24) + 8, 18, 96);
+  robot.nextTarget = compactTileLabel(destination);
+  if (state.runtimeOccupiedTiles.get(source) === robot.id) state.runtimeOccupiedTiles.delete(source);
+  state.runtimeOccupiedTiles.set(destination, robot.id);
+  setRuntimeActiveLock(source, robot.id, "leaving", eventTick + segment.durationTicks);
+  setRuntimeActiveLock(destination, robot.id, "reserved", eventTick + segment.durationTicks + 1);
+}
+
+function skillStatusFromMessage(message) {
+  const value = String(message || "").toLowerCase();
+  if (value.includes("unload")) return "UNLOADING";
+  if (value.includes("handoff") || value.includes("exchange")) return "EXCHANGE";
+  return "LOADING";
+}
+
+function runtimeOrderStatusFromRobotStatus(status) {
+  if (status === "LOADING") return "picking";
+  if (status === "UNLOADING") return "dropping";
+  if (status === "EXCHANGE") return "handoff";
+  return "assigned";
+}
+
+function applyRuntimeEvent(event) {
+  const type = event.event_type || "";
+  const payload = event.payload || {};
+  const message = event.message || type;
+  const robot = payload.robot_id ? findRuntimeRobot(payload.robot_id) : null;
+  const tick = Number(event.tick || state.runtimeReplayTick || 0);
+
+  if (["order.assigned", "skill.started", "skill.completed", "order.completed", "robot.lock_wait", "route.replanned", "planner.checked"].includes(type)) {
+    pushRuntimeLog(message);
+  }
+
+  if (type === "order.created") {
+    const created = parseCreatedOrder(message, payload);
+    upsertRuntimeOrder(created.orderId, {
+      id: created.orderId,
+      priority: runtimeOrderPriority(created.priorityLabel),
+      difficulty: runtimeOrderDifficultyFromSku(created.sku),
+      weight: runtimeOrderWeightFromSku(created.sku),
+      robot: "-",
+      status: "pending",
+      sku: created.sku,
+      createdTick: tick,
+    });
+  }
+
+  if (type === "order.assigned") {
+    const target = parseAssignedTarget(message);
+    upsertRuntimeOrder(payload.order_id, {
+      robot: payload.robot_id || "-",
+      status: "assigned",
+      target,
+    });
+    if (robot) {
+      robot.currentOrder = payload.order_id || robot.currentOrder || "-";
+      robot.currentTarget = compactTileLabel(target);
+      robot.nextTarget = compactTileLabel(target);
+      robot.runtimeStatus = "navigating_to_rack";
+      robot.status = "MOVING";
+      robot.lockPressurePct = clamp(robot.lockPressurePct || 28, 18, 96);
+    }
+  }
+
+  if (type === "robot.moved" && robot) {
+    setRobotMotionFromEvent(robot, event);
+  }
+
+  if (type === "robot.lock_wait" && robot) {
+    const tileId = parseLockTile(message);
+    robot.runtimeStatus = "waiting_for_tile_lock";
+    robot.status = "WAITING";
+    robot.waitTicks = (robot.waitTicks || 0) + 1;
+    robot.lockTiles = tileId ? [tileId] : robot.lockTiles || [];
+    robot.currentTarget = compactTileLabel(tileId || robot.nextTileId);
+    robot.lockPressurePct = clamp(48 + robot.waitTicks * 8, 24, 98);
+    setRuntimeActiveLock(tileId, robot.id, payload.reason || "wait", tick + 3);
+  }
+
+  if (type === "route.replanned" && robot) {
+    robot.runtimeStatus = "route_replanned";
+    robot.status = robot.motion ? "MOVING" : "WAITING";
+    robot.lockPressurePct = clamp((robot.lockPressurePct || 42) + 12, 24, 98);
+  }
+
+  if (type === "skill.started" && robot) {
+    const status = skillStatusFromMessage(message);
+    robot.runtimeStatus = status === "LOADING" ? "picking" : status === "UNLOADING" ? "unloading" : "handoff";
+    robot.status = status;
+    robot.currentOrder = payload.order_id || robot.currentOrder || "-";
+    robot.currentTarget = status === "UNLOADING" ? "PACK" : status === "EXCHANGE" ? "HANDOFF" : robot.currentTarget;
+    if (status === "UNLOADING") robot.carrying = true;
+    upsertRuntimeOrder(payload.order_id, {
+      robot: robot.id,
+      status: runtimeOrderStatusFromRobotStatus(status),
+    });
+  }
+
+  if (type === "skill.completed" && robot) {
+    const sku = parsePickedSku(message) || robot.carriedSku || "SKU_CARD_SMALL";
+    robot.carrying = true;
+    robot.carriedSku = sku;
+    robot.carriedWeight = runtimeOrderWeightFromSku(sku);
+    robot.carriedMaterial = materialFromSku(sku);
+    robot.runtimeStatus = "navigating_to_conveyor";
+    robot.status = "MOVING";
+    robot.currentOrder = payload.order_id || robot.currentOrder || "-";
+    robot.currentTarget = "PACK";
+    upsertRuntimeOrder(payload.order_id, {
+      robot: robot.id,
+      sku,
+      weight: runtimeOrderWeightFromSku(sku),
+      difficulty: runtimeOrderDifficultyFromSku(sku),
+      status: "navigating_to_conveyor",
+    });
+  }
+
+  if (type === "order.completed") {
+    upsertRuntimeOrder(payload.order_id, {
+      robot: payload.robot_id || "-",
+      status: "completed",
+    });
+    if (robot) {
+      robot.runtimeStatus = "ready";
+      robot.status = "IDLE";
+      robot.carrying = false;
+      robot.currentOrder = "-";
+      robot.currentTarget = "DEPOT";
+      robot.nextTarget = "-";
+      robot.carriedSku = "-";
+      robot.carriedWeight = "-";
+      robot.lockTiles = robot.tileId ? [robot.tileId] : [];
+      robot.lockPressurePct = 24;
+    }
+  }
+}
+
+function applyRuntimeEventsThrough(targetTick) {
+  while (state.runtimeEventIndex < state.runtimeEvents.length) {
+    const event = state.runtimeEvents[state.runtimeEventIndex];
+    if (Number(event.tick || 0) > targetTick) break;
+    applyRuntimeEvent(event);
+    state.runtimeEventIndex += 1;
+  }
+  syncRuntimeOrderRows();
 }
 
 function applyRuntimeSnapshot(snapshot, metrics) {
@@ -500,17 +1017,28 @@ function applyRuntimeSnapshot(snapshot, metrics) {
 async function loadRuntimeProfile(load) {
   const snapshotUrl = `../outputs/runtime_snapshot_${load}.json`;
   const metricsUrl = `../outputs/benchmark_metrics_${load}.json`;
-  const [snapshot, metrics] = await Promise.all([fetchJsonOrNull(snapshotUrl), fetchJsonOrNull(metricsUrl)]);
+  const eventsUrl = `../outputs/runtime_events_${load}.jsonl`;
+  const [snapshot, metrics, eventsText] = await Promise.all([
+    fetchJsonOrNull(snapshotUrl),
+    fetchJsonOrNull(metricsUrl),
+    fetchTextOrNull(eventsUrl),
+  ]);
   if (snapshot) {
     applyRuntimeSnapshot(snapshot, metrics);
-    if (els.runtimeSnapshotPort) els.runtimeSnapshotPort.textContent = `${load}.json`;
-    if (els.runtimeLinkBadge) els.runtimeLinkBadge.textContent = "Runtime JSON";
-    state.log.push(`Loaded runtime_snapshot_${load}.json.`);
-    if (state.log.length > 22) state.log.shift();
+    applyRuntimeEvents(eventsText);
+    if (els.runtimeSnapshotPort) els.runtimeSnapshotPort.textContent = `${load}.json + events`;
+    if (els.runtimeLinkBadge) els.runtimeLinkBadge.textContent = state.runtimeEvents.length ? "Runtime Events" : "Runtime JSON";
+    pushRuntimeLog(state.runtimeEvents.length
+      ? `Loaded runtime_snapshot_${load}.json and runtime_events_${load}.jsonl.`
+      : `Loaded runtime_snapshot_${load}.json.`);
   } else {
     state.runtimeLinked = false;
     state.runtimeSnapshot = null;
     state.runtimeMetrics = null;
+    state.runtimeEvents = [];
+    state.runtimeEventIndex = 0;
+    state.runtimeOrderBook = new Map();
+    state.runtimeActiveLocks = new Map();
     state.runtimeBlockedTiles = new Set();
     state.runtimeOccupiedTiles = new Map();
     state.orders = cloneData(orderSeed);
@@ -766,8 +1294,8 @@ function resizeCanvas() {
   view.width = pixelCanvas.width;
   view.height = pixelCanvas.height;
 
-  const tileFromWidth = ((view.width - 28) * 2) / (grid.cols + grid.rows + 0.8);
-  const tileFromHeight = ((view.height - 54) * 4) / (grid.cols + grid.rows + 1.4);
+  const tileFromWidth = ((view.width - 28) * 2) / (grid.cols + grid.rows + 3.2);
+  const tileFromHeight = ((view.height - 54) * 4) / (grid.cols + grid.rows + 3.6);
   view.tileW = clamp(Math.min(tileFromWidth, tileFromHeight), 84, 172);
   view.tileH = view.tileW * 0.5;
   view.originX = view.width * 0.5;
@@ -1099,10 +1627,10 @@ function drawBackground() {
   ctx.fillRect(0, 0, view.width, view.height);
 
   const base = [
-    project(-0.85, -0.75, -0.03),
-    project(grid.cols + 0.95, -0.75, -0.03),
-    project(grid.cols + 0.95, grid.rows + 1.05, -0.03),
-    project(-0.85, grid.rows + 1.05, -0.03),
+    project(-2.35, -2.25, -0.03),
+    project(grid.cols + 2.35, -2.25, -0.03),
+    project(grid.cols + 2.35, grid.rows + 2.25, -0.03),
+    project(-2.35, grid.rows + 2.25, -0.03),
   ];
   pixelPoly(base, "#122533", "rgba(24,224,230,0.12)", Math.max(1, view.tileW / 96));
 
@@ -1117,19 +1645,23 @@ function drawBackground() {
   drawFloorPaint();
 
   const activeLedTiles = state.ledTiles || ledTiles;
-  activeLedTiles.rest.forEach(([x, y]) => drawSprite("LED", "led_edge_robot_route_cyan", tileAnchor(x, y), { alpha: 0.72 }));
-  activeLedTiles.delivery.forEach(([x, y]) => drawSprite("LED", "led_edge_delivery_green", tileAnchor(x, y), { alpha: 0.82 }));
-  activeLedTiles.route.forEach(([x, y]) => drawSprite("LED", "led_edge_robot_route_cyan", tileAnchor(x, y), { alpha: 0.72 }));
-  if (state.load === "high" || activeLedTiles.congestion.length) {
-    activeLedTiles.congestion.forEach(([x, y]) => drawSprite("LED", "led_edge_congestion_red", tileAnchor(x, y), { alpha: 0.7 }));
-  }
-  if (state.dragShelf || state.selectedShelfId) {
-    activeLedTiles.pick.forEach(([x, y]) => drawSprite("LED", "led_edge_pick_orange", tileAnchor(x, y), { alpha: 0.78 }));
-  }
+  const restTiles = activeLedTiles.rest || [];
+  const deliveryTiles = activeLedTiles.delivery || [];
+  const lockTiles = state.runtimeEvents.length
+    ? currentRuntimeLockTilePoints()
+    : [...(activeLedTiles.route || []), ...(activeLedTiles.congestion || [])];
 
-  drawZoneMicroLabel("DEPOT", 0, Math.max(0, grid.rows - 3), "#38cae8");
-  drawZoneMicroLabel("PACK", Math.max(0, grid.cols - 6), Math.max(0, grid.rows - 3), "#5cdd61");
-  drawZoneMicroLabel("EXIT", Math.max(0, grid.cols - 3), Math.max(0, grid.rows - 2), "#5cdd61");
+  restTiles.forEach(([x, y]) => drawSprite("LED", "led_edge_robot_route_cyan", tileAnchor(x, y), { alpha: 0.72 }));
+  deliveryTiles.forEach(([x, y]) => drawSprite("LED", "led_edge_delivery_green", tileAnchor(x, y), { alpha: 0.82 }));
+  lockTiles.forEach(([x, y], index) => {
+    const pulse = 0.56 + Math.sin(state.simTime * 0.08 + index) * 0.16;
+    drawSprite("LED", "led_edge_congestion_red", tileAnchor(x, y), { alpha: clamp(pulse, 0.38, 0.82) });
+  });
+
+  drawZoneMicroLabel("DEPOT", 1, Math.max(0, grid.rows - 2), "#38cae8");
+  deliveryTiles.forEach(([x, y], index) => {
+    if (index < 4) drawZoneMicroLabel("DROP", x, y, "#5cdd61");
+  });
 }
 
 function drawFacilityProps() {
@@ -1303,17 +1835,34 @@ function drawFacilitySprite(prop) {
 
 function drawFacilityShadow(prop) {
   if (prop.id === "SERVER") drawIsoFootprint(0.66, 1.68, 1.05, 1.05, { alpha: 0.22, expand: 0.12 });
-  if (prop.id === "EXIT-E") drawIsoFootprint(13.3, 10.25, 2.9, 1.15, { alpha: 0.32, expand: 0.1 });
+  if (prop.shadow) drawIsoFootprint(prop.shadow.x, prop.shadow.y, prop.shadow.w, prop.shadow.d, { alpha: 0.32, expand: 0.1 });
+  if (prop.doorLine) {
+    const a = project(prop.doorLine.x1, prop.doorLine.y1, 0.08);
+    const b = project(prop.doorLine.x2, prop.doorLine.y2, 0.08);
+    segment(a, b, "rgba(247, 183, 51, 0.82)", Math.max(2, view.tileW / 34));
+  }
 }
 
 function drawRackShadow(rack) {
-  drawIsoFootprint(rack.x, rack.y, rack.w, rack.d, { alpha: 0.28, expand: 0.1 });
+  drawIsoFootprint(rack.x, rack.y, rack.w, rack.d, { alpha: 0.42, expand: 0.18, z: 0.014, fill: "rgba(0, 0, 0, 0.66)" });
+}
+
+function drawRackContactBase(rack) {
+  const inset = 0.035;
+  const width = Math.max(0.35, rack.w - inset * 2);
+  const depth = Math.max(0.35, rack.d - inset * 2);
+  drawIsoBoxAt(rack.x + inset, rack.y + inset, width, depth, 0.006, 0.09, {
+    top: "rgba(38, 62, 70, 0.92)",
+    left: "rgba(8, 17, 23, 0.96)",
+    right: "rgba(15, 31, 39, 0.96)",
+  }, "rgba(0, 0, 0, 0.78)");
 }
 
 function drawRackSprite(rack) {
   const selected = state.dragShelf?.id === rack.id || state.selectedShelfId === rack.id;
   const anchor = worldAnchor(rack.anchorX, rack.anchorY);
   const name = rackSpriteName(rack);
+  drawRackContactBase(rack);
   drawSprite("rack", name, anchor);
   if (selected) {
     drawSpriteLabel(rack.id, { x: anchor.x, y: anchor.y - 118 * spriteScale() }, "#f7b733");
@@ -1329,6 +1878,7 @@ function robotSpriteName(robot, status, direction, index) {
 function displayRobotStatus(status) {
   if (status === "LOADING") return "PICKING";
   if (status === "UNLOADING") return "DROPPING";
+  if (status === "HANDOFF" || status === "EXCHANGE") return "EXCHANGING";
   return status;
 }
 
@@ -1535,7 +2085,8 @@ function runtimeMoveForRobot(kind, robot) {
 function runtimeRobotCanMove(robot) {
   const runtimeStatus = String(robot.runtimeStatus || "").toLowerCase();
   if (["picking", "loading", "unloading", "unloading_at_conveyor", "waiting_for_tile_lock", "blocked", "ready", "idle"].includes(runtimeStatus)) return false;
-  return robotStatus(robot) === "MOVING" && (runtimeStatus.includes("navigating") || runtimeStatus.includes("relocating") || runtimeStatus === "moving");
+  const hasRoutePlayback = (robot.routeTiles || routeTileIds(robot.route)).length > 1;
+  return robotStatus(robot) === "MOVING" && hasRoutePlayback && (runtimeStatus.includes("navigating") || runtimeStatus.includes("relocating") || runtimeStatus === "moving");
 }
 
 function runtimeTileIsAvailable(tileId, robotId = "", options = {}) {
@@ -1556,7 +2107,8 @@ function runtimeSegmentFromTiles(robot, sourceTileId, destinationTileId, options
   if (!source || !destination || source === destination) return null;
   if (!tileIdsAreCardinalNeighbors(source, destination)) return null;
   if (!runtimeTileIsAvailable(source, robot.id, true)) return null;
-  if (!runtimeTileIsAvailable(destination, robot.id, {
+  const visualOnly = typeof options === "object" && options.visualOnly === true;
+  if (!visualOnly && !runtimeTileIsAvailable(destination, robot.id, {
     allowOccupied: Boolean(options.allowOccupied),
     allowMovingOccupant: Boolean(options.allowMovingOccupant),
   })) return null;
@@ -1621,7 +2173,7 @@ function initialRuntimeSegment(robot) {
   }
 
   const routeNext = nextRuntimeRouteTile(robot, source);
-  return runtimeSegmentFromTiles(robot, source, routeNext, { allowMovingOccupant: true });
+  return runtimeSegmentFromTiles(robot, source, routeNext, { allowMovingOccupant: true, visualOnly: true });
 }
 
 function advanceRuntimeSegment(robot, fromTileId) {
@@ -1631,7 +2183,7 @@ function advanceRuntimeSegment(robot, fromTileId) {
     robot.motionDirection = direction === 1 ? -1 : 1;
     routeNext = runtimeRouteNeighbor(robot, fromTileId, robot.motionDirection);
   }
-  return runtimeSegmentFromTiles(robot, fromTileId, routeNext, { allowMovingOccupant: true });
+  return runtimeSegmentFromTiles(robot, fromTileId, routeNext, { allowMovingOccupant: true, visualOnly: true });
 }
 
 function poseFromSegment(segment) {
@@ -1849,7 +2401,7 @@ function drawRobot(robot) {
 
 function drawRobotTag(robot, status, x, y, color) {
   const s = view.tileW / 76;
-  const text = `${robot.id} ${status}`;
+  const text = `${robot.id} ${displayRobotStatus(status)}`;
   ctx.save();
   ctx.font = `700 ${Math.round(10 * s)}px Monaco, "Courier New", monospace`;
   const width = ctx.measureText(text).width + 12 * s;
@@ -1905,8 +2457,9 @@ function render() {
     .slice(0, state.runtimeLinked ? 5 : 3)
     .forEach((robot, index) => drawRoute(robot.route, robot.color, index === 0));
 
+  const facilities = activeFacilitySprites();
   const objects = [
-    ...facilitySprites.map((prop) => ({ type: "facility", depth: prop.depth, value: prop })),
+    ...facilities.map((prop) => ({ type: "facility", depth: prop.depth, value: prop })),
     ...state.shelves.map((shelf) => ({ type: "rack", depth: shelf.anchorX + shelf.anchorY + shelf.length * 0.25, value: shelf })),
     ...state.robots.map((robot) => {
       const pos = robotDisplayPosition(robot);
@@ -1915,7 +2468,7 @@ function render() {
   ].sort((a, b) => a.depth - b.depth);
 
   state.shelves.forEach((shelf) => drawRackShadow(shelf));
-  facilitySprites.forEach((prop) => drawFacilityShadow(prop));
+  facilities.forEach((prop) => drawFacilityShadow(prop));
   state.robots.forEach((robot) => drawRobotShadow(robot));
 
   objects.forEach((object, index) => {
@@ -2013,7 +2566,7 @@ function updateDom() {
   const replanCount = metrics.replan_count ?? runtime.replans ?? Math.max(1, Math.round(metricValue(state.load === "high" ? 14 : state.load === "low" ? 3 : 7, 2, 0.018)));
   const deadlockCount = metrics.deadlock_count ?? runtime.deadlocks ?? Math.max(0, Math.round(metricValue(state.load === "high" ? 4 : state.load === "low" ? 0.6 : 2, 1.1, 0.015)));
   const activeSkillCount = runtime.active_skills?.length ?? (state.load === "high" ? 16 : state.load === "low" ? 8 : 12);
-  const tileLocks = snapshot ? uniqueRuntimeLockTiles(snapshot) : state.robots.length * 2 + (state.load === "high" ? 7 : state.load === "low" ? 2 : 4);
+  const tileLocks = runtimeLockCount(snapshot);
   const deniedLocks = movementLocks.denied_moves?.length || 0;
   const congestion = snapshot ? deniedLocks + state.robots.filter((robot) => robot.status === "BLOCKED" || robot.status === "WAITING").length : Math.max(0, Math.round(metricValue(profile.congestion, 5, 0.014)));
   const utilization = metrics.robot_utilization_pct ?? clamp(Math.round(metricValue(profile.utilization, 4, 0.01)), 0, 99);
@@ -2027,7 +2580,7 @@ function updateDom() {
   if (els.activeLoadBadge) els.activeLoadBadge.textContent = `${capitalize(state.load)} Load`;
   if (els.speedBadge) els.speedBadge.textContent = `${state.speed}x`;
   if (els.recordBadge) els.recordBadge.textContent = state.recording ? "Recording" : "Standby";
-  if (els.runtimeLinkBadge) els.runtimeLinkBadge.textContent = state.runtimeLinked ? "Runtime JSON" : "Mock Fallback";
+  if (els.runtimeLinkBadge) els.runtimeLinkBadge.textContent = state.runtimeEvents.length ? "Runtime Events" : state.runtimeLinked ? "Runtime JSON" : "Mock Fallback";
   if (els.wallClock) els.wallClock.textContent = new Date().toLocaleTimeString("en-US", { hour12: false });
   if (els.ordersCompleted) els.ordersCompleted.textContent = `${completedOrders}`;
   if (els.throughputRate) els.throughputRate.textContent = `${Math.round(completedRate)}/hr`;
@@ -2065,7 +2618,7 @@ function updateDom() {
   if (els.skuMix) els.skuMix.textContent = state.load === "high" ? "Heavy Mix" : state.load === "low" ? "Light Mix" : "Live Mix";
   if (els.contractState) els.contractState.textContent = state.runtimeLinked && !healthBad ? "Ready" : "Fallback";
   if (els.runtimeControlState) els.runtimeControlState.textContent = state.running ? "Ready" : "Paused";
-  if (els.runtimeSnapshotPort) els.runtimeSnapshotPort.textContent = state.runtimeLinked ? `${state.load}.json` : "mock";
+  if (els.runtimeSnapshotPort) els.runtimeSnapshotPort.textContent = state.runtimeEvents.length ? `${state.load}.events` : state.runtimeLinked ? `${state.load}.json` : "mock";
   if (els.robotsPort) els.robotsPort.textContent = String(state.robots.length).padStart(2, "0");
   if (els.ordersPort) els.ordersPort.textContent = String(activeOrders).padStart(2, "0");
   if (els.locksPort) els.locksPort.textContent = String(tileLocks).padStart(2, "0");
@@ -2082,7 +2635,7 @@ function updateDom() {
   }
   if (els.selectedShelf) els.selectedShelf.textContent = state.dragShelf ? state.dragShelf.id : state.selectedShelfId || "None";
   if (els.fleetCount) els.fleetCount.textContent = `${String(state.robots.length).padStart(2, "0")} AEGIS`;
-  if (els.orderFlowMode) els.orderFlowMode.textContent = state.runtimeLinked ? "Runtime Feed" : (state.load === "high" ? "Surge Feed" : state.load === "low" ? "Steady Feed" : "Live Feed");
+  if (els.orderFlowMode) els.orderFlowMode.textContent = state.runtimeEvents.length ? "Event Replay" : state.runtimeLinked ? "Runtime Feed" : (state.load === "high" ? "Surge Feed" : state.load === "low" ? "Steady Feed" : "Live Feed");
   if (els.orderNewCount) els.orderNewCount.textContent = String(clamp(Math.round(createdRate / 10), 0, 99)).padStart(2, "0");
   if (els.orderAssignedCount) els.orderAssignedCount.textContent = String(clamp(activeOrders - pendingOrders, 0, 99)).padStart(2, "0");
   if (els.orderAgingCount) els.orderAgingCount.textContent = String(slaRisk).padStart(2, "0");
@@ -2230,7 +2783,10 @@ function setFocusedSkill(skill) {
 }
 
 function runtimeTilesPerSecond() {
-  return state.speed >= 60 ? 1.15 : 0.42;
+  const nominalRobotSpeedMps = 1.0;
+  const tileSizeM = 2.0;
+  const physicalTilesPerSecond = nominalRobotSpeedMps / tileSizeM;
+  return Math.min(12, physicalTilesPerSecond * Math.max(1, state.speed));
 }
 
 function holdRuntimeRobot(robot) {
@@ -2239,7 +2795,29 @@ function holdRuntimeRobot(robot) {
   robot.visualTileId = robot.tileId || robot.visualTileId;
 }
 
+function stepRuntimeEventRobotAnimation(robot) {
+  if (!robot.motion) {
+    holdRuntimeRobot(robot);
+    return;
+  }
+
+  const elapsed = (state.runtimeReplayTick || state.tick || 0) - Number(robot.motion.startTick || 0);
+  robot.motion.progress = clamp(elapsed / Math.max(0.001, Number(robot.motion.durationTicks || 1)), 0, 1);
+  robot.visualPose = poseFromSegment(robot.motion);
+  if (robot.motion.progress >= 1) {
+    robot.visualTileId = robot.motion.destinationTileId;
+    robot.tileId = robot.motion.destinationTileId;
+    robot.motion = null;
+    robot.visualPose = staticRuntimePose(robot);
+  }
+}
+
 function stepRuntimeRobotAnimation(robot, dt) {
+  if (state.runtimeEvents.length) {
+    stepRuntimeEventRobotAnimation(robot);
+    return;
+  }
+
   if (!runtimeRobotCanMove(robot)) {
     holdRuntimeRobot(robot);
     return;
@@ -2305,6 +2883,20 @@ function updateRuntimeDebugAttributes() {
 function stepSimulation(dt) {
   if (!state.running) return;
   if (state.runtimeLinked) {
+    if (state.runtimeEvents.length) {
+      state.runtimeReplayTick += dt * state.speed;
+      if (state.runtimeReplayTick > state.runtimeReplayEndTick) {
+        restartRuntimeEventReplay();
+        return;
+      }
+      state.tick = state.runtimeReplayTick;
+      state.simTime = state.runtimeReplayTick;
+      applyRuntimeEventsThrough(state.runtimeReplayTick);
+      state.robots.forEach((robot) => stepRuntimeRobotAnimation(robot, dt));
+      pruneRuntimeActiveLocks();
+      syncRuntimeOrderRows();
+      return;
+    }
     state.simTime += dt * state.speed;
     state.tick += dt * state.speed;
     state.robots.forEach((robot) => stepRuntimeRobotAnimation(robot, dt));
@@ -2347,8 +2939,8 @@ function setSpeed(speed) {
 
 async function resetSimulation() {
   state.running = true;
-  state.speed = 10;
-  state.load = "medium";
+  state.speed = 1;
+  state.load = "high";
   state.simTime = 9300;
   state.tick = 0;
   state.shelves = cloneData(shelvesSeed);
@@ -2370,8 +2962,8 @@ async function resetSimulation() {
     "Congestion-aware planner assigned A2 priority route.",
   ];
   state.focusSkill = "shelf_pick";
-  setSpeed(10);
-  await setLoad("medium");
+  setSpeed(1);
+  await setLoad("high");
   setFocusedSkill("shelf_pick");
 }
 
@@ -2605,11 +3197,17 @@ async function init() {
 
 window.__warehouseRuntimeDebug = () => ({
   runtimeLinked: state.runtimeLinked,
+  runtimeEventCount: state.runtimeEvents.length,
+  runtimeEventIndex: state.runtimeEventIndex,
+  runtimeReplayTick: Number((state.runtimeReplayTick || 0).toFixed(2)),
+  runtimeLockCount: currentRuntimeLockTileIds().size,
   load: state.load,
   speed: state.speed,
   tick: Math.floor(state.tick),
   blockedTileCount: state.runtimeBlockedTiles?.size || 0,
   occupiedTileCount: state.runtimeOccupiedTiles?.size || 0,
+  dropTiles: state.runtimeSnapshot?.warehouse?.drop_tiles || [],
+  conveyors: state.runtimeSnapshot?.warehouse?.conveyors || [],
   robots: state.robots.map((robot) => ({
     id: robot.id,
     status: robot.runtimeStatus || robot.status || robotStatus(robot),

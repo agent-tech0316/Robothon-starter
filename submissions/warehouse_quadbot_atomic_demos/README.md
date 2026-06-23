@@ -77,19 +77,19 @@ The judge-facing takeaway is simple: one robot moving is a skill; many robots sh
 
 ## Benchmark Overview
 
-The benchmark runs a 20 x 14 tile warehouse with 9 robots, rack footprint blocking, depot/service/outbound tiles, three SKU weight classes, and three load profiles.
+The benchmark runs a 20 x 14 tile warehouse with 9 robots, rack footprint blocking, a 3 x 3 corner robot depot, four wall-facing outbound conveyor ports, three SKU weight classes, and three load profiles. Each conveyor belt sits outside the warehouse boundary, with its roll-up door on the outer end and exactly one adjacent in-warehouse unload tile on the edge. Robots drop parcels at that edge tile only; the belt and door are visual/exterior infrastructure, not traversable robot floor.
 
 | Load | Created | Completed | Active | Throughput | Avg completion | Avg lock wait | Robot util. | Safety violations |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Low | 27 | 25 | 2 | 100/hr | 36.36 ticks | 3.44 ticks | 13.4% | 0 |
-| Medium | 84 | 81 | 3 | 324/hr | 42.30 ticks | 41.78 ticks | 48.4% | 0 |
-| High | 140 | 124 | 16 | 496/hr | 63.29 ticks | 120.67 ticks | 77.4% | 0 |
+| Low | 27 | 24 | 3 | 96/hr | 56.04 ticks | 2.89 ticks | 20.4% | 0 |
+| Medium | 84 | 77 | 7 | 308/hr | 70.83 ticks | 30.67 ticks | 72.9% | 0 |
+| High | 140 | 91 | 49 | 364/hr | 104.53 ticks | 38.56 ticks | 89.2% | 0 |
 
 Safety violations include blocked-rack route violations, non-cardinal route steps, robot-tile collisions, and tile-lock overlap violations. All are zero in the generated low/medium/high snapshots.
 
 ## Accelerated Fleet Stress Benchmark
 
-The project now includes a benchmark-only fast-forward simulator for warehouse-scale testing without browser rendering. It runs 54 six-hour scenarios across load level, SKU weight mix, pick difficulty, and congestion shock, comparing planner-off against the local route-window planner.
+The project now includes a benchmark-only fast-forward simulator for warehouse-scale testing without browser rendering. It runs 54 six-hour scenarios across load level, SKU weight mix, pick difficulty, and congestion shock, comparing planner-off against the congestion-aware local planner.
 
 | Stress benchmark | Result |
 | --- | ---: |
@@ -124,14 +124,14 @@ flowchart LR
 
 ## Baseline Comparison
 
-The current deterministic 900-tick medium-load comparison now shows a measurable local-planner uplift. `--planner local` enables route-window reservation: robots keep the same source+destination tile lock contract, but cleared short corridors let them move continuously instead of pausing for a full control cycle after every tile.
+The current deterministic 900-tick high-load comparison shows why multi-exit warehouse planning matters under surge pressure. `--planner off` uses a short-sighted nearest-exit policy that overloads one conveyor path. `--planner local` keeps the same physical speed and source+destination tile lock contract, but chooses among four exterior conveyor mouths using distance, queue pressure, route pressure, and occupancy.
 
 | Mode | Completed | Throughput | Avg completion | Avg lock wait | Planner checks | Collision violations |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Planner off | 72 / 84 | 288/hr | 120.06 ticks | 82.44 ticks | 0 | 0 |
-| Local planner | 81 / 84 | 324/hr | 42.30 ticks | 41.78 ticks | 2 | 0 |
+| Planner off | 16 / 140 | 64/hr | 57.44 ticks | 698.00 ticks | 0 | 0 |
+| Local planner | 91 / 140 | 364/hr | 104.53 ticks | 38.56 ticks | 2 | 0 |
 
-That is a +12.5% throughput increase, a 64.8% reduction in average completion time, and a 49.3% reduction in average lock wait on the medium profile, while keeping blocked-tile, cardinality, collision, and lock-overlap violations at 0.
+That is a +468.8% throughput increase and a 94.5% reduction in average lock wait on the high profile, while keeping blocked-tile, cardinality, collision, and lock-overlap violations at 0. The off baseline has a lower average completion time only because it completes a small set of early/easy orders while 124 orders remain stuck in the active queue.
 
 ## Environment
 
@@ -142,7 +142,7 @@ That is a +12.5% throughput increase, a 64.8% reduction in average completion ti
 - Local planner route-window reservation keeps cleared robots moving continuously through short corridors
 - SKU classes: cardboard/light, wood/medium, metal/heavy
 - Load profiles: low, medium, high
-- Outbound service tiles and conveyor zones
+- Four wall-facing outbound conveyor ports, each with one in-warehouse unload tile and one exterior roll-up door line
 
 ## Robot Platform
 
@@ -169,11 +169,11 @@ Primary metrics:
 
 ## Results
 
-- Medium load reaches 324 orders/hour with 81 of 84 orders completed in 900 simulated seconds after local planner route-window reservation.
-- High load reaches 496 orders/hour with 124 of 140 orders completed while keeping all movement safety counters at 0.
+- Medium load reaches 308 orders/hour with 77 of 84 orders completed in 900 simulated seconds after local planner multi-port conveyor selection.
+- High load reaches 364 orders/hour with 91 of 140 orders completed while keeping all movement safety counters at 0 under surge pressure.
 - MuJoCo clips show payload-dependent gait, shelf pickup, basket contact, and heavy-package handoff.
 - The UI binds to generated runtime JSON and animates runtime-linked robot movement without closing open routes or using mock-only phase motion.
-- The first dashboard KPI panel now shows the medium benchmark proof directly: 288/hr planner-off baseline, 324/hr local planner, and 0 movement safety violations.
+- The first dashboard KPI panel now shows the high-load benchmark proof directly: 64/hr planner-off baseline, 364/hr local planner, and 0 movement safety violations.
 - The UI now includes a simplified Judge Review Path so evaluators can see fleet size, throughput uplift, safety, replans, and MuJoCo-backed skills without decoding the full operations dashboard.
 - The accelerated fleet stress benchmark runs 54 six-hour nominal/aisle-surge scenarios in about 7.7 wall-clock seconds, achieving 100% safety pass rate and +30.74% average planner throughput uplift.
 
@@ -234,7 +234,7 @@ http://127.0.0.1:8765/submissions/warehouse_quadbot_atomic_demos/ui/index.html
 The dashboard exposes:
 
 - Load profile: low, medium, high
-- Playback speed: 10x, 60x
+- Playback speed: 1x, 10x, 60x
 - Pause / next tick / reset
 - Runtime status, order intake, robot modules, tile locks, KPI badges, and MuJoCo evidence panels
 

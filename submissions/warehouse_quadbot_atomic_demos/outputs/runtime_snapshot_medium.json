@@ -6,22 +6,49 @@
   "planner_enabled": true,
   "orders": {
     "created_per_hr": 336,
-    "completed_per_hr": 324,
-    "active": 3,
+    "completed_per_hr": 308,
+    "active": 7,
     "pending": 0,
     "sla_risk": 0,
-    "open": 3,
-    "avg_fulfillment_min": 0.7
+    "open": 7,
+    "avg_fulfillment_min": 1.2
   },
   "order_rows": [
+    {
+      "id": "ORD-000000077",
+      "priority": "P1",
+      "difficulty": "normal",
+      "weight_kg": 4.0,
+      "assigned_robot": "Q-01",
+      "age_s": 69.0,
+      "status": "navigating_to_conveyor"
+    },
+    {
+      "id": "ORD-000000080",
+      "priority": "P1",
+      "difficulty": "normal",
+      "weight_kg": 4.0,
+      "assigned_robot": "Q-07",
+      "age_s": 50.0,
+      "status": "navigating_to_conveyor"
+    },
     {
       "id": "ORD-000000083",
       "priority": "P1",
       "difficulty": "hard",
       "weight_kg": 7.5,
-      "assigned_robot": "Q-03",
+      "assigned_robot": "Q-06",
       "age_s": 11.0,
       "status": "navigating_to_rack"
+    },
+    {
+      "id": "ORD-000000079",
+      "priority": "P2",
+      "difficulty": "normal",
+      "weight_kg": 2.0,
+      "assigned_robot": "Q-03",
+      "age_s": 55.0,
+      "status": "unloading_at_conveyor"
     },
     {
       "id": "ORD-000000082",
@@ -33,39 +60,73 @@
       "status": "navigating_to_conveyor"
     },
     {
+      "id": "ORD-000000078",
+      "priority": "P3",
+      "difficulty": "expert",
+      "weight_kg": 1.2,
+      "assigned_robot": "Q-02",
+      "age_s": 58.0,
+      "status": "navigating_to_conveyor"
+    },
+    {
       "id": "ORD-000000084",
       "priority": "P3",
       "difficulty": "hard",
       "weight_kg": 5.5,
-      "assigned_robot": "Q-01",
+      "assigned_robot": "Q-04",
       "age_s": 7.0,
-      "status": "picking"
+      "status": "navigating_to_rack"
     }
   ],
   "robots": [
     {
       "id": "Q-01",
-      "x": 13.0,
-      "y": 6.0,
-      "tile_id": "T_13_06",
+      "x": 3.0,
+      "y": 9.0,
+      "tile_id": "T_03_09",
       "heading": "N",
-      "status": "picking",
-      "battery": 93,
-      "carrying": false,
-      "current_order": "ORD-000000084",
-      "current_target": "T_13_06",
-      "next_target": null,
+      "status": "navigating_to_conveyor",
+      "battery": 92,
+      "carrying": true,
+      "current_order": "ORD-000000077",
+      "current_target": "T_00_06",
+      "next_target": "T_03_08",
       "movement_model": "four_direction_grid",
       "route_closed": false,
       "route_cardinal": true,
       "lock_tiles": [
-        "T_13_06"
+        "T_03_09",
+        "T_03_08"
       ],
-      "carried_sku": null,
-      "carried_weight_kg": null,
+      "carried_sku": "SKU_BULK_FOAM",
+      "carried_weight_kg": 4.0,
       "route": [
         [
-          13.0,
+          3.0,
+          9.0
+        ],
+        [
+          3.0,
+          8.0
+        ],
+        [
+          3.0,
+          7.0
+        ],
+        [
+          2.0,
+          7.0
+        ],
+        [
+          1.0,
+          7.0
+        ],
+        [
+          0.0,
+          7.0
+        ],
+        [
+          0.0,
           6.0
         ]
       ],
@@ -74,25 +135,38 @@
     },
     {
       "id": "Q-02",
-      "x": 16.0,
+      "x": 13.0,
       "y": 0.0,
-      "tile_id": "T_16_00",
-      "heading": "W",
-      "status": "ready",
-      "battery": 93,
-      "carrying": false,
-      "current_order": null,
+      "tile_id": "T_13_00",
+      "heading": "E",
+      "status": "navigating_to_conveyor",
+      "battery": 92,
+      "carrying": true,
+      "current_order": "ORD-000000078",
       "current_target": "T_16_00",
-      "next_target": null,
+      "next_target": "T_14_00",
       "movement_model": "four_direction_grid",
       "route_closed": false,
       "route_cardinal": true,
       "lock_tiles": [
-        "T_16_00"
+        "T_13_00",
+        "T_14_00"
       ],
-      "carried_sku": null,
-      "carried_weight_kg": null,
+      "carried_sku": "SKU_FRAGILE_LIGHT",
+      "carried_weight_kg": 1.2,
       "route": [
+        [
+          13.0,
+          0.0
+        ],
+        [
+          14.0,
+          0.0
+        ],
+        [
+          15.0,
+          0.0
+        ],
         [
           16.0,
           0.0
@@ -103,61 +177,28 @@
     },
     {
       "id": "Q-03",
-      "x": 14.0,
-      "y": 10.0,
-      "tile_id": "T_14_10",
+      "x": 16.0,
+      "y": 0.0,
+      "tile_id": "T_16_00",
       "heading": "N",
-      "status": "navigating_to_rack",
-      "battery": 93,
-      "carrying": false,
-      "current_order": "ORD-000000083",
-      "current_target": "T_13_05",
-      "next_target": "T_13_10",
+      "status": "unloading",
+      "battery": 92,
+      "carrying": true,
+      "current_order": "ORD-000000079",
+      "current_target": "T_16_00",
+      "next_target": null,
       "movement_model": "four_direction_grid",
       "route_closed": false,
       "route_cardinal": true,
       "lock_tiles": [
-        "T_14_10",
-        "T_13_10"
+        "T_16_00"
       ],
-      "carried_sku": null,
-      "carried_weight_kg": null,
+      "carried_sku": "SKU_WOOD_MED",
+      "carried_weight_kg": 2.0,
       "route": [
         [
-          14.0,
-          10.0
-        ],
-        [
-          13.0,
-          10.0
-        ],
-        [
-          12.0,
-          10.0
-        ],
-        [
-          12.0,
-          9.0
-        ],
-        [
-          12.0,
-          8.0
-        ],
-        [
-          12.0,
-          7.0
-        ],
-        [
-          12.0,
-          6.0
-        ],
-        [
-          12.0,
-          5.0
-        ],
-        [
-          13.0,
-          5.0
+          16.0,
+          0.0
         ]
       ],
       "wait_ticks": 0,
@@ -165,41 +206,41 @@
     },
     {
       "id": "Q-04",
-      "x": 17.0,
-      "y": 11.0,
-      "tile_id": "T_17_11",
-      "heading": "S",
-      "status": "blocked",
-      "battery": 93,
+      "x": 3.0,
+      "y": 10.0,
+      "tile_id": "T_03_10",
+      "heading": "N",
+      "status": "navigating_to_rack",
+      "battery": 92,
       "carrying": false,
-      "current_order": null,
-      "current_target": "T_15_12",
-      "next_target": "T_17_12",
+      "current_order": "ORD-000000084",
+      "current_target": "T_03_07",
+      "next_target": "T_03_09",
       "movement_model": "four_direction_grid",
       "route_closed": false,
       "route_cardinal": true,
       "lock_tiles": [
-        "T_17_11",
-        "T_17_12"
+        "T_03_10",
+        "T_03_09"
       ],
       "carried_sku": null,
       "carried_weight_kg": null,
       "route": [
         [
-          17.0,
-          11.0
+          3.0,
+          10.0
         ],
         [
-          17.0,
-          12.0
+          3.0,
+          9.0
         ],
         [
-          16.0,
-          12.0
+          3.0,
+          8.0
         ],
         [
-          15.0,
-          12.0
+          3.0,
+          7.0
         ]
       ],
       "wait_ticks": 0,
@@ -208,145 +249,11 @@
     {
       "id": "Q-05",
       "x": 15.0,
-      "y": 11.0,
-      "tile_id": "T_15_11",
-      "heading": "S",
-      "status": "waiting_for_tile_lock",
-      "battery": 94,
-      "carrying": false,
-      "current_order": null,
-      "current_target": "T_08_13",
-      "next_target": "T_14_11",
-      "movement_model": "four_direction_grid",
-      "route_closed": false,
-      "route_cardinal": true,
-      "lock_tiles": [
-        "T_15_11",
-        "T_14_11"
-      ],
-      "carried_sku": null,
-      "carried_weight_kg": null,
-      "route": [
-        [
-          15.0,
-          11.0
-        ],
-        [
-          14.0,
-          11.0
-        ],
-        [
-          14.0,
-          12.0
-        ],
-        [
-          14.0,
-          13.0
-        ],
-        [
-          13.0,
-          13.0
-        ],
-        [
-          12.0,
-          13.0
-        ],
-        [
-          11.0,
-          13.0
-        ],
-        [
-          10.0,
-          13.0
-        ],
-        [
-          9.0,
-          13.0
-        ],
-        [
-          8.0,
-          13.0
-        ]
-      ],
-      "wait_ticks": 0,
-      "role": "picker"
-    },
-    {
-      "id": "Q-06",
-      "x": 17.0,
       "y": 12.0,
-      "tile_id": "T_17_12",
-      "heading": "N",
-      "status": "relocating_to_buffer",
-      "battery": 94,
-      "carrying": false,
-      "current_order": null,
-      "current_target": "T_15_12",
-      "next_target": "T_16_12",
-      "movement_model": "four_direction_grid",
-      "route_closed": false,
-      "route_cardinal": true,
-      "lock_tiles": [
-        "T_17_12",
-        "T_16_12"
-      ],
-      "carried_sku": null,
-      "carried_weight_kg": null,
-      "route": [
-        [
-          17.0,
-          12.0
-        ],
-        [
-          16.0,
-          12.0
-        ],
-        [
-          15.0,
-          12.0
-        ]
-      ],
-      "wait_ticks": 0,
-      "role": "runner"
-    },
-    {
-      "id": "Q-07",
-      "x": 16.0,
-      "y": 11.0,
-      "tile_id": "T_16_11",
-      "heading": "N",
-      "status": "ready",
-      "battery": 95,
-      "carrying": false,
-      "current_order": null,
-      "current_target": "T_08_13",
-      "next_target": "T_15_11",
-      "movement_model": "four_direction_grid",
-      "route_closed": false,
-      "route_cardinal": true,
-      "lock_tiles": [
-        "T_16_11",
-        "T_15_11"
-      ],
-      "carried_sku": null,
-      "carried_weight_kg": null,
-      "route": [
-        [
-          16.0,
-          11.0
-        ]
-      ],
-      "wait_ticks": 3,
-      "role": "picker"
-    },
-    {
-      "id": "Q-08",
-      "x": 10.0,
-      "y": 12.0,
-      "tile_id": "T_10_12",
+      "tile_id": "T_15_12",
       "heading": "W",
       "status": "ready",
-      "battery": 96,
+      "battery": 92,
       "carrying": false,
       "current_order": null,
       "current_target": null,
@@ -355,11 +262,153 @@
       "route_closed": false,
       "route_cardinal": true,
       "lock_tiles": [
-        "T_10_12"
+        "T_15_12"
       ],
       "carried_sku": null,
       "carried_weight_kg": null,
       "route": [
+        [
+          15.0,
+          12.0
+        ]
+      ],
+      "wait_ticks": 0,
+      "role": "picker"
+    },
+    {
+      "id": "Q-06",
+      "x": 13.0,
+      "y": 4.0,
+      "tile_id": "T_13_04",
+      "heading": "S",
+      "status": "navigating_to_rack",
+      "battery": 93,
+      "carrying": false,
+      "current_order": "ORD-000000083",
+      "current_target": "T_13_05",
+      "next_target": "T_13_05",
+      "movement_model": "four_direction_grid",
+      "route_closed": false,
+      "route_cardinal": true,
+      "lock_tiles": [
+        "T_13_04",
+        "T_13_05"
+      ],
+      "carried_sku": null,
+      "carried_weight_kg": null,
+      "route": [
+        [
+          13.0,
+          4.0
+        ],
+        [
+          13.0,
+          5.0
+        ]
+      ],
+      "wait_ticks": 0,
+      "role": "runner"
+    },
+    {
+      "id": "Q-07",
+      "x": 9.0,
+      "y": 11.0,
+      "tile_id": "T_09_11",
+      "heading": "E",
+      "status": "navigating_to_conveyor",
+      "battery": 93,
+      "carrying": true,
+      "current_order": "ORD-000000080",
+      "current_target": "T_19_11",
+      "next_target": "T_10_11",
+      "movement_model": "four_direction_grid",
+      "route_closed": false,
+      "route_cardinal": true,
+      "lock_tiles": [
+        "T_09_11",
+        "T_10_11"
+      ],
+      "carried_sku": "SKU_BULK_FOAM",
+      "carried_weight_kg": 4.0,
+      "route": [
+        [
+          9.0,
+          11.0
+        ],
+        [
+          10.0,
+          11.0
+        ],
+        [
+          11.0,
+          11.0
+        ],
+        [
+          12.0,
+          11.0
+        ],
+        [
+          13.0,
+          11.0
+        ],
+        [
+          14.0,
+          11.0
+        ],
+        [
+          15.0,
+          11.0
+        ],
+        [
+          16.0,
+          11.0
+        ],
+        [
+          17.0,
+          11.0
+        ],
+        [
+          18.0,
+          11.0
+        ],
+        [
+          19.0,
+          11.0
+        ]
+      ],
+      "wait_ticks": 0,
+      "role": "picker"
+    },
+    {
+      "id": "Q-08",
+      "x": 12.0,
+      "y": 12.0,
+      "tile_id": "T_12_12",
+      "heading": "W",
+      "status": "relocating_to_buffer",
+      "battery": 93,
+      "carrying": false,
+      "current_order": null,
+      "current_target": "T_10_12",
+      "next_target": "T_11_12",
+      "movement_model": "four_direction_grid",
+      "route_closed": false,
+      "route_cardinal": true,
+      "lock_tiles": [
+        "T_12_12",
+        "T_11_12"
+      ],
+      "carried_sku": null,
+      "carried_weight_kg": null,
+      "route": [
+        [
+          12.0,
+          12.0
+        ],
+        [
+          11.0,
+          12.0
+        ],
         [
           10.0,
           12.0
@@ -370,58 +419,48 @@
     },
     {
       "id": "Q-09",
-      "x": 16.0,
-      "y": 10.0,
-      "tile_id": "T_16_10",
-      "heading": "S",
-      "status": "waiting_for_tile_lock",
-      "battery": 95,
+      "x": 2.0,
+      "y": 6.0,
+      "tile_id": "T_02_06",
+      "heading": "W",
+      "status": "navigating_to_conveyor",
+      "battery": 93,
       "carrying": true,
       "current_order": "ORD-000000082",
-      "current_target": "T_18_13",
-      "next_target": "T_17_10",
+      "current_target": "T_00_06",
+      "next_target": "T_01_06",
       "movement_model": "four_direction_grid",
       "route_closed": false,
       "route_cardinal": true,
       "lock_tiles": [
-        "T_16_10",
-        "T_17_10"
+        "T_02_06",
+        "T_01_06"
       ],
       "carried_sku": "SKU_METAL_HEAVY",
       "carried_weight_kg": 7.5,
       "route": [
         [
-          16.0,
-          10.0
+          2.0,
+          6.0
         ],
         [
-          17.0,
-          10.0
+          1.0,
+          6.0
         ],
         [
-          17.0,
-          11.0
-        ],
-        [
-          18.0,
-          11.0
-        ],
-        [
-          18.0,
-          12.0
-        ],
-        [
-          18.0,
-          13.0
+          0.0,
+          6.0
         ]
       ],
-      "wait_ticks": 2,
+      "wait_ticks": 0,
       "role": "runner"
     }
   ],
   "warehouse": {
     "width_tiles": 20,
     "height_tiles": 14,
+    "tile_size_m": 2.0,
+    "nominal_robot_speed_mps": 1.0,
     "movement_model": "four_direction_grid",
     "lock_model": "current_and_next_tile",
     "blocked_tiles": [
@@ -485,20 +524,27 @@
       "T_11_00",
       "T_15_00",
       "T_15_12",
-      "T_16_00"
+      "T_17_00"
     ],
     "depot_tiles": [
+      "T_00_11",
+      "T_00_12",
       "T_00_13",
+      "T_01_11",
+      "T_01_12",
       "T_01_13",
-      "T_02_13",
-      "T_03_13",
-      "T_04_13",
-      "T_05_13",
-      "T_06_13",
-      "T_07_13",
-      "T_08_13"
+      "T_02_11",
+      "T_02_12",
+      "T_02_13"
+    ],
+    "drop_tiles": [
+      "T_00_06",
+      "T_16_00",
+      "T_16_13",
+      "T_19_11"
     ],
     "service_tiles": [
+      "T_00_06",
       "T_03_02",
       "T_03_03",
       "T_03_04",
@@ -523,46 +569,128 @@
       "T_13_07",
       "T_13_08",
       "T_13_09",
-      "T_17_13",
-      "T_18_13",
-      "T_19_13"
+      "T_16_00",
+      "T_16_13",
+      "T_19_11"
+    ],
+    "conveyors": [
+      {
+        "conveyor_id": "CONV_EAST_01",
+        "unload_tile_id": "T_19_11",
+        "door_tile_id": null,
+        "direction": "E",
+        "wall": "east",
+        "exterior_footprint": {
+          "x": 20,
+          "y": 11,
+          "w": 2,
+          "d": 1
+        },
+        "door_line": {
+          "x1": 22,
+          "y1": 11,
+          "x2": 22,
+          "y2": 12
+        },
+        "capacity_packages": 6
+      },
+      {
+        "conveyor_id": "CONV_SOUTH_01",
+        "unload_tile_id": "T_16_13",
+        "door_tile_id": null,
+        "direction": "S",
+        "wall": "south",
+        "exterior_footprint": {
+          "x": 16,
+          "y": 14,
+          "w": 1,
+          "d": 2
+        },
+        "door_line": {
+          "x1": 16,
+          "y1": 16,
+          "x2": 17,
+          "y2": 16
+        },
+        "capacity_packages": 6
+      },
+      {
+        "conveyor_id": "CONV_NORTH_01",
+        "unload_tile_id": "T_16_00",
+        "door_tile_id": null,
+        "direction": "N",
+        "wall": "north",
+        "exterior_footprint": {
+          "x": 16,
+          "y": -2,
+          "w": 1,
+          "d": 2
+        },
+        "door_line": {
+          "x1": 16,
+          "y1": -2,
+          "x2": 17,
+          "y2": -2
+        },
+        "capacity_packages": 6
+      },
+      {
+        "conveyor_id": "CONV_WEST_01",
+        "unload_tile_id": "T_00_06",
+        "door_tile_id": null,
+        "direction": "W",
+        "wall": "west",
+        "exterior_footprint": {
+          "x": -2,
+          "y": 6,
+          "w": 2,
+          "d": 1
+        },
+        "door_line": {
+          "x1": -2,
+          "y1": 6,
+          "x2": -2,
+          "y2": 7
+        },
+        "capacity_packages": 6
+      }
     ],
     "occupied_tiles": [
       {
-        "tile_id": "T_10_12",
-        "robot_id": "Q-08"
+        "tile_id": "T_02_06",
+        "robot_id": "Q-09"
       },
       {
-        "tile_id": "T_13_06",
+        "tile_id": "T_03_09",
         "robot_id": "Q-01"
       },
       {
-        "tile_id": "T_14_10",
-        "robot_id": "Q-03"
+        "tile_id": "T_03_10",
+        "robot_id": "Q-04"
       },
       {
-        "tile_id": "T_15_11",
+        "tile_id": "T_09_11",
+        "robot_id": "Q-07"
+      },
+      {
+        "tile_id": "T_12_12",
+        "robot_id": "Q-08"
+      },
+      {
+        "tile_id": "T_13_00",
+        "robot_id": "Q-02"
+      },
+      {
+        "tile_id": "T_13_04",
+        "robot_id": "Q-06"
+      },
+      {
+        "tile_id": "T_15_12",
         "robot_id": "Q-05"
       },
       {
         "tile_id": "T_16_00",
-        "robot_id": "Q-02"
-      },
-      {
-        "tile_id": "T_16_10",
-        "robot_id": "Q-09"
-      },
-      {
-        "tile_id": "T_16_11",
-        "robot_id": "Q-07"
-      },
-      {
-        "tile_id": "T_17_11",
-        "robot_id": "Q-04"
-      },
-      {
-        "tile_id": "T_17_12",
-        "robot_id": "Q-06"
+        "robot_id": "Q-03"
       }
     ]
   },
@@ -570,176 +698,89 @@
     "model": "source_and_destination_tile_atomic",
     "occupied_tiles": [
       {
-        "tile_id": "T_10_12",
-        "robot_id": "Q-08"
+        "tile_id": "T_02_06",
+        "robot_id": "Q-09"
       },
       {
-        "tile_id": "T_13_06",
+        "tile_id": "T_03_09",
         "robot_id": "Q-01"
       },
       {
-        "tile_id": "T_14_10",
-        "robot_id": "Q-03"
+        "tile_id": "T_03_10",
+        "robot_id": "Q-04"
       },
       {
-        "tile_id": "T_15_11",
+        "tile_id": "T_09_11",
+        "robot_id": "Q-07"
+      },
+      {
+        "tile_id": "T_12_12",
+        "robot_id": "Q-08"
+      },
+      {
+        "tile_id": "T_13_00",
+        "robot_id": "Q-02"
+      },
+      {
+        "tile_id": "T_13_04",
+        "robot_id": "Q-06"
+      },
+      {
+        "tile_id": "T_15_12",
         "robot_id": "Q-05"
       },
       {
         "tile_id": "T_16_00",
-        "robot_id": "Q-02"
-      },
-      {
-        "tile_id": "T_16_10",
-        "robot_id": "Q-09"
-      },
-      {
-        "tile_id": "T_16_11",
-        "robot_id": "Q-07"
-      },
-      {
-        "tile_id": "T_17_11",
-        "robot_id": "Q-04"
-      },
-      {
-        "tile_id": "T_17_12",
-        "robot_id": "Q-06"
+        "robot_id": "Q-03"
       }
     ],
     "requested_moves": [
       {
         "tick": 900,
-        "robot_id": "Q-01",
-        "source_tile": "T_13_07",
-        "destination_tile": "T_13_06",
+        "robot_id": "Q-07",
+        "source_tile": "T_08_11",
+        "destination_tile": "T_09_11",
         "lock_tiles": [
-          "T_13_07",
-          "T_13_06"
+          "T_08_11",
+          "T_09_11"
         ],
-        "priority": 25
+        "priority": 83
       },
       {
         "tick": 900,
-        "robot_id": "Q-03",
-        "source_tile": "T_14_11",
-        "destination_tile": "T_14_10",
+        "robot_id": "Q-08",
+        "source_tile": "T_13_12",
+        "destination_tile": "T_12_12",
         "lock_tiles": [
-          "T_14_11",
-          "T_14_10"
-        ],
-        "priority": 75
-      },
-      {
-        "tick": 900,
-        "robot_id": "Q-04",
-        "source_tile": "T_17_10",
-        "destination_tile": "T_17_11",
-        "lock_tiles": [
-          "T_17_10",
-          "T_17_11"
-        ],
-        "priority": 2
-      },
-      {
-        "tick": 900,
-        "robot_id": "Q-05",
-        "source_tile": "T_15_10",
-        "destination_tile": "T_15_11",
-        "lock_tiles": [
-          "T_15_10",
-          "T_15_11"
-        ],
-        "priority": 4
-      },
-      {
-        "tick": 900,
-        "robot_id": "Q-06",
-        "source_tile": "T_17_13",
-        "destination_tile": "T_17_12",
-        "lock_tiles": [
-          "T_17_13",
-          "T_17_12"
+          "T_13_12",
+          "T_12_12"
         ],
         "priority": 0
-      },
-      {
-        "tick": 900,
-        "robot_id": "Q-09",
-        "source_tile": "T_16_10",
-        "destination_tile": "T_17_10",
-        "lock_tiles": [
-          "T_16_10",
-          "T_17_10"
-        ],
-        "priority": 60
       }
     ],
     "granted_moves": [
       {
         "tick": 900,
-        "robot_id": "Q-03",
-        "source_tile": "T_14_11",
-        "destination_tile": "T_14_10",
+        "robot_id": "Q-07",
+        "source_tile": "T_08_11",
+        "destination_tile": "T_09_11",
         "lock_tiles": [
-          "T_14_11",
-          "T_14_10"
+          "T_08_11",
+          "T_09_11"
         ]
       },
       {
         "tick": 900,
-        "robot_id": "Q-01",
-        "source_tile": "T_13_07",
-        "destination_tile": "T_13_06",
+        "robot_id": "Q-08",
+        "source_tile": "T_13_12",
+        "destination_tile": "T_12_12",
         "lock_tiles": [
-          "T_13_07",
-          "T_13_06"
-        ]
-      },
-      {
-        "tick": 900,
-        "robot_id": "Q-05",
-        "source_tile": "T_15_10",
-        "destination_tile": "T_15_11",
-        "lock_tiles": [
-          "T_15_10",
-          "T_15_11"
-        ]
-      },
-      {
-        "tick": 900,
-        "robot_id": "Q-04",
-        "source_tile": "T_17_10",
-        "destination_tile": "T_17_11",
-        "lock_tiles": [
-          "T_17_10",
-          "T_17_11"
-        ]
-      },
-      {
-        "tick": 900,
-        "robot_id": "Q-06",
-        "source_tile": "T_17_13",
-        "destination_tile": "T_17_12",
-        "lock_tiles": [
-          "T_17_13",
-          "T_17_12"
+          "T_13_12",
+          "T_12_12"
         ]
       }
     ],
-    "denied_moves": [
-      {
-        "tick": 900,
-        "robot_id": "Q-09",
-        "source_tile": "T_16_10",
-        "destination_tile": "T_17_10",
-        "lock_tiles": [
-          "T_16_10",
-          "T_17_10"
-        ],
-        "reason": "destination_occupied",
-        "blocker": "Q-04"
-      }
-    ],
+    "denied_moves": [],
     "lock_overlap_violations": []
   },
   "shelves": [
@@ -964,16 +1005,16 @@
     }
   ],
   "events": [
-    "Q-04 backing off to buffer T_15_12.",
-    "Completed ORD-RUNTIME-000000081 via Q-06 at CONV_EAST_01.",
-    "Q-06 clearing service tile T_17_13 toward T_15_12.",
-    "Q-03 moved T_14_11->T_14_10.",
-    "Q-01 moved T_13_07->T_13_06.",
-    "Q-01 started shelf_pick for ORD-RUNTIME-000000084 (10s).",
-    "Q-05 moved T_15_10->T_15_11.",
-    "Q-04 moved T_17_10->T_17_11.",
-    "Q-06 moved T_17_13->T_17_12.",
-    "Q-09 waits for tile T_17_10 blocked by Q-04 (destination_occupied)."
+    "Q-06 moved T_13_02->T_13_03.",
+    "Q-04 moved T_04_11->T_03_11.",
+    "Q-01 moved T_03_10->T_03_09.",
+    "Q-09 moved T_03_06->T_02_06.",
+    "Q-08 moved T_14_12->T_13_12.",
+    "Q-06 moved T_13_03->T_13_04.",
+    "Q-02 moved T_12_00->T_13_00.",
+    "Q-04 moved T_03_11->T_03_10.",
+    "Q-07 moved T_08_11->T_09_11.",
+    "Q-08 moved T_13_12->T_12_12."
   ],
   "runtime": {
     "workflow": "Outbound Batch Fulfillment",
@@ -981,10 +1022,10 @@
       "deadlock_recovery",
       "move_tile",
       "route_plan",
-      "shelf_pick"
+      "unload"
     ],
-    "deadlocks": 31,
-    "replans": 48,
+    "deadlocks": 21,
+    "replans": 63,
     "latest_decision": "Local planner prioritizes deadlock recovery, buffer reroutes, and short route-window reservation.",
     "planner_mode": "local",
     "planner_source": "local",
@@ -992,7 +1033,7 @@
     "ai_interval_s": 600,
     "next_planner_check_s": 300,
     "route_window_reservation": true,
-    "planner_movement_factor": 0.25,
+    "planner_movement_factor": 1.0,
     "route_blocked_tile_violations": 0,
     "route_cardinality_violations": 0,
     "collision_violations": 0,
