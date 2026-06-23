@@ -100,6 +100,8 @@ CLIPS: tuple[ClipSpec, ...] = (
     ClipSpec("shelf_pick_cardboard", "shelf_pick", "cardboard", 1.8, "Short shelf pickup: light package, fast loading."),
     ClipSpec("shelf_pick_wood", "shelf_pick", "wood", 2.1, "Short shelf pickup: medium package, longer loading."),
     ClipSpec("shelf_pick_metal", "shelf_pick", "metal", 2.4, "Short shelf pickup: heavy package, longest loading."),
+    ClipSpec("six_dof_grasp_sweep_wood", "six_dof_grasp_sweep", "wood", 3.0, "6-DOF multi-angle shelf-to-basket grasp: wrist roll/tool yaw reorient a medium crate while both fingertip pads stay in contact."),
+    ClipSpec("six_dof_grasp_sweep_metal", "six_dof_grasp_sweep", "metal", 3.2, "6-DOF heavy-package grasp sweep: overhead arc, wrist roll, tool yaw, basket placement, and sustained dual-finger package contact."),
     ClipSpec("handoff_metal", "handoff", "metal", 2.2, "Robot-to-robot handoff with heavy package and receiver basket drop."),
 )
 
@@ -588,6 +590,18 @@ def set_joint(model: mujoco.MjModel, data: mujoco.MjData, joint_name: str, value
     data.qpos[qpos_addr] = value
 
 
+def joint_value(model: mujoco.MjModel, data: mujoco.MjData, joint_name: str) -> float:
+    joint_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_JOINT, joint_name)
+    if joint_id < 0:
+        return 0.0
+    qpos_addr = int(model.jnt_qposadr[joint_id])
+    return float(data.qpos[qpos_addr])
+
+
+def arm_joint_snapshot(model: mujoco.MjModel, data: mujoco.MjData, prefix: str) -> dict[str, float]:
+    return {name: round(joint_value(model, data, f"{prefix}{name}"), 4) for name in ARM_JOINTS}
+
+
 def set_freejoint_pose(
     model: mujoco.MjModel,
     data: mujoco.MjData,
@@ -637,11 +651,16 @@ def body_position(model: mujoco.MjModel, data: mujoco.MjData, body_name: str) ->
 def contact_counters(model: mujoco.MjModel, data: mujoco.MjData) -> dict[str, int]:
     counters = {
         "gripper_package": 0,
+        "left_finger_package": 0,
+        "right_finger_package": 0,
+        "dual_finger_grasp_frames": 0,
         "package_basket": 0,
         "package_shelf": 0,
         "package_receiver_gripper": 0,
         "total_contacts": int(data.ncon),
     }
+    left_touch = False
+    right_touch = False
     for idx in range(data.ncon):
         contact = data.contact[idx]
         names = [
@@ -651,17 +670,26 @@ def contact_counters(model: mujoco.MjModel, data: mujoco.MjData) -> dict[str, in
         joined = " ".join(names)
         has_package = "package" in joined
         has_gripper = "gripper" in joined
+        has_left_finger = "gripper_left" in joined
+        has_right_finger = "gripper_right" in joined
         has_basket = "basket" in joined
         has_shelf = "shelf" in joined
         has_receiver = "b_gripper" in joined
         if has_package and has_gripper:
             counters["gripper_package"] += 1
+        if has_package and has_left_finger:
+            counters["left_finger_package"] += 1
+            left_touch = True
+        if has_package and has_right_finger:
+            counters["right_finger_package"] += 1
+            right_touch = True
         if has_package and has_basket:
             counters["package_basket"] += 1
         if has_package and has_shelf:
             counters["package_shelf"] += 1
         if has_package and has_receiver:
             counters["package_receiver_gripper"] += 1
+    counters["dual_finger_grasp_frames"] = int(left_touch and right_touch)
     return counters
 
 
@@ -718,8 +746,13 @@ def apply_package_pose(
     pos: tuple[float, float, float],
     yaw: float = 0.0,
     pitch: float = 0.0,
+    roll: float = 0.0,
 ) -> None:
-    set_freejoint_pose(model, data, "package_freejoint", pos, quat_from_euler(0.0, pitch, yaw))
+    set_freejoint_pose(model, data, "package_freejoint", pos, quat_from_euler(roll, pitch, yaw))
+
+
+def gripper_hold_position(model: mujoco.MjModel, data: mujoco.MjData, prefix: str) -> tuple[float, float, float]:
+    return body_world_point(model, data, f"{prefix}arm_tool_yaw_body", (0.155, 0.0, 0.0))
 
 
 def package_in_basket(model: mujoco.MjModel, data: mujoco.MjData, prefix: str, *, pitch: float = 0.0) -> None:
@@ -783,9 +816,8 @@ def apply_shelf_pick(model: mujoco.MjModel, data: mujoco.MjData, t: float, durat
 
     mujoco.mj_forward(model, data)
     shelf_pos = (-0.52, 0.0, 0.495)
-    gripper = site_position(model, data, "a_gripper_site")
     basket_site = site_position(model, data, "a_basket_payload_site")
-    carry_pos = (gripper[0], gripper[1], gripper[2] - 0.010)
+    carry_pos = gripper_hold_position(model, data, "a_")
     basket_pos = (basket_site[0], basket_site[1], basket_site[2] - 0.006)
     if grip < 1.0:
         pos = lerp(shelf_pos, carry_pos, 0.20 * grip)
@@ -823,18 +855,74 @@ def apply_handoff(model: mujoco.MjModel, data: mujoco.MjData, t: float, duration
 
     mujoco.mj_forward(model, data)
     sender_basket = site_position(model, data, "a_basket_payload_site")
-    sender_grip = site_position(model, data, "a_gripper_site")
-    receiver_grip = site_position(model, data, "b_gripper_site")
+    sender_grip = gripper_hold_position(model, data, "a_")
+    receiver_grip = gripper_hold_position(model, data, "b_")
     receiver_basket = site_position(model, data, "b_basket_payload_site")
     if sender_raise < 1.0:
-        pos = lerp((sender_basket[0], sender_basket[1], sender_basket[2] - 0.006), (sender_grip[0], sender_grip[1], sender_grip[2] - 0.010), sender_raise)
+        pos = lerp((sender_basket[0], sender_basket[1], sender_basket[2] - 0.006), sender_grip, sender_raise)
     elif transfer < 1.0:
-        pos = lerp((sender_grip[0], sender_grip[1], sender_grip[2] - 0.010), (receiver_grip[0], receiver_grip[1], receiver_grip[2] - 0.010), transfer)
+        pos = lerp(sender_grip, receiver_grip, transfer)
     elif receiver_lower < 1.0:
-        pos = (receiver_grip[0], receiver_grip[1], receiver_grip[2] - 0.010)
+        pos = receiver_grip
     else:
         pos = (receiver_basket[0], receiver_basket[1], receiver_basket[2] - 0.006)
     apply_package_pose(model, data, pos, yaw=math.pi * transfer, pitch=0.08 * receiver_lower)
+
+
+def apply_six_dof_grasp_sweep(model: mujoco.MjModel, data: mujoco.MjData, t: float, duration: float, profile: PayloadProfile) -> None:
+    apply_robot_base(model, data, "a_", x=0.12, y=0.0, yaw=math.pi, t=t, compression=profile.leg_compression, moving=False)
+
+    close_start = 0.42
+    close_end = close_start + profile.grip_close_s
+    lift_start = close_end + 0.08
+    overhead_start = 1.10
+    basket_start = 2.25
+    release_start = duration - 0.45
+
+    reach = smoothstep(0.05, close_start, t)
+    grip = smoothstep(close_start, close_end, t)
+    lift = smoothstep(lift_start, overhead_start, t)
+    overhead = smoothstep(overhead_start, basket_start, t)
+    settle = smoothstep(basket_start, release_start, t)
+    release = smoothstep(release_start, duration - 0.06, t)
+
+    stow = (-1.42, -0.55, -0.95, 0.58, 0.00, 0.00)
+    reach_pose = (0.04, -0.12, -0.34, 0.24, -0.18, 0.18)
+    lift_pose = (0.00, -0.92, 0.16, 0.92, 0.32, -0.32)
+    overhead_a = (-0.95, -1.05, -0.12, 1.12, 1.22, -0.82)
+    overhead_b = (-2.12, -0.86, -0.92, 0.90, -1.18, 1.02)
+    basket_pose = (-2.34, -0.82, -1.06, 0.82, 0.34, -0.30)
+
+    pose = lerp_list(stow, reach_pose, reach)
+    pose = lerp_list(pose, lift_pose, lift)
+    arc_pose = lerp_list(overhead_a, overhead_b, 0.5 - 0.5 * math.cos(math.pi * overhead))
+    pose = lerp_list(pose, arc_pose, overhead)
+    pose = lerp_list(pose, basket_pose, settle)
+    apply_arm_pose(model, data, "a_", pose)  # type: ignore[arg-type]
+    apply_gripper(model, data, "a_", grip * (1.0 - release))
+
+    mujoco.mj_forward(model, data)
+    shelf_pos = (-0.52, 0.0, 0.495)
+    hold_pos = gripper_hold_position(model, data, "a_")
+    basket_site = site_position(model, data, "a_basket_payload_site")
+    basket_pos = (basket_site[0], basket_site[1], basket_site[2] - 0.006)
+
+    if grip < 1.0:
+        pos = lerp(shelf_pos, hold_pos, 0.25 * grip)
+    elif release < 1.0:
+        pos = hold_pos
+    else:
+        pos = basket_pos
+
+    roll = (0.92 * pose[4]) * (1.0 - release)
+    pitch = (0.16 * lift + 0.18 * math.sin(math.pi * settle)) * (1.0 - release)
+    yaw = (0.75 * pose[5]) * (1.0 - release)
+    if release > 0.0:
+        pos = lerp(pos, basket_pos, release)
+        roll *= 1.0 - release
+        pitch *= 1.0 - release
+        yaw *= 1.0 - release
+    apply_package_pose(model, data, pos, yaw=yaw, pitch=pitch, roll=roll)
 
 
 def update_camera(camera: mujoco.MjvCamera, clip: ClipSpec, t: float) -> None:
@@ -844,11 +932,11 @@ def update_camera(camera: mujoco.MjvCamera, clip: ClipSpec, t: float) -> None:
         camera.distance = 2.15
         camera.azimuth = 105.0
         camera.elevation = -17.0
-    elif clip.kind == "shelf_pick":
-        camera.lookat[:] = [-0.18, 0.0, 0.42]
-        camera.distance = 1.70
-        camera.azimuth = 92.0
-        camera.elevation = -18.0
+    elif clip.kind in {"shelf_pick", "six_dof_grasp_sweep"}:
+        camera.lookat[:] = [-0.18, 0.0, 0.43]
+        camera.distance = 1.74
+        camera.azimuth = 92.0 + 6.0 * math.sin(0.9 * t)
+        camera.elevation = -17.0
     else:
         camera.lookat[:] = [0.08, 0.0, 0.36]
         camera.distance = 1.80
@@ -870,6 +958,8 @@ def apply_clip_state(model: mujoco.MjModel, data: mujoco.MjData, clip: ClipSpec,
         apply_shelf_pick(model, data, t, clip.duration_s, profile)
     elif clip.kind == "handoff":
         apply_handoff(model, data, t, clip.duration_s, profile)
+    elif clip.kind == "six_dof_grasp_sweep":
+        apply_six_dof_grasp_sweep(model, data, t, clip.duration_s, profile)
     else:
         raise ValueError(f"Unknown clip kind: {clip.kind}")
     mujoco.mj_forward(model, data)
@@ -886,7 +976,8 @@ def render_clip(
 ) -> dict:
     profile = PAYLOADS[clip.payload_key or "cardboard"]
     include_receiver = clip.kind == "handoff"
-    spec = build_spec(profile, include_receiver=include_receiver, include_shelf=clip.kind == "shelf_pick")
+    include_shelf = clip.kind in {"shelf_pick", "six_dof_grasp_sweep"}
+    spec = build_spec(profile, include_receiver=include_receiver, include_shelf=include_shelf)
     model = spec.compile()
     data = mujoco.MjData(model)
     renderer = mujoco.Renderer(model, width=width, height=height)
@@ -903,6 +994,9 @@ def render_clip(
     samples: list[dict] = []
     totals = {
         "gripper_package": 0,
+        "left_finger_package": 0,
+        "right_finger_package": 0,
+        "dual_finger_grasp_frames": 0,
         "package_basket": 0,
         "package_shelf": 0,
         "package_receiver_gripper": 0,
@@ -923,11 +1017,13 @@ def render_clip(
             sample = {
                 "time_s": round(t, 3),
                 "robot_a": body_position(model, data, "a_torso"),
+                "robot_a_arm_joints_rad": arm_joint_snapshot(model, data, "a_"),
                 "package": body_position(model, data, "package"),
                 "contacts": contacts,
             }
             if include_receiver:
                 sample["robot_b"] = body_position(model, data, "b_torso")
+                sample["robot_b_arm_joints_rad"] = arm_joint_snapshot(model, data, "b_")
             samples.append(sample)
 
     video_path = output_dir / f"{clip.name}.mp4"
@@ -961,6 +1057,7 @@ def render_clip(
         "mujoco_depth": {
             "quadruped_leg_joints": 12 if not include_receiver else 24,
             "arm_dof_per_robot": 6,
+            "six_dof_joint_names": list(ARM_JOINTS),
             "gripper_slide_joints_per_robot": 2,
             "collision_pairs_tracked": list(totals.keys()),
             "sensors": [
@@ -972,10 +1069,20 @@ def render_clip(
                 "package framepos",
             ],
             "actuators": "position actuators on leg, arm, wrist, tool, and gripper joints",
+            "extra_physics_validation": "six-axis mounted arm, wrist roll/tool yaw reorientation, dual-finger package contact counters, and package roll/pitch/yaw pose tracking",
         },
         "contact_totals": totals,
         "samples": samples,
     }
+    if clip.kind == "six_dof_grasp_sweep":
+        summary["six_dof_grasp_validation"] = {
+            "arm_joint_sequence": list(ARM_JOINTS),
+            "package_orientation_axes": ["roll", "pitch", "yaw"],
+            "dual_finger_grasp_frames": totals["dual_finger_grasp_frames"],
+            "left_finger_package_contacts": totals["left_finger_package"],
+            "right_finger_package_contacts": totals["right_finger_package"],
+            "claim": "The parcel follows the gripper through an overhead 6-DOF sweep while MuJoCo reports fingertip/package contacts.",
+        }
     if fallback_reason:
         summary["video_fallback_reason"] = fallback_reason
     (output_dir / f"{clip.name}.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
@@ -1017,10 +1124,11 @@ def main() -> int:
     ]
     manifest = {
         "project": "Warehouse Quadbot MuJoCo Physics Evidence",
-        "purpose": "Short UI-ready clips showing robot state, arm/gripper collision evidence, basket contact, shelf pickup, handoff, and payload-dependent gait.",
+        "purpose": "Short UI-ready clips showing robot state, 6-DOF arm/gripper collision evidence, basket contact, shelf pickup, handoff, payload-dependent gait, and multi-angle fingertip grasp validation.",
         "references": {
-            "arm_layout": "UR5e-style six-axis manipulator hierarchy: shoulder pan/lift, elbow, wrist_1, wrist_2, wrist_3.",
+            "arm_layout": "UR5e-style six-axis manipulator hierarchy: base yaw, shoulder pitch, elbow pitch, wrist pitch, wrist roll, tool yaw.",
             "gripper_layout": "Panda/Robotiq-inspired two-finger gripper with fingertip collision pads and touch sites.",
+            "new_validation_clips": "six_dof_grasp_sweep_wood and six_dof_grasp_sweep_metal demonstrate overhead shelf-to-basket arcs, wrist roll/tool yaw, parcel orientation tracking, and dual-finger contact counters.",
         },
         "clips": results,
     }

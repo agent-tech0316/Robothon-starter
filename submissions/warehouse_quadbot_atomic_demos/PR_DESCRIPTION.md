@@ -8,11 +8,11 @@ The core challenge is fleet-level coordination: one robot can move a parcel, but
 
 Judge-facing distinction: this is not only a multi-robot clip. It is a scalable warehouse benchmark. MuJoCo proves the atomic robot skills are physically plausible; the runtime proves that fleet decisions improve throughput under congestion, SKU-weight variation, pick difficulty, and long-horizon load.
 
-Latest judge fast path: `python examples/run_agentech_judge_review.py` prints artifact readiness, 54-scenario stress benchmark results, medium/high runtime metrics, MuJoCo evidence count, and rubric mapping without requiring the dashboard UI.
+Latest judge fast path: `python examples/run_agentech_judge_review.py` prints artifact readiness, 54-scenario stress benchmark results, medium/high runtime metrics, 12 MuJoCo evidence clips, 6-DOF grasp contact proof, and rubric mapping without requiring the dashboard UI.
 
 # Robot Platform
 
-Faraday Future AEGIS quadruped, with a BASE_LINK-mounted basket and a Futurist-right-arm-derived front manipulator. MuJoCo evidence clips validate walking, payload carrying, shelf pickup, basket contact, and robot-to-robot handoff.
+Faraday Future AEGIS quadruped, with a BASE_LINK-mounted basket and a Futurist-right-arm-derived six-axis front manipulator. MuJoCo evidence clips validate walking, payload carrying, shelf pickup, basket contact, robot-to-robot handoff, and new 6-DOF overhead grasp sweeps with wrist roll/tool yaw and fingertip/package contacts.
 
 # Task Goal
 
@@ -31,6 +31,8 @@ The runtime uses four-direction movement, atomic source+destination locks, deadl
 - Local planner multi-port conveyor selection improves high-load throughput from 64/hr planner-off to 364/hr local (+468.8%) while preserving zero movement safety violations.
 - MuJoCo used as physical evidence for atomic skills while fleet planning stays in a scalable tile-level simulator.
 - MuJoCo evidence scorecard makes physical validation inspectable: joints, actuators, sensors, contact counters, payload response, and two-robot handoff scene depth.
+- Added two extra judge-facing MuJoCo videos beyond the main demo: `six_dof_grasp_sweep_wood.mp4` and `six_dof_grasp_sweep_metal.mp4`, showing a six-axis arm carrying parcels through an overhead arc while wrist roll/tool yaw reorient the package.
+- Heavy 6-DOF grasp evidence records 630 gripper/package contacts, 220 left-finger contacts, 250 right-finger contacts, and 36 dual-finger grasp frames; the heavy handoff records 279 receiver-gripper/package contacts.
 - Runtime snapshots expose robot state, order state, movement locks, rack-blocking, congestion, conveyor door/unload tiles, and KPI metrics directly to the dashboard.
 - One-command AI judge fast path reduces review friction and directly addresses the prior UI-complexity feedback.
 - Default simplified UI mode directly addresses prior judge feedback: first screen now shows only throughput, safety, MuJoCo proof, and the live map; dense ops panels are one click away.
@@ -62,8 +64,11 @@ The final video is already trimmed to 1:05.97 and follows a fast review path: id
 Included evidence clips:
 
 - `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/*.mp4`
+- `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/six_dof_grasp_sweep_wood.mp4`
+- `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/six_dof_grasp_sweep_metal.mp4`
 - `submissions/warehouse_quadbot_atomic_demos/outputs/*.mp4`
 - `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/physics_evidence_contact_sheet.png`
+- `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/clip_manifest.json` with contact totals and six-axis joint traces
 
 # Run Instructions
 

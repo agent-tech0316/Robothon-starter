@@ -14,14 +14,15 @@ Expected result:
 - Fleet stress benchmark reports 54 scenarios, 108 raw planner runs, 2,916 simulated robot-hours.
 - Safety reports 100% pass, 0 collisions, and 0 tile-lock overlaps.
 - Planner comparison reports +30.74% average throughput uplift and +97.42% best uplift.
-- MuJoCo evidence reports generated MJCF, contact traces, contact sheet, and clips for loaded walk, shelf pickup, basket contact, and robot-to-robot handoff.
+- MuJoCo evidence reports 12 generated clips, generated MJCF, contact traces, contact sheet, loaded walk, shelf pickup, basket contact, robot-to-robot handoff, and two 6-DOF grasp sweeps.
+- The heavy 6-DOF sweep records 630 gripper/package contacts and 36 dual-finger grasp frames; the heavy handoff records 279 receiver-gripper/package contacts.
 
 ## Why This Helps Review
 
 The project has two layers:
 
 - The warehouse runtime proves multi-agent decision quality: route locks, congestion, planner-off baseline, local multi-port conveyor planning uplift, throughput, wait time, and safety counters.
-- MuJoCo proves low-level physical plausibility: quadruped joints, mounted arm, actuated gripper, collision geoms, touch sensors, and payload-dependent motion evidence.
+- MuJoCo proves low-level physical plausibility: quadruped joints, mounted 6-DOF arm, wrist roll/tool yaw, actuated two-finger gripper, collision geoms, touch sensors, package orientation tracking, and payload-dependent motion evidence.
 
 The dashboard remains available at:
 

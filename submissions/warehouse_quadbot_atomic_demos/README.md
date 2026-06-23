@@ -13,7 +13,7 @@ The scoring evidence is deliberately system-level:
 - 9 AEGIS quadrupeds share rack aisles through atomic current+next tile locks.
 - Planner-off and planner-on runs are compared, so the throughput gain is measured against a baseline.
 - The 54-scenario stress benchmark varies load, SKU weight mix, pick difficulty, and aisle-surge congestion, then fast-forwards 2,916 robot-hours with 0 collision and 0 lock-overlap violations.
-- MuJoCo validates the physical atomic skills; the runtime validates warehouse-scale decision quality.
+- MuJoCo validates the physical atomic skills with 12 evidence clips, generated MJCF, touch sensors, and contact counters; the runtime validates warehouse-scale decision quality.
 
 ## AI Judge Fast Path
 
@@ -31,9 +31,10 @@ The dashboard also opens in simplified judge mode by default: the first screen s
 
 Final 1-3 minute demo video: [`demo.mp4`](demo.mp4).
 
-The final demo video is included directly in this submission as `demo.mp4` (1:05.97, 720p H.264/AAC, 9.8 MB). It is paced as a short review path: project identity, 9 robots sharing aisles, route locks/replans, KPI proof, and MuJoCo action evidence. Existing evidence clips are also included and can be reviewed separately:
+The final demo video is included directly in this submission as `demo.mp4` (1:05.97, 720p H.264/AAC, 9.8 MB). It is paced as a short review path: project identity, 9 robots sharing aisles, route locks/replans, KPI proof, and MuJoCo action evidence. Additional MuJoCo evidence clips are included separately for physical inspection:
 
 - MuJoCo contact sheet: `outputs/physics_evidence/physics_evidence_contact_sheet.png`
+- New 6-DOF grasp videos: `outputs/physics_evidence/six_dof_grasp_sweep_wood.mp4` and `outputs/physics_evidence/six_dof_grasp_sweep_metal.mp4`
 - Atomic action preview sheet: `outputs/preview_contact_sheet.png`
 - Runtime dashboard: serve `ui/index.html` over HTTP as described below
 - MuJoCo MP4 clips: `outputs/physics_evidence/*.mp4` and `outputs/*.mp4`
@@ -149,7 +150,7 @@ That is a +468.8% throughput increase and a 94.5% reduction in average lock wait
 - Base robot: Faraday Future AEGIS quadruped, using `assets/Aegis/urdf/Aegis_mujoco.urdf`
 - Warehouse accessory: BASE_LINK-mounted basket
 - Manipulator reference: FF Futurist right-arm chain, using `assets/Futurist/futurist.urdf` and right-arm/right-hand STL meshes
-- MuJoCo evidence: leg joints, arm joints, gripper slide joints, collision geoms, touch sensors, and position actuators
+- MuJoCo evidence: 12 generated clips, leg joints, 6-DOF arm joints, wrist roll/tool yaw, gripper slide joints, collision geoms, touch sensors, position actuators, and fingertip/package contact counters
 
 ## Metrics
 
@@ -171,7 +172,8 @@ Primary metrics:
 
 - Medium load reaches 308 orders/hour with 77 of 84 orders completed in 900 simulated seconds after local planner multi-port conveyor selection.
 - High load reaches 364 orders/hour with 91 of 140 orders completed while keeping all movement safety counters at 0 under surge pressure.
-- MuJoCo clips show payload-dependent gait, shelf pickup, basket contact, and heavy-package handoff.
+- MuJoCo clips show payload-dependent gait, shelf pickup, basket contact, heavy-package handoff, and two new 6-DOF shelf-to-basket grasp sweeps with package roll/pitch/yaw tracking.
+- The new heavy 6-DOF grasp sweep records 630 gripper/package contacts, 220 left-finger contacts, 250 right-finger contacts, and 36 dual-finger grasp frames.
 - The UI binds to generated runtime JSON and animates runtime-linked robot movement without closing open routes or using mock-only phase motion.
 - The first dashboard KPI panel now shows the high-load benchmark proof directly: 64/hr planner-off baseline, 364/hr local planner, and 0 movement safety violations.
 - The UI now includes a simplified Judge Review Path so evaluators can see fleet size, throughput uplift, safety, replans, and MuJoCo-backed skills without decoding the full operations dashboard.
@@ -211,10 +213,16 @@ Run the MuJoCo atomic evidence generator:
 python submissions/warehouse_quadbot_atomic_demos/run_quadbot_atomic_demos.py --scenario all
 ```
 
+Run the judge-facing MuJoCo physics evidence set, including the 6-DOF grasp sweeps:
+
+```bash
+python submissions/warehouse_quadbot_atomic_demos/mujoco_physics_evidence/main.py --clip all --fps 18 --width 720 --height 406
+```
+
 Run one MuJoCo clip only:
 
 ```bash
-python submissions/warehouse_quadbot_atomic_demos/run_quadbot_atomic_demos.py --scenario shelf_pick_metal
+python submissions/warehouse_quadbot_atomic_demos/mujoco_physics_evidence/main.py --clip six_dof_grasp_sweep_metal --fps 18 --width 720 --height 406
 ```
 
 Serve the dashboard over HTTP so browser `fetch()` can read runtime JSON:
@@ -270,7 +278,7 @@ submissions/warehouse_quadbot_atomic_demos/
 
 ## Limitations
 
-- MuJoCo validates atomic actions and contact evidence, but the warehouse runtime is a tile-level simulator, not a full continuous physics simulation of all fleet movement.
+- MuJoCo validates atomic actions and contact evidence, including 6-DOF grasp sweeps, but the warehouse runtime is a tile-level simulator, not a full continuous physics simulation of all fleet movement.
 - Optional OpenAI planner mode requires judge-provided `OPENAI_API_KEY` and `OPENAI_MODEL`; default judging path uses local planner mode.
 
 ## Future Improvements

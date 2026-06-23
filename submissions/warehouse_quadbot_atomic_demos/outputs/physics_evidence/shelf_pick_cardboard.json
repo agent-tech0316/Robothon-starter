@@ -5,7 +5,7 @@
   "video": "outputs/physics_evidence/shelf_pick_cardboard.mp4",
   "scene_xml": "outputs/physics_evidence/generated_mjcf/shelf_pick_cardboard_scene.xml",
   "duration_s": 1.8,
-  "fps": 24,
+  "fps": 18,
   "payload": {
     "key": "cardboard",
     "label": "light cardboard parcel",
@@ -18,9 +18,20 @@
   "mujoco_depth": {
     "quadruped_leg_joints": 12,
     "arm_dof_per_robot": 6,
+    "six_dof_joint_names": [
+      "arm_base_yaw",
+      "arm_shoulder_pitch",
+      "arm_elbow_pitch",
+      "arm_wrist_pitch",
+      "arm_wrist_roll",
+      "arm_tool_yaw"
+    ],
     "gripper_slide_joints_per_robot": 2,
     "collision_pairs_tracked": [
       "gripper_package",
+      "left_finger_package",
+      "right_finger_package",
+      "dual_finger_grasp_frames",
       "package_basket",
       "package_shelf",
       "package_receiver_gripper",
@@ -34,14 +45,18 @@
       "basket touch",
       "package framepos"
     ],
-    "actuators": "position actuators on leg, arm, wrist, tool, and gripper joints"
+    "actuators": "position actuators on leg, arm, wrist, tool, and gripper joints",
+    "extra_physics_validation": "six-axis mounted arm, wrist roll/tool yaw reorientation, dual-finger package contact counters, and package roll/pitch/yaw pose tracking"
   },
   "contact_totals": {
-    "gripper_package": 329,
-    "package_basket": 8,
-    "package_shelf": 100,
+    "gripper_package": 253,
+    "left_finger_package": 96,
+    "right_finger_package": 98,
+    "dual_finger_grasp_frames": 17,
+    "package_basket": 4,
+    "package_shelf": 50,
     "package_receiver_gripper": 0,
-    "total_contacts": 2349
+    "total_contacts": 1724
   },
   "samples": [
     {
@@ -51,6 +66,14 @@
         0.0,
         0.365
       ],
+      "robot_a_arm_joints_rad": {
+        "arm_base_yaw": -0.0471,
+        "arm_shoulder_pitch": -0.0288,
+        "arm_elbow_pitch": -0.0323,
+        "arm_wrist_pitch": 0.0279,
+        "arm_wrist_roll": 0.0,
+        "arm_tool_yaw": 0.0
+      },
       "package": [
         -0.52,
         0.0,
@@ -58,6 +81,9 @@
       ],
       "contacts": {
         "gripper_package": 0,
+        "left_finger_package": 0,
+        "right_finger_package": 0,
+        "dual_finger_grasp_frames": 0,
         "package_basket": 0,
         "package_shelf": 0,
         "package_receiver_gripper": 0,
@@ -71,6 +97,14 @@
         0.0,
         0.368
       ],
+      "robot_a_arm_joints_rad": {
+        "arm_base_yaw": -0.0471,
+        "arm_shoulder_pitch": -0.0288,
+        "arm_elbow_pitch": -0.0323,
+        "arm_wrist_pitch": 0.0279,
+        "arm_wrist_roll": 0.0,
+        "arm_tool_yaw": 0.0
+      },
       "package": [
         -0.52,
         0.0,
@@ -78,6 +112,9 @@
       ],
       "contacts": {
         "gripper_package": 0,
+        "left_finger_package": 0,
+        "right_finger_package": 0,
+        "dual_finger_grasp_frames": 0,
         "package_basket": 0,
         "package_shelf": 0,
         "package_receiver_gripper": 0,
@@ -91,6 +128,14 @@
         0.0,
         0.369
       ],
+      "robot_a_arm_joints_rad": {
+        "arm_base_yaw": 0.0471,
+        "arm_shoulder_pitch": -0.0288,
+        "arm_elbow_pitch": -0.0323,
+        "arm_wrist_pitch": 0.0279,
+        "arm_wrist_roll": 0.0,
+        "arm_tool_yaw": 0.0
+      },
       "package": [
         -0.52,
         0.0,
@@ -98,6 +143,9 @@
       ],
       "contacts": {
         "gripper_package": 0,
+        "left_finger_package": 0,
+        "right_finger_package": 0,
+        "dual_finger_grasp_frames": 0,
         "package_basket": 0,
         "package_shelf": 0,
         "package_receiver_gripper": 0,
@@ -111,13 +159,24 @@
         0.0,
         0.3674
       ],
+      "robot_a_arm_joints_rad": {
+        "arm_base_yaw": 0.0471,
+        "arm_shoulder_pitch": -0.0288,
+        "arm_elbow_pitch": -0.0323,
+        "arm_wrist_pitch": 0.0279,
+        "arm_wrist_roll": 0.0,
+        "arm_tool_yaw": 0.0
+      },
       "package": [
-        -0.5584,
-        -0.0049,
-        0.5135
+        -0.5685,
+        -0.0054,
+        0.5154
       ],
       "contacts": {
         "gripper_package": 0,
+        "left_finger_package": 0,
+        "right_finger_package": 0,
+        "dual_finger_grasp_frames": 0,
         "package_basket": 0,
         "package_shelf": 0,
         "package_receiver_gripper": 0,
@@ -131,17 +190,28 @@
         0.0,
         0.3642
       ],
+      "robot_a_arm_joints_rad": {
+        "arm_base_yaw": 0.0471,
+        "arm_shoulder_pitch": -0.0288,
+        "arm_elbow_pitch": -0.0323,
+        "arm_wrist_pitch": 0.0279,
+        "arm_wrist_roll": 0.0,
+        "arm_tool_yaw": 0.0
+      },
       "package": [
-        -0.7647,
-        -0.0313,
-        0.6104
+        -0.8296,
+        -0.0344,
+        0.6226
       ],
       "contacts": {
-        "gripper_package": 17,
+        "gripper_package": 20,
+        "left_finger_package": 8,
+        "right_finger_package": 8,
+        "dual_finger_grasp_frames": 1,
         "package_basket": 0,
         "package_shelf": 4,
         "package_receiver_gripper": 0,
-        "total_contacts": 65
+        "total_contacts": 68
       }
     },
     {
@@ -151,17 +221,28 @@
         0.0,
         0.3615
       ],
+      "robot_a_arm_joints_rad": {
+        "arm_base_yaw": 0.0471,
+        "arm_shoulder_pitch": -0.0288,
+        "arm_elbow_pitch": -0.0323,
+        "arm_wrist_pitch": 0.0279,
+        "arm_wrist_roll": 0.0,
+        "arm_tool_yaw": 0.0
+      },
       "package": [
-        -0.7647,
-        -0.0313,
-        0.625
+        -0.8296,
+        -0.0344,
+        0.6372
       ],
       "contacts": {
-        "gripper_package": 19,
+        "gripper_package": 20,
+        "left_finger_package": 8,
+        "right_finger_package": 8,
+        "dual_finger_grasp_frames": 1,
         "package_basket": 0,
-        "package_shelf": 4,
+        "package_shelf": 2,
         "package_receiver_gripper": 0,
-        "total_contacts": 67
+        "total_contacts": 66
       }
     },
     {
@@ -171,17 +252,28 @@
         0.0,
         0.3612
       ],
+      "robot_a_arm_joints_rad": {
+        "arm_base_yaw": 0.0207,
+        "arm_shoulder_pitch": -0.0288,
+        "arm_elbow_pitch": -0.0323,
+        "arm_wrist_pitch": 0.0279,
+        "arm_wrist_roll": 0.0,
+        "arm_tool_yaw": 0.0
+      },
       "package": [
-        -0.7653,
-        -0.0138,
-        0.6416
+        -0.8302,
+        -0.0151,
+        0.6538
       ],
       "contacts": {
-        "gripper_package": 12,
+        "gripper_package": 9,
+        "left_finger_package": 3,
+        "right_finger_package": 3,
+        "dual_finger_grasp_frames": 1,
         "package_basket": 0,
-        "package_shelf": 4,
+        "package_shelf": 2,
         "package_receiver_gripper": 0,
-        "total_contacts": 60
+        "total_contacts": 55
       }
     },
     {
@@ -191,17 +283,28 @@
         0.0,
         0.3634
       ],
+      "robot_a_arm_joints_rad": {
+        "arm_base_yaw": -0.0471,
+        "arm_shoulder_pitch": -0.0288,
+        "arm_elbow_pitch": -0.0323,
+        "arm_wrist_pitch": 0.0279,
+        "arm_wrist_roll": 0.0,
+        "arm_tool_yaw": 0.0
+      },
       "package": [
-        -0.7647,
-        0.0313,
-        0.6442
+        -0.8296,
+        0.0344,
+        0.6563
       ],
       "contacts": {
         "gripper_package": 13,
+        "left_finger_package": 5,
+        "right_finger_package": 5,
+        "dual_finger_grasp_frames": 1,
         "package_basket": 0,
-        "package_shelf": 4,
+        "package_shelf": 2,
         "package_receiver_gripper": 0,
-        "total_contacts": 61
+        "total_contacts": 59
       }
     },
     {
@@ -211,17 +314,28 @@
         0.0,
         0.3666
       ],
+      "robot_a_arm_joints_rad": {
+        "arm_base_yaw": -0.0471,
+        "arm_shoulder_pitch": -0.0288,
+        "arm_elbow_pitch": -0.0323,
+        "arm_wrist_pitch": 0.0279,
+        "arm_wrist_roll": 0.0,
+        "arm_tool_yaw": 0.0
+      },
       "package": [
-        -0.7647,
-        0.0313,
-        0.6474
+        -0.8296,
+        0.0344,
+        0.6596
       ],
       "contacts": {
         "gripper_package": 13,
+        "left_finger_package": 5,
+        "right_finger_package": 5,
+        "dual_finger_grasp_frames": 1,
         "package_basket": 0,
-        "package_shelf": 4,
+        "package_shelf": 2,
         "package_receiver_gripper": 0,
-        "total_contacts": 61
+        "total_contacts": 59
       }
     },
     {
@@ -231,17 +345,28 @@
         0.0,
         0.3688
       ],
+      "robot_a_arm_joints_rad": {
+        "arm_base_yaw": -0.0471,
+        "arm_shoulder_pitch": -0.0288,
+        "arm_elbow_pitch": -0.0323,
+        "arm_wrist_pitch": 0.0279,
+        "arm_wrist_roll": 0.0,
+        "arm_tool_yaw": 0.0
+      },
       "package": [
-        -0.628,
-        0.0267,
-        0.6096
+        -0.6833,
+        0.0293,
+        0.62
       ],
       "contacts": {
-        "gripper_package": 4,
+        "gripper_package": 12,
+        "left_finger_package": 4,
+        "right_finger_package": 4,
+        "dual_finger_grasp_frames": 1,
         "package_basket": 0,
         "package_shelf": 4,
         "package_receiver_gripper": 0,
-        "total_contacts": 59
+        "total_contacts": 63
       }
     },
     {
@@ -251,13 +376,24 @@
         0.0,
         0.3685
       ],
+      "robot_a_arm_joints_rad": {
+        "arm_base_yaw": -0.0471,
+        "arm_shoulder_pitch": -0.0288,
+        "arm_elbow_pitch": -0.0323,
+        "arm_wrist_pitch": 0.0279,
+        "arm_wrist_roll": 0.0,
+        "arm_tool_yaw": 0.0
+      },
       "package": [
-        0.0129,
-        0.005,
-        0.5858
+        0.0026,
+        0.0055,
+        0.5878
       ],
       "contacts": {
         "gripper_package": 0,
+        "left_finger_package": 0,
+        "right_finger_package": 0,
+        "dual_finger_grasp_frames": 0,
         "package_basket": 2,
         "package_shelf": 0,
         "package_receiver_gripper": 0,

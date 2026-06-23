@@ -2,7 +2,7 @@
 
 Project: Agentic Warehouse Quadbot Fulfillment Simulator  
 Team: Agentech  
-Validation date: 2026-06-21  
+Validation date: 2026-06-22
 Registration UUID: 13b27675-9c26-49df-9014-cb31f33f9df8
 
 ## Official Requirement Cross-Check
@@ -33,6 +33,8 @@ python examples/build_integrated_demo_data.py
 python examples/run_warehouse_runtime.py --load medium --planner local --ticks 900 --print-summary
 python -m pytest tests/test_runtime_smoke.py
 python submissions/warehouse_quadbot_atomic_demos/run_quadbot_atomic_demos.py --scenario shelf_pick_metal
+python submissions/warehouse_quadbot_atomic_demos/mujoco_physics_evidence/main.py --clip all --fps 18 --width 720 --height 406
+python examples/run_agentech_judge_review.py
 python -m http.server 8877 --bind 127.0.0.1
 ```
 
@@ -41,6 +43,7 @@ HTTP resources checked successfully from the clean-copy server:
 - `submissions/warehouse_quadbot_atomic_demos/ui/index.html`
 - `submissions/warehouse_quadbot_atomic_demos/outputs/runtime_snapshot_medium.json`
 - `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/empty_walk.mp4`
+- `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/six_dof_grasp_sweep_metal.mp4`
 
 ## Runtime Validation Result
 
@@ -117,6 +120,21 @@ Temporary HTTP checks returned `200 OK` for:
 - MuJoCo MP4 asset
 
 The temporary HTTP server was stopped after validation.
+
+## MuJoCo Physics Evidence Refresh
+
+The MuJoCo physics evidence set was regenerated with Python 3.12 using:
+
+```bash
+python submissions/warehouse_quadbot_atomic_demos/mujoco_physics_evidence/main.py --clip all --fps 18 --width 720 --height 406
+```
+
+Regenerated outputs include 12 MP4 clips, 12 JSON contact traces, generated MJCF XML scenes, and an updated 12-panel contact sheet. New judge-facing physical validation clips are:
+
+- `outputs/physics_evidence/six_dof_grasp_sweep_wood.mp4`
+- `outputs/physics_evidence/six_dof_grasp_sweep_metal.mp4`
+
+Heavy 6-DOF grasp evidence reports 630 gripper/package contacts, 220 left-finger contacts, 250 right-finger contacts, and 36 dual-finger grasp frames. Heavy handoff evidence reports 279 receiver-gripper/package contacts.
 
 ## Demo Video Integration
 

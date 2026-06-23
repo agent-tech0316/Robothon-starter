@@ -1,9 +1,10 @@
 {
   "project": "Warehouse Quadbot MuJoCo Physics Evidence",
-  "purpose": "Short UI-ready clips showing robot state, arm/gripper collision evidence, basket contact, shelf pickup, handoff, and payload-dependent gait.",
+  "purpose": "Short UI-ready clips showing robot state, 6-DOF arm/gripper collision evidence, basket contact, shelf pickup, handoff, payload-dependent gait, and multi-angle fingertip grasp validation.",
   "references": {
-    "arm_layout": "UR5e-style six-axis manipulator hierarchy: shoulder pan/lift, elbow, wrist_1, wrist_2, wrist_3.",
-    "gripper_layout": "Panda/Robotiq-inspired two-finger gripper with fingertip collision pads and touch sites."
+    "arm_layout": "UR5e-style six-axis manipulator hierarchy: base yaw, shoulder pitch, elbow pitch, wrist pitch, wrist roll, tool yaw.",
+    "gripper_layout": "Panda/Robotiq-inspired two-finger gripper with fingertip collision pads and touch sites.",
+    "new_validation_clips": "six_dof_grasp_sweep_wood and six_dof_grasp_sweep_metal demonstrate overhead shelf-to-basket arcs, wrist roll/tool yaw, parcel orientation tracking, and dual-finger contact counters."
   },
   "clips": [
     {
@@ -13,14 +14,25 @@
       "video": "outputs/physics_evidence/rest_idle.mp4",
       "scene_xml": "outputs/physics_evidence/generated_mjcf/rest_idle_scene.xml",
       "duration_s": 1.6,
-      "fps": 24,
+      "fps": 18,
       "payload": null,
       "mujoco_depth": {
         "quadruped_leg_joints": 12,
         "arm_dof_per_robot": 6,
+        "six_dof_joint_names": [
+          "arm_base_yaw",
+          "arm_shoulder_pitch",
+          "arm_elbow_pitch",
+          "arm_wrist_pitch",
+          "arm_wrist_roll",
+          "arm_tool_yaw"
+        ],
         "gripper_slide_joints_per_robot": 2,
         "collision_pairs_tracked": [
           "gripper_package",
+          "left_finger_package",
+          "right_finger_package",
+          "dual_finger_grasp_frames",
           "package_basket",
           "package_shelf",
           "package_receiver_gripper",
@@ -34,14 +46,18 @@
           "basket touch",
           "package framepos"
         ],
-        "actuators": "position actuators on leg, arm, wrist, tool, and gripper joints"
+        "actuators": "position actuators on leg, arm, wrist, tool, and gripper joints",
+        "extra_physics_validation": "six-axis mounted arm, wrist roll/tool yaw reorientation, dual-finger package contact counters, and package roll/pitch/yaw pose tracking"
       },
       "contact_totals": {
         "gripper_package": 0,
+        "left_finger_package": 0,
+        "right_finger_package": 0,
+        "dual_finger_grasp_frames": 0,
         "package_basket": 0,
         "package_shelf": 0,
         "package_receiver_gripper": 0,
-        "total_contacts": 912
+        "total_contacts": 696
       }
     },
     {
@@ -51,14 +67,25 @@
       "video": "outputs/physics_evidence/empty_stance.mp4",
       "scene_xml": "outputs/physics_evidence/generated_mjcf/empty_stance_scene.xml",
       "duration_s": 1.6,
-      "fps": 24,
+      "fps": 18,
       "payload": null,
       "mujoco_depth": {
         "quadruped_leg_joints": 12,
         "arm_dof_per_robot": 6,
+        "six_dof_joint_names": [
+          "arm_base_yaw",
+          "arm_shoulder_pitch",
+          "arm_elbow_pitch",
+          "arm_wrist_pitch",
+          "arm_wrist_roll",
+          "arm_tool_yaw"
+        ],
         "gripper_slide_joints_per_robot": 2,
         "collision_pairs_tracked": [
           "gripper_package",
+          "left_finger_package",
+          "right_finger_package",
+          "dual_finger_grasp_frames",
           "package_basket",
           "package_shelf",
           "package_receiver_gripper",
@@ -72,14 +99,18 @@
           "basket touch",
           "package framepos"
         ],
-        "actuators": "position actuators on leg, arm, wrist, tool, and gripper joints"
+        "actuators": "position actuators on leg, arm, wrist, tool, and gripper joints",
+        "extra_physics_validation": "six-axis mounted arm, wrist roll/tool yaw reorientation, dual-finger package contact counters, and package roll/pitch/yaw pose tracking"
       },
       "contact_totals": {
         "gripper_package": 0,
+        "left_finger_package": 0,
+        "right_finger_package": 0,
+        "dual_finger_grasp_frames": 0,
         "package_basket": 0,
         "package_shelf": 0,
         "package_receiver_gripper": 0,
-        "total_contacts": 912
+        "total_contacts": 696
       }
     },
     {
@@ -89,14 +120,25 @@
       "video": "outputs/physics_evidence/empty_walk.mp4",
       "scene_xml": "outputs/physics_evidence/generated_mjcf/empty_walk_scene.xml",
       "duration_s": 1.8,
-      "fps": 24,
+      "fps": 18,
       "payload": null,
       "mujoco_depth": {
         "quadruped_leg_joints": 12,
         "arm_dof_per_robot": 6,
+        "six_dof_joint_names": [
+          "arm_base_yaw",
+          "arm_shoulder_pitch",
+          "arm_elbow_pitch",
+          "arm_wrist_pitch",
+          "arm_wrist_roll",
+          "arm_tool_yaw"
+        ],
         "gripper_slide_joints_per_robot": 2,
         "collision_pairs_tracked": [
           "gripper_package",
+          "left_finger_package",
+          "right_finger_package",
+          "dual_finger_grasp_frames",
           "package_basket",
           "package_shelf",
           "package_receiver_gripper",
@@ -110,14 +152,18 @@
           "basket touch",
           "package framepos"
         ],
-        "actuators": "position actuators on leg, arm, wrist, tool, and gripper joints"
+        "actuators": "position actuators on leg, arm, wrist, tool, and gripper joints",
+        "extra_physics_validation": "six-axis mounted arm, wrist roll/tool yaw reorientation, dual-finger package contact counters, and package roll/pitch/yaw pose tracking"
       },
       "contact_totals": {
         "gripper_package": 0,
+        "left_finger_package": 0,
+        "right_finger_package": 0,
+        "dual_finger_grasp_frames": 0,
         "package_basket": 0,
         "package_shelf": 0,
         "package_receiver_gripper": 0,
-        "total_contacts": 1032
+        "total_contacts": 768
       }
     },
     {
@@ -127,7 +173,7 @@
       "video": "outputs/physics_evidence/loaded_walk_cardboard.mp4",
       "scene_xml": "outputs/physics_evidence/generated_mjcf/loaded_walk_cardboard_scene.xml",
       "duration_s": 1.8,
-      "fps": 24,
+      "fps": 18,
       "payload": {
         "key": "cardboard",
         "label": "light cardboard parcel",
@@ -140,9 +186,20 @@
       "mujoco_depth": {
         "quadruped_leg_joints": 12,
         "arm_dof_per_robot": 6,
+        "six_dof_joint_names": [
+          "arm_base_yaw",
+          "arm_shoulder_pitch",
+          "arm_elbow_pitch",
+          "arm_wrist_pitch",
+          "arm_wrist_roll",
+          "arm_tool_yaw"
+        ],
         "gripper_slide_joints_per_robot": 2,
         "collision_pairs_tracked": [
           "gripper_package",
+          "left_finger_package",
+          "right_finger_package",
+          "dual_finger_grasp_frames",
           "package_basket",
           "package_shelf",
           "package_receiver_gripper",
@@ -156,14 +213,18 @@
           "basket touch",
           "package framepos"
         ],
-        "actuators": "position actuators on leg, arm, wrist, tool, and gripper joints"
+        "actuators": "position actuators on leg, arm, wrist, tool, and gripper joints",
+        "extra_physics_validation": "six-axis mounted arm, wrist roll/tool yaw reorientation, dual-finger package contact counters, and package roll/pitch/yaw pose tracking"
       },
       "contact_totals": {
         "gripper_package": 0,
-        "package_basket": 66,
+        "left_finger_package": 0,
+        "right_finger_package": 0,
+        "dual_finger_grasp_frames": 0,
+        "package_basket": 50,
         "package_shelf": 0,
         "package_receiver_gripper": 0,
-        "total_contacts": 1098
+        "total_contacts": 818
       }
     },
     {
@@ -173,7 +234,7 @@
       "video": "outputs/physics_evidence/loaded_walk_wood.mp4",
       "scene_xml": "outputs/physics_evidence/generated_mjcf/loaded_walk_wood_scene.xml",
       "duration_s": 1.8,
-      "fps": 24,
+      "fps": 18,
       "payload": {
         "key": "wood",
         "label": "medium wood crate",
@@ -186,9 +247,20 @@
       "mujoco_depth": {
         "quadruped_leg_joints": 12,
         "arm_dof_per_robot": 6,
+        "six_dof_joint_names": [
+          "arm_base_yaw",
+          "arm_shoulder_pitch",
+          "arm_elbow_pitch",
+          "arm_wrist_pitch",
+          "arm_wrist_roll",
+          "arm_tool_yaw"
+        ],
         "gripper_slide_joints_per_robot": 2,
         "collision_pairs_tracked": [
           "gripper_package",
+          "left_finger_package",
+          "right_finger_package",
+          "dual_finger_grasp_frames",
           "package_basket",
           "package_shelf",
           "package_receiver_gripper",
@@ -202,14 +274,18 @@
           "basket touch",
           "package framepos"
         ],
-        "actuators": "position actuators on leg, arm, wrist, tool, and gripper joints"
+        "actuators": "position actuators on leg, arm, wrist, tool, and gripper joints",
+        "extra_physics_validation": "six-axis mounted arm, wrist roll/tool yaw reorientation, dual-finger package contact counters, and package roll/pitch/yaw pose tracking"
       },
       "contact_totals": {
         "gripper_package": 0,
-        "package_basket": 66,
+        "left_finger_package": 0,
+        "right_finger_package": 0,
+        "dual_finger_grasp_frames": 0,
+        "package_basket": 50,
         "package_shelf": 0,
         "package_receiver_gripper": 0,
-        "total_contacts": 1098
+        "total_contacts": 818
       }
     },
     {
@@ -219,7 +295,7 @@
       "video": "outputs/physics_evidence/loaded_walk_metal.mp4",
       "scene_xml": "outputs/physics_evidence/generated_mjcf/loaded_walk_metal_scene.xml",
       "duration_s": 1.8,
-      "fps": 24,
+      "fps": 18,
       "payload": {
         "key": "metal",
         "label": "heavy metal case",
@@ -232,9 +308,20 @@
       "mujoco_depth": {
         "quadruped_leg_joints": 12,
         "arm_dof_per_robot": 6,
+        "six_dof_joint_names": [
+          "arm_base_yaw",
+          "arm_shoulder_pitch",
+          "arm_elbow_pitch",
+          "arm_wrist_pitch",
+          "arm_wrist_roll",
+          "arm_tool_yaw"
+        ],
         "gripper_slide_joints_per_robot": 2,
         "collision_pairs_tracked": [
           "gripper_package",
+          "left_finger_package",
+          "right_finger_package",
+          "dual_finger_grasp_frames",
           "package_basket",
           "package_shelf",
           "package_receiver_gripper",
@@ -248,14 +335,18 @@
           "basket touch",
           "package framepos"
         ],
-        "actuators": "position actuators on leg, arm, wrist, tool, and gripper joints"
+        "actuators": "position actuators on leg, arm, wrist, tool, and gripper joints",
+        "extra_physics_validation": "six-axis mounted arm, wrist roll/tool yaw reorientation, dual-finger package contact counters, and package roll/pitch/yaw pose tracking"
       },
       "contact_totals": {
         "gripper_package": 0,
-        "package_basket": 66,
+        "left_finger_package": 0,
+        "right_finger_package": 0,
+        "dual_finger_grasp_frames": 0,
+        "package_basket": 50,
         "package_shelf": 0,
         "package_receiver_gripper": 0,
-        "total_contacts": 1098
+        "total_contacts": 818
       }
     },
     {
@@ -265,7 +356,7 @@
       "video": "outputs/physics_evidence/shelf_pick_cardboard.mp4",
       "scene_xml": "outputs/physics_evidence/generated_mjcf/shelf_pick_cardboard_scene.xml",
       "duration_s": 1.8,
-      "fps": 24,
+      "fps": 18,
       "payload": {
         "key": "cardboard",
         "label": "light cardboard parcel",
@@ -278,9 +369,20 @@
       "mujoco_depth": {
         "quadruped_leg_joints": 12,
         "arm_dof_per_robot": 6,
+        "six_dof_joint_names": [
+          "arm_base_yaw",
+          "arm_shoulder_pitch",
+          "arm_elbow_pitch",
+          "arm_wrist_pitch",
+          "arm_wrist_roll",
+          "arm_tool_yaw"
+        ],
         "gripper_slide_joints_per_robot": 2,
         "collision_pairs_tracked": [
           "gripper_package",
+          "left_finger_package",
+          "right_finger_package",
+          "dual_finger_grasp_frames",
           "package_basket",
           "package_shelf",
           "package_receiver_gripper",
@@ -294,14 +396,18 @@
           "basket touch",
           "package framepos"
         ],
-        "actuators": "position actuators on leg, arm, wrist, tool, and gripper joints"
+        "actuators": "position actuators on leg, arm, wrist, tool, and gripper joints",
+        "extra_physics_validation": "six-axis mounted arm, wrist roll/tool yaw reorientation, dual-finger package contact counters, and package roll/pitch/yaw pose tracking"
       },
       "contact_totals": {
-        "gripper_package": 329,
-        "package_basket": 8,
-        "package_shelf": 100,
+        "gripper_package": 253,
+        "left_finger_package": 96,
+        "right_finger_package": 98,
+        "dual_finger_grasp_frames": 17,
+        "package_basket": 4,
+        "package_shelf": 50,
         "package_receiver_gripper": 0,
-        "total_contacts": 2349
+        "total_contacts": 1724
       }
     },
     {
@@ -311,7 +417,7 @@
       "video": "outputs/physics_evidence/shelf_pick_wood.mp4",
       "scene_xml": "outputs/physics_evidence/generated_mjcf/shelf_pick_wood_scene.xml",
       "duration_s": 2.1,
-      "fps": 24,
+      "fps": 18,
       "payload": {
         "key": "wood",
         "label": "medium wood crate",
@@ -324,9 +430,20 @@
       "mujoco_depth": {
         "quadruped_leg_joints": 12,
         "arm_dof_per_robot": 6,
+        "six_dof_joint_names": [
+          "arm_base_yaw",
+          "arm_shoulder_pitch",
+          "arm_elbow_pitch",
+          "arm_wrist_pitch",
+          "arm_wrist_roll",
+          "arm_tool_yaw"
+        ],
         "gripper_slide_joints_per_robot": 2,
         "collision_pairs_tracked": [
           "gripper_package",
+          "left_finger_package",
+          "right_finger_package",
+          "dual_finger_grasp_frames",
           "package_basket",
           "package_shelf",
           "package_receiver_gripper",
@@ -340,14 +457,18 @@
           "basket touch",
           "package framepos"
         ],
-        "actuators": "position actuators on leg, arm, wrist, tool, and gripper joints"
+        "actuators": "position actuators on leg, arm, wrist, tool, and gripper joints",
+        "extra_physics_validation": "six-axis mounted arm, wrist roll/tool yaw reorientation, dual-finger package contact counters, and package roll/pitch/yaw pose tracking"
       },
       "contact_totals": {
-        "gripper_package": 395,
-        "package_basket": 6,
-        "package_shelf": 112,
+        "gripper_package": 309,
+        "left_finger_package": 119,
+        "right_finger_package": 118,
+        "dual_finger_grasp_frames": 20,
+        "package_basket": 4,
+        "package_shelf": 84,
         "package_receiver_gripper": 0,
-        "total_contacts": 2230
+        "total_contacts": 1699
       }
     },
     {
@@ -357,7 +478,7 @@
       "video": "outputs/physics_evidence/shelf_pick_metal.mp4",
       "scene_xml": "outputs/physics_evidence/generated_mjcf/shelf_pick_metal_scene.xml",
       "duration_s": 2.4,
-      "fps": 24,
+      "fps": 18,
       "payload": {
         "key": "metal",
         "label": "heavy metal case",
@@ -370,9 +491,20 @@
       "mujoco_depth": {
         "quadruped_leg_joints": 12,
         "arm_dof_per_robot": 6,
+        "six_dof_joint_names": [
+          "arm_base_yaw",
+          "arm_shoulder_pitch",
+          "arm_elbow_pitch",
+          "arm_wrist_pitch",
+          "arm_wrist_roll",
+          "arm_tool_yaw"
+        ],
         "gripper_slide_joints_per_robot": 2,
         "collision_pairs_tracked": [
           "gripper_package",
+          "left_finger_package",
+          "right_finger_package",
+          "dual_finger_grasp_frames",
           "package_basket",
           "package_shelf",
           "package_receiver_gripper",
@@ -386,14 +518,178 @@
           "basket touch",
           "package framepos"
         ],
-        "actuators": "position actuators on leg, arm, wrist, tool, and gripper joints"
+        "actuators": "position actuators on leg, arm, wrist, tool, and gripper joints",
+        "extra_physics_validation": "six-axis mounted arm, wrist roll/tool yaw reorientation, dual-finger package contact counters, and package roll/pitch/yaw pose tracking"
       },
       "contact_totals": {
-        "gripper_package": 455,
-        "package_basket": 10,
-        "package_shelf": 38,
+        "gripper_package": 367,
+        "left_finger_package": 140,
+        "right_finger_package": 141,
+        "dual_finger_grasp_frames": 24,
+        "package_basket": 8,
+        "package_shelf": 62,
         "package_receiver_gripper": 0,
-        "total_contacts": 2057
+        "total_contacts": 1589
+      }
+    },
+    {
+      "name": "six_dof_grasp_sweep_wood",
+      "kind": "six_dof_grasp_sweep",
+      "description": "6-DOF multi-angle shelf-to-basket grasp: wrist roll/tool yaw reorient a medium crate while both fingertip pads stay in contact.",
+      "video": "outputs/physics_evidence/six_dof_grasp_sweep_wood.mp4",
+      "scene_xml": "outputs/physics_evidence/generated_mjcf/six_dof_grasp_sweep_wood_scene.xml",
+      "duration_s": 3.0,
+      "fps": 18,
+      "payload": {
+        "key": "wood",
+        "label": "medium wood crate",
+        "mass_kg": 2.0,
+        "loading_time_s": 1.05,
+        "gait_speed_mps": 0.35,
+        "leg_compression_m": 0.05,
+        "grip_close_s": 0.32
+      },
+      "mujoco_depth": {
+        "quadruped_leg_joints": 12,
+        "arm_dof_per_robot": 6,
+        "six_dof_joint_names": [
+          "arm_base_yaw",
+          "arm_shoulder_pitch",
+          "arm_elbow_pitch",
+          "arm_wrist_pitch",
+          "arm_wrist_roll",
+          "arm_tool_yaw"
+        ],
+        "gripper_slide_joints_per_robot": 2,
+        "collision_pairs_tracked": [
+          "gripper_package",
+          "left_finger_package",
+          "right_finger_package",
+          "dual_finger_grasp_frames",
+          "package_basket",
+          "package_shelf",
+          "package_receiver_gripper",
+          "total_contacts"
+        ],
+        "sensors": [
+          "arm jointpos",
+          "gripper framepos",
+          "basket framepos",
+          "left/right finger touch",
+          "basket touch",
+          "package framepos"
+        ],
+        "actuators": "position actuators on leg, arm, wrist, tool, and gripper joints",
+        "extra_physics_validation": "six-axis mounted arm, wrist roll/tool yaw reorientation, dual-finger package contact counters, and package roll/pitch/yaw pose tracking"
+      },
+      "contact_totals": {
+        "gripper_package": 592,
+        "left_finger_package": 207,
+        "right_finger_package": 233,
+        "dual_finger_grasp_frames": 34,
+        "package_basket": 0,
+        "package_shelf": 108,
+        "package_receiver_gripper": 0,
+        "total_contacts": 2458
+      },
+      "six_dof_grasp_validation": {
+        "arm_joint_sequence": [
+          "arm_base_yaw",
+          "arm_shoulder_pitch",
+          "arm_elbow_pitch",
+          "arm_wrist_pitch",
+          "arm_wrist_roll",
+          "arm_tool_yaw"
+        ],
+        "package_orientation_axes": [
+          "roll",
+          "pitch",
+          "yaw"
+        ],
+        "dual_finger_grasp_frames": 34,
+        "left_finger_package_contacts": 207,
+        "right_finger_package_contacts": 233,
+        "claim": "The parcel follows the gripper through an overhead 6-DOF sweep while MuJoCo reports fingertip/package contacts."
+      }
+    },
+    {
+      "name": "six_dof_grasp_sweep_metal",
+      "kind": "six_dof_grasp_sweep",
+      "description": "6-DOF heavy-package grasp sweep: overhead arc, wrist roll, tool yaw, basket placement, and sustained dual-finger package contact.",
+      "video": "outputs/physics_evidence/six_dof_grasp_sweep_metal.mp4",
+      "scene_xml": "outputs/physics_evidence/generated_mjcf/six_dof_grasp_sweep_metal_scene.xml",
+      "duration_s": 3.2,
+      "fps": 18,
+      "payload": {
+        "key": "metal",
+        "label": "heavy metal case",
+        "mass_kg": 4.0,
+        "loading_time_s": 1.35,
+        "gait_speed_mps": 0.25,
+        "leg_compression_m": 0.085,
+        "grip_close_s": 0.46
+      },
+      "mujoco_depth": {
+        "quadruped_leg_joints": 12,
+        "arm_dof_per_robot": 6,
+        "six_dof_joint_names": [
+          "arm_base_yaw",
+          "arm_shoulder_pitch",
+          "arm_elbow_pitch",
+          "arm_wrist_pitch",
+          "arm_wrist_roll",
+          "arm_tool_yaw"
+        ],
+        "gripper_slide_joints_per_robot": 2,
+        "collision_pairs_tracked": [
+          "gripper_package",
+          "left_finger_package",
+          "right_finger_package",
+          "dual_finger_grasp_frames",
+          "package_basket",
+          "package_shelf",
+          "package_receiver_gripper",
+          "total_contacts"
+        ],
+        "sensors": [
+          "arm jointpos",
+          "gripper framepos",
+          "basket framepos",
+          "left/right finger touch",
+          "basket touch",
+          "package framepos"
+        ],
+        "actuators": "position actuators on leg, arm, wrist, tool, and gripper joints",
+        "extra_physics_validation": "six-axis mounted arm, wrist roll/tool yaw reorientation, dual-finger package contact counters, and package roll/pitch/yaw pose tracking"
+      },
+      "contact_totals": {
+        "gripper_package": 630,
+        "left_finger_package": 220,
+        "right_finger_package": 250,
+        "dual_finger_grasp_frames": 36,
+        "package_basket": 7,
+        "package_shelf": 64,
+        "package_receiver_gripper": 0,
+        "total_contacts": 2224
+      },
+      "six_dof_grasp_validation": {
+        "arm_joint_sequence": [
+          "arm_base_yaw",
+          "arm_shoulder_pitch",
+          "arm_elbow_pitch",
+          "arm_wrist_pitch",
+          "arm_wrist_roll",
+          "arm_tool_yaw"
+        ],
+        "package_orientation_axes": [
+          "roll",
+          "pitch",
+          "yaw"
+        ],
+        "dual_finger_grasp_frames": 36,
+        "left_finger_package_contacts": 220,
+        "right_finger_package_contacts": 250,
+        "claim": "The parcel follows the gripper through an overhead 6-DOF sweep while MuJoCo reports fingertip/package contacts."
       }
     },
     {
@@ -403,7 +699,7 @@
       "video": "outputs/physics_evidence/handoff_metal.mp4",
       "scene_xml": "outputs/physics_evidence/generated_mjcf/handoff_metal_scene.xml",
       "duration_s": 2.2,
-      "fps": 24,
+      "fps": 18,
       "payload": {
         "key": "metal",
         "label": "heavy metal case",
@@ -416,9 +712,20 @@
       "mujoco_depth": {
         "quadruped_leg_joints": 24,
         "arm_dof_per_robot": 6,
+        "six_dof_joint_names": [
+          "arm_base_yaw",
+          "arm_shoulder_pitch",
+          "arm_elbow_pitch",
+          "arm_wrist_pitch",
+          "arm_wrist_roll",
+          "arm_tool_yaw"
+        ],
         "gripper_slide_joints_per_robot": 2,
         "collision_pairs_tracked": [
           "gripper_package",
+          "left_finger_package",
+          "right_finger_package",
+          "dual_finger_grasp_frames",
           "package_basket",
           "package_shelf",
           "package_receiver_gripper",
@@ -432,14 +739,18 @@
           "basket touch",
           "package framepos"
         ],
-        "actuators": "position actuators on leg, arm, wrist, tool, and gripper joints"
+        "actuators": "position actuators on leg, arm, wrist, tool, and gripper joints",
+        "extra_physics_validation": "six-axis mounted arm, wrist roll/tool yaw reorientation, dual-finger package contact counters, and package roll/pitch/yaw pose tracking"
       },
       "contact_totals": {
-        "gripper_package": 664,
-        "package_basket": 38,
+        "gripper_package": 577,
+        "left_finger_package": 202,
+        "right_finger_package": 241,
+        "dual_finger_grasp_frames": 27,
+        "package_basket": 29,
         "package_shelf": 0,
-        "package_receiver_gripper": 343,
-        "total_contacts": 4194
+        "package_receiver_gripper": 279,
+        "total_contacts": 3213
       }
     }
   ]

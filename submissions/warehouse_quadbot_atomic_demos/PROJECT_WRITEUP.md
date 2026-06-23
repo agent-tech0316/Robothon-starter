@@ -28,7 +28,7 @@ This makes the benchmark closer to warehouse traffic control than to a single ma
 
 # Robot Platform
 
-The robot platform is the Faraday Future AEGIS quadruped using `assets/Aegis/urdf/Aegis_mujoco.urdf`. The warehouse version adds a BASE_LINK-mounted basket and a Futurist-derived front manipulator based on the FF Futurist right-arm chain and STL meshes.
+The robot platform is the Faraday Future AEGIS quadruped using `assets/Aegis/urdf/Aegis_mujoco.urdf`. The warehouse version adds a BASE_LINK-mounted basket and a Futurist-derived six-axis front manipulator with base yaw, shoulder pitch, elbow pitch, wrist pitch, wrist roll, tool yaw, and two slide-joint gripper fingers.
 
 # Environment
 
@@ -91,7 +91,7 @@ Tracked safety counters: blocked-tile route violations, route cardinality violat
 - Runtime snapshots, metrics, and event streams
 - Multi-wall exterior conveyor ports with explicit exterior footprints, outer door lines, and unique in-warehouse unload tiles
 - Mission-control dashboard with runtime-linked robot animation
-- MuJoCo evidence clips for walking, payload carrying, shelf pickup, and handoff
+- MuJoCo evidence clips for walking, payload carrying, shelf pickup, handoff, and 6-DOF multi-angle shelf-to-basket grasp sweeps
 
 # Technical Architecture
 
@@ -104,7 +104,7 @@ Tracked safety counters: blocked-tile route violations, route cardinality violat
 
 # Results
 
-The current medium profile completes 77 of 84 orders and reaches 308 orders/hour. High load completes 91 of 140 orders and reaches 364 orders/hour while preserving zero collision and zero lock-overlap violations. The accelerated fleet stress benchmark adds 54 six-hour nominal/aisle-surge scenarios with 100% safety pass rate and +30.74% average planner throughput uplift. MuJoCo evidence clips include contact counters for package/gripper, package/basket, package/shelf, and handoff interactions.
+The current medium profile completes 77 of 84 orders and reaches 308 orders/hour. High load completes 91 of 140 orders and reaches 364 orders/hour while preserving zero collision and zero lock-overlap violations. The accelerated fleet stress benchmark adds 54 six-hour nominal/aisle-surge scenarios with 100% safety pass rate and +30.74% average planner throughput uplift. MuJoCo evidence now includes 12 clips with generated MJCF, contact counters for package/gripper, package/basket, package/shelf, and handoff interactions, plus two 6-DOF grasp sweeps where the package follows wrist roll/tool yaw through an overhead arc. The heavy grasp sweep records 630 gripper/package contacts and 36 dual-finger grasp frames.
 
 # Current Limitations
 
@@ -118,4 +118,4 @@ The current medium profile completes 77 of 84 orders and reaches 308 orders/hour
 - Learn lane direction, handoff timing, and congestion pricing policies from multiple benchmark seeds.
 - Add randomized benchmark seeds and multiple warehouse layouts.
 - Stream live runtime events to the dashboard.
-- Add more detailed MuJoCo contact validation for full shelf-to-basket manipulation.
+- Extend the 6-DOF MuJoCo contact validation to randomized shelf heights and package dimensions.
