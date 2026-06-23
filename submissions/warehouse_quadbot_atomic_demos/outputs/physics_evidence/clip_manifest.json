@@ -1,11 +1,12 @@
 {
   "project": "Warehouse Quadbot MuJoCo Physics Evidence",
-  "purpose": "Short UI-ready clips showing robot state, 6-DOF arm/gripper collision evidence, basket contact, shelf pickup, handoff, payload-dependent gait, multi-angle fingertip grasp validation, and a three-AEGIS fleet physics corridor.",
+  "purpose": "Short UI-ready clips showing robot state, 6-DOF arm/gripper collision evidence, basket contact, shelf pickup, handoff, payload-dependent gait, multi-angle fingertip grasp validation, a three-AEGIS fleet physics corridor, and a heterogeneous end-effector lab with dexterous hand, electromagnet, and slide rail contacts.",
   "references": {
     "arm_layout": "UR5e-style six-axis manipulator hierarchy: base yaw, shoulder pitch, elbow pitch, wrist pitch, wrist roll, tool yaw.",
     "gripper_layout": "Panda/Robotiq-inspired two-finger gripper with fingertip collision pads and touch sites.",
     "new_validation_clips": "six_dof_grasp_sweep_wood and six_dof_grasp_sweep_metal demonstrate overhead shelf-to-basket arcs, wrist roll/tool yaw, parcel orientation tracking, and dual-finger contact counters.",
-    "fleet_physics_corridor": "Three AEGIS robots in MuJoCo share a narrow corridor while one carries a 4.0kg metal parcel; the clip records gripper/package contacts, basket contacts, obstacle clearance, and zero obstacle contacts."
+    "fleet_physics_corridor": "Three AEGIS robots in MuJoCo share a narrow corridor while one carries a 4.0kg metal parcel; the clip records gripper/package contacts, basket contacts, obstacle clearance, and zero obstacle contacts.",
+    "heterogeneous_effector_lab": "effector_mix_lab shows three AEGIS quadrupeds with different upper tools: dexterous hand for fragile cylindrical cargo, electromagnet for ferrous metal cargo, and a slide-rail tool for guided tote transfer. The trajectory JSON records separate dexterous_fragile, magnet_metal, and rail_tote contact counters."
   },
   "clips": [
     {
@@ -802,6 +803,71 @@
       "fleet_physics_metrics": {
         "min_robot_spacing_m": 0.6161,
         "min_obstacle_clearance_m": 0.6513
+      }
+    },
+    {
+      "name": "effector_mix_lab",
+      "kind": "heterogeneous_end_effectors",
+      "description": "Three AEGIS robots validate dexterous-hand, electromagnet, and slide-rail end-effectors against fragile, metal, and rail-tote payloads.",
+      "video": "outputs/physics_evidence/effector_mix_lab.mp4",
+      "trajectory": "outputs/physics_evidence/effector_mix_lab_trajectory.json",
+      "duration_s": 3.4,
+      "fps": 30,
+      "payload": {
+        "style": "heterogeneous",
+        "items": [
+          "fragile_vial",
+          "metal_puck",
+          "rail_tote"
+        ],
+        "end_effectors": [
+          "dexterous_hand",
+          "electromagnet",
+          "slide_rail"
+        ]
+      },
+      "mujoco_depth": {
+        "quadruped_leg_joints": 36,
+        "arm_dof_per_robot": 7,
+        "gripper_slide_joints_per_robot": 2,
+        "collision_geoms": [
+          "package box",
+          "left/right gripper fingers and pads",
+          "cargo basket floor and rails",
+          "pickup shelf decks",
+          "fleet corridor obstacle pillar",
+          "fragile vial cylinder",
+          "electromagnet contact plate",
+          "low-friction slide rail carriage"
+        ],
+        "sensors": [
+          "leg joint position",
+          "Futurist right-arm joint position",
+          "gripper frame position",
+          "basket frame position",
+          "left/right finger touch",
+          "basket touch",
+          "heterogeneous end-effector contact counters"
+        ],
+        "actuators": "position actuators on AEGIS leg joints, seven Futurist-derived arm joints, and two finger slide joints"
+      },
+      "contact_totals": {
+        "gripper_box": 0,
+        "receiver_gripper_box": 0,
+        "box_basket": 0,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "robot_obstacle": 0,
+        "box_obstacle": 0,
+        "dexterous_fragile": 1077,
+        "magnet_metal": 508,
+        "rail_tote": 1020,
+        "total_contacts": 11794
+      },
+      "end_effector_mix": {
+        "dexterous_hand": "fragile cylindrical vial / high-friction multi-pad contact",
+        "electromagnet": "ferrous metal puck / magnetic plate contact surrogate",
+        "slide_rail": "low-friction rail tote / guided slide contact"
       }
     }
   ]

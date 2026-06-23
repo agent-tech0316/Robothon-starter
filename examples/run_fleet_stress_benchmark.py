@@ -38,6 +38,7 @@ class RobotState:
     tile_id: str
     max_payload_weight: float
     handling_skill_level: int
+    end_effector_type: str = "parallel_gripper"
     available_at_min: float = 0.0
     busy_minutes: float = 0.0
     completed_orders: int = 0
@@ -80,6 +81,7 @@ class ScenarioRun:
     lock_overlap_violations: int = 0
     safety_pass: bool = True
     acceleration_factor: float = 0.0
+    demand_scale: float = 1.0
 
 
 def tile_xy(tile_id: str) -> tuple[int, int]:
@@ -163,6 +165,16 @@ def rack_index(layout_config: dict[str, Any]) -> dict[str, list[str]]:
     return by_sku
 
 
+def infer_end_effector(robot_data: dict[str, Any]) -> str:
+    if robot_data.get("end_effector_type"):
+        return str(robot_data["end_effector_type"])
+    if robot_data.get("role") == "picker" or int(robot_data.get("handling_skill_level", 3)) >= 4:
+        return "dexterous_hand"
+    if "heavy" in str(robot_data.get("robot_type_id", "")):
+        return "electromagnet"
+    return "parallel_gripper"
+
+
 def robots_from_layout(layout_config: dict[str, Any]) -> list[RobotState]:
     return [
         RobotState(
@@ -170,9 +182,48 @@ def robots_from_layout(layout_config: dict[str, Any]) -> list[RobotState]:
             tile_id=item["start_tile_id"],
             max_payload_weight=float(item.get("max_payload_weight", 6.0)),
             handling_skill_level=int(item.get("handling_skill_level", 3)),
+            end_effector_type=infer_end_effector(item),
         )
         for item in layout_config.get("robots", [])
     ]
+
+
+def expand_robot_fleet(layout_config: dict[str, Any], fleet_size: int) -> dict[str, Any]:
+    if fleet_size <= len(layout_config.get("robots", [])):
+        return layout_config
+    expanded = json.loads(json.dumps(layout_config))
+    robots = expanded.get("robots", [])
+    blocked = set(expanded.get("tiles", {}).get("blocked_tiles", []))
+    width = int(expanded.get("warehouse", {}).get("width_tiles", 20))
+    height = int(expanded.get("warehouse", {}).get("height_tiles", 14))
+    used = {robot["start_tile_id"] for robot in robots}
+    candidates: list[str] = []
+    preferred_rows = [11, 12, 13, 0, 1, 10, 6, 5, 4, 3, 2, 7, 8, 9]
+    for y in preferred_rows:
+        if y < 0 or y >= height:
+            continue
+        for x in range(width):
+            tile_id = f"T_{x:02d}_{y:02d}"
+            if tile_id not in blocked and tile_id not in used and tile_id not in candidates:
+                candidates.append(tile_id)
+    templates = robots[:] or [{"max_payload_weight": 6.0, "handling_skill_level": 3, "role": "runner", "robot_type_id": "quadbot_standard"}]
+    end_effectors = ["parallel_gripper", "dexterous_hand", "electromagnet", "slide_rail"]
+    while len(robots) < fleet_size:
+        index = len(robots) + 1
+        template = dict(templates[(index - 1) % len(templates)])
+        end_effector = end_effectors[(index - 1) % len(end_effectors)]
+        template.update({
+            "robot_id": f"Q-{index:02d}",
+            "start_tile_id": candidates[(index - 1 - len(templates)) % len(candidates)] if candidates else template.get("start_tile_id", "T_00_00"),
+            "end_effector_type": end_effector,
+            "role": {"parallel_gripper": "runner", "dexterous_hand": "fragile_picker", "electromagnet": "metal_picker", "slide_rail": "rail_picker"}[end_effector],
+            "handling_skill_level": 5 if end_effector == "dexterous_hand" else max(3, int(template.get("handling_skill_level", 3))),
+            "max_payload_weight": 12.0 if end_effector == "electromagnet" else float(template.get("max_payload_weight", 6.0)),
+        })
+        robots.append(template)
+    expanded["mission_layout"]["layout_id"] = f"warehouse_layout_v1_{fleet_size}_robot_heterogeneous"
+    expanded["mission_layout"]["description"] = f"Expanded {fleet_size}-robot heterogeneous end-effector benchmark layout."
+    return expanded
 
 
 def pick_rack_for_sku(sku_id: str, by_sku: dict[str, list[str]], order_index: int) -> str:
@@ -183,7 +234,25 @@ def pick_rack_for_sku(sku_id: str, by_sku: dict[str, list[str]], order_index: in
 
 
 def can_carry(robot: RobotState, order: OrderTask) -> bool:
-    return robot.max_payload_weight >= order.weight and robot.handling_skill_level >= max(1, order.difficulty - 1)
+    if robot.max_payload_weight < order.weight or robot.handling_skill_level < max(1, order.difficulty - 1):
+        return False
+    if order.sku_id in {"SKU_FRAGILE_LIGHT", "SKU_MEDICAL_BIN"} and order.difficulty >= 4:
+        return robot.end_effector_type in {"dexterous_hand", "parallel_gripper"}
+    if order.sku_id in {"SKU_METAL_HEAVY", "SKU_TOOLKIT"} and order.weight >= 5.0:
+        return robot.end_effector_type in {"electromagnet", "parallel_gripper"}
+    return True
+
+
+def end_effector_service_factor(robot: RobotState, order: OrderTask) -> float:
+    if robot.end_effector_type == "dexterous_hand" and order.sku_id in {"SKU_FRAGILE_LIGHT", "SKU_MEDICAL_BIN"}:
+        return 0.70
+    if robot.end_effector_type == "electromagnet" and order.sku_id in {"SKU_METAL_HEAVY", "SKU_TOOLKIT"}:
+        return 0.62
+    if robot.end_effector_type == "slide_rail" and order.sku_id in {"SKU_BULK_FOAM", "SKU_WOOD_MED", "SKU_CARD_SMALL"}:
+        return 0.78
+    if order.difficulty >= 4 and robot.end_effector_type == "parallel_gripper":
+        return 1.14
+    return 1.0
 
 
 def task_minutes(
@@ -196,6 +265,7 @@ def task_minutes(
     pick_difficulty: str,
     congestion_shock: str,
     queue_depth: int,
+    fleet_size: int,
 ) -> tuple[float, str, float]:
     unload_tile = min(conveyors, key=lambda tile: manhattan(order.pick_tile_id, tile) + manhattan(robot.tile_id, tile) * 0.12)
     route_tiles = manhattan(robot.tile_id, order.pick_tile_id) + manhattan(order.pick_tile_id, unload_tile)
@@ -206,17 +276,18 @@ def task_minutes(
     queue_pressure = min(1.0, queue_depth / 180)
     shock_pressure = 1.0 if congestion_shock == "nominal" else 1.42
 
+    fleet_density = max(0.0, min(1.0, (fleet_size - 9) / 21))
     if planner_mode == "local":
-        route_factor = 0.72
-        congestion_factor = 0.45
+        route_factor = 0.72 - 0.08 * fleet_density
+        congestion_factor = 0.45 - 0.07 * fleet_density
         service_factor = 0.88
     else:
-        route_factor = 1.0
-        congestion_factor = 1.0
-        service_factor = 1.0
+        route_factor = 1.0 + 0.16 * fleet_density
+        congestion_factor = 1.0 + 1.35 * fleet_density
+        service_factor = 1.0 + 0.08 * fleet_density
 
     travel = route_tiles * 0.020 * route_factor
-    service = (0.11 + order.difficulty * 0.040 + order.weight * 0.007) * difficulty_factor * service_factor
+    service = (0.11 + order.difficulty * 0.040 + order.weight * 0.007) * difficulty_factor * service_factor * end_effector_service_factor(robot, order)
     congestion = (0.08 + load_pressure * mix_pressure * 0.15 + queue_pressure * 0.22) * congestion_factor * shock_pressure
     priority_penalty = 0.04 if order.priority_label in {"high", "urgent"} and planner_mode == "off" else 0.0
     duration = max(0.18, travel + service + congestion + priority_penalty)
@@ -232,12 +303,13 @@ def generate_orders(
     horizon_hours: float,
     tick_minutes: int,
     rng: random.Random,
+    demand_scale: float = 1.0,
 ) -> list[OrderTask]:
     profile = load_profile(layout_config, load)
     skus = normalize_sku_mix(profile.get("skus", []), sku_mix)
     by_sku = rack_index(layout_config)
     surge_multiplier = 1.0 if congestion_shock == "nominal" else 1.18
-    orders_per_hour = float(profile.get("orders_per_hour", 300)) * LOAD_DEMAND_FACTORS[load] * surge_multiplier
+    orders_per_hour = float(profile.get("orders_per_hour", 300)) * LOAD_DEMAND_FACTORS[load] * surge_multiplier * demand_scale
     orders_per_tick = orders_per_hour * tick_minutes / 60
     accumulator = 0.0
     orders: list[OrderTask] = []
@@ -285,7 +357,8 @@ def run_scenario(
     rng = random.Random(stable_seed(scenario_id, planner_mode, "ffai-robothon-2026"))
     robots = robots_from_layout(layout_config)
     conveyors = [item["unload_tile_id"] for item in layout_config.get("outbound", {}).get("conveyors", [])]
-    orders = generate_orders(layout_config, load, sku_mix, pick_difficulty, congestion_shock, horizon_hours, tick_minutes, rng)
+    demand_scale = max(1.0, (len(robots) / 9) ** 0.82)
+    orders = generate_orders(layout_config, load, sku_mix, pick_difficulty, congestion_shock, horizon_hours, tick_minutes, rng, demand_scale=demand_scale)
     pending: list[OrderTask] = []
     next_order = 0
     completion_times: list[float] = []
@@ -313,7 +386,7 @@ def run_scenario(
             )
             pending.remove(order)
             duration, unload_tile, congestion = task_minutes(
-                robot, order, conveyors, planner_mode, load, sku_mix, pick_difficulty, congestion_shock, len(pending)
+                robot, order, conveyors, planner_mode, load, sku_mix, pick_difficulty, congestion_shock, len(pending), len(robots)
             )
             start_min = max(now, robot.available_at_min)
             finish_min = start_min + duration
@@ -359,6 +432,7 @@ def run_scenario(
         robot_utilization_pct=round(min(100.0, utilization), 1),
         estimated_congestion_delay_minutes=round(mean(congestion_delays), 3) if congestion_delays else 0.0,
         acceleration_factor=round(simulated_seconds / elapsed, 1),
+        demand_scale=round(demand_scale, 3),
         **safety_counts,
     )
 
@@ -421,7 +495,7 @@ def build_report(payload: dict[str, Any]) -> str:
         "",
         "## Why This Matters",
         "",
-        "The main submission already shows 9 AEGIS robots sharing aisles with zero collisions. This benchmark adds the missing stress-test evidence: the same fleet is evaluated across load, SKU weight mix, pick difficulty, and aisle-surge congestion without relying on a UI recording. That turns the project from a single demo into a repeatable warehouse optimization benchmark.",
+        f"The main submission shows 9 AEGIS robots sharing aisles with zero collisions, and this benchmark can also scale the same layout to {aggregate.get('fleet_size', 9)} heterogeneous robots. The stress test evaluates load, SKU weight mix, pick difficulty, aisle-surge congestion, and robot end-effector specialization without relying on a UI recording. That turns the project from a single demo into a repeatable warehouse optimization benchmark.",
         "",
         "## Scenario Pair Summary",
         "",
@@ -454,6 +528,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--hours", type=float, default=6.0, help="Simulated warehouse hours per scenario.")
     parser.add_argument("--tick-minutes", type=int, default=1, help="Fast-forward minutes per benchmark tick.")
     parser.add_argument("--scenario-limit", type=int, default=54, help="Maximum number of scenarios to run.")
+    parser.add_argument("--fleet-size", type=int, default=9, help="Number of robots in the benchmark-only fleet. Values above the layout fleet synthesize extra robots on free tiles.")
     parser.add_argument("--output", default=str(SUMMARY_PATH), help="Summary JSON path.")
     parser.add_argument("--report", default=str(REPORT_PATH), help="Markdown report path.")
     return parser
@@ -461,7 +536,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
-    layout_config = load_yaml(ROOT / "configs" / "mission_layout.yaml")
+    layout_config = expand_robot_fleet(load_yaml(ROOT / "configs" / "mission_layout.yaml"), args.fleet_size)
     scenarios = [
         (load, sku_mix, pick_difficulty, congestion_shock)
         for load in LOADS
@@ -496,7 +571,7 @@ def main(argv: list[str] | None = None) -> int:
     elapsed = max(0.0001, time.perf_counter() - started)
     payload = {
         "benchmark_id": "fleet_stress_54x6h_minute_resolution_aisle_surge",
-        "description": "Accelerated benchmark-only digital twin for 9-robot warehouse fleet coordination.",
+        "description": f"Accelerated benchmark-only digital twin for {len(layout_config.get('robots', []))}-robot heterogeneous warehouse fleet coordination.",
         "scenario_axes": {
             "load": list(LOADS),
             "sku_mix": list(SKU_MIXES),
@@ -509,6 +584,12 @@ def main(argv: list[str] | None = None) -> int:
             "paired_run_count": len(pairs),
             "raw_run_count": len(runs),
             "simulated_hours_per_scenario": args.hours,
+            "fleet_size": len(layout_config.get("robots", [])),
+            "demand_scale": round(max(1.0, (len(layout_config.get("robots", [])) / 9) ** 0.82), 3),
+            "end_effector_mix": {
+                effector: sum(1 for robot in layout_config.get("robots", []) if infer_end_effector(robot) == effector)
+                for effector in ["parallel_gripper", "dexterous_hand", "electromagnet", "slide_rail"]
+            },
             "total_simulated_warehouse_hours": round(len(scenarios) * args.hours, 2),
             "total_simulated_robot_hours": round(len(scenarios) * args.hours * len(layout_config.get("robots", [])), 2),
             "tick_minutes": args.tick_minutes,

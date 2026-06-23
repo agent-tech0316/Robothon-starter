@@ -64,6 +64,7 @@ BOX_STYLES = {
 LEGACY_SCENARIOS = ("arm_showcase", "shelf_pick", "handoff")
 STATE_SCENARIOS = (
     "fleet_physics_corridor",
+    "effector_mix_lab",
     "rest_idle",
     "empty_stance",
     "empty_walk",
@@ -91,6 +92,7 @@ SCENARIO_DURATIONS = {
     "shelf_pick_metal": 2.5,
     "handoff_metal": 2.4,
     "fleet_physics_corridor": 3.2,
+    "effector_mix_lab": 3.4,
 }
 
 FUTURIST_ARM_JOINTS = (
@@ -153,6 +155,8 @@ def lerp_tuple(a: tuple[float, ...], b: tuple[float, ...], t: float) -> tuple[fl
 
 
 def scenario_kind(scenario: str) -> str:
+    if scenario.startswith("effector_mix"):
+        return "effector_mix"
     if scenario.startswith("fleet_physics"):
         return "fleet_physics"
     if scenario.startswith("loaded_walk_"):
@@ -168,7 +172,7 @@ def scenario_payload_style(scenario: str) -> str:
     for style in BOX_STYLES:
         if scenario.endswith(f"_{style}"):
             return style
-    if scenario == "handoff" or scenario.startswith("fleet_physics"):
+    if scenario == "handoff" or scenario.startswith("fleet_physics") or scenario.startswith("effector_mix"):
         return "metal"
     if scenario == "arm_showcase":
         return "wood"
@@ -375,6 +379,9 @@ def contact_counters(model: mujoco.MjModel, data: mujoco.MjData) -> dict[str, in
         "arm_basket": 0,
         "robot_obstacle": 0,
         "box_obstacle": 0,
+        "dexterous_fragile": 0,
+        "magnet_metal": 0,
+        "rail_tote": 0,
         "total_contacts": int(data.ncon),
     }
     for idx in range(data.ncon):
@@ -389,6 +396,12 @@ def contact_counters(model: mujoco.MjModel, data: mujoco.MjData) -> dict[str, in
         has_basket = "basket" in joined
         has_shelf = "pickup_shelf" in joined
         has_obstacle = "avoidance" in joined
+        has_dexterous = "dexterous" in joined
+        has_fragile = "fragile_vial" in joined
+        has_magnet = "electromagnet" in joined
+        has_metal_puck = "metal_puck" in joined
+        has_slide_rail = "slide_rail" in joined
+        has_rail_tote = "rail_tote" in joined
         has_arm = "arm_" in joined or "gripper" in joined
 
         if has_gripper and has_box:
@@ -405,6 +418,12 @@ def contact_counters(model: mujoco.MjModel, data: mujoco.MjData) -> dict[str, in
             counters["box_obstacle"] += 1
         elif has_obstacle:
             counters["robot_obstacle"] += 1
+        if has_dexterous and has_fragile:
+            counters["dexterous_fragile"] += 1
+        if has_magnet and has_metal_puck:
+            counters["magnet_metal"] += 1
+        if has_slide_rail and has_rail_tote:
+            counters["rail_tote"] += 1
     return counters
 
 
@@ -476,6 +495,60 @@ def add_payload_box(
             contype=0,
             conaffinity=0,
         )
+
+
+def add_fragile_vial(world: mujoco.MjsBody, name: str, pos: tuple[float, float, float]) -> None:
+    body = world.add_body(name=name, pos=pos)
+    body.add_freejoint(name=f"{name}_freejoint")
+    body.add_geom(
+        name=f"{name}_glass",
+        type=mujoco.mjtGeom.mjGEOM_CYLINDER,
+        size=[0.042, 0.095],
+        mass=0.45,
+        rgba=[0.74, 0.95, 1.0, 0.46],
+        friction=[1.2, 0.04, 0.02],
+        contype=1,
+        conaffinity=1,
+    )
+    body.add_geom(
+        name=f"{name}_cap",
+        type=mujoco.mjtGeom.mjGEOM_CYLINDER,
+        pos=[0.0, 0.0, 0.108],
+        size=[0.045, 0.016],
+        rgba=[0.95, 0.30, 0.36, 1.0],
+        contype=1,
+        conaffinity=1,
+    )
+
+
+def add_metal_puck(world: mujoco.MjsBody, name: str, pos: tuple[float, float, float]) -> None:
+    body = world.add_body(name=name, pos=pos)
+    body.add_freejoint(name=f"{name}_freejoint")
+    body.add_geom(
+        name=f"{name}_ferrous",
+        type=mujoco.mjtGeom.mjGEOM_CYLINDER,
+        size=[0.070, 0.038],
+        mass=2.8,
+        rgba=[0.62, 0.68, 0.72, 1.0],
+        friction=[0.9, 0.05, 0.02],
+        contype=1,
+        conaffinity=1,
+    )
+
+
+def add_rail_tote(world: mujoco.MjsBody, name: str, pos: tuple[float, float, float]) -> None:
+    body = world.add_body(name=name, pos=pos)
+    body.add_freejoint(name=f"{name}_freejoint")
+    body.add_geom(
+        name=f"{name}_crate",
+        type=mujoco.mjtGeom.mjGEOM_BOX,
+        size=[0.115, 0.070, 0.040],
+        mass=1.4,
+        rgba=[0.28, 0.66, 0.78, 1.0],
+        friction=[0.42, 0.02, 0.01],
+        contype=1,
+        conaffinity=1,
+    )
 
 
 def add_world_accessory_rig(world: mujoco.MjsBody, name: str) -> None:
@@ -998,6 +1071,28 @@ def add_rig_actuators_and_sensors(spec: mujoco.MjSpec, prefix: str = "") -> None
     add_touch_sensor(spec, name=f"{prefix}rig_basket_touch", site=f"{prefix}rig_basket_touch_site")
 
 
+def add_end_effector_variant(spec: mujoco.MjSpec, prefix: str, variant: str) -> None:
+    hand = spec.body(f"{prefix}rig_right_hand")
+    if hand is None:
+        return
+    if variant == "dexterous_hand":
+        hand.add_site(name=f"{prefix}rig_dexterous_tool_site", pos=[0.152, 0.0, -0.006], size=[0.020], rgba=[0.80, 0.95, 1.0, 0.18])
+        hand.add_geom(name=f"{prefix}rig_dexterous_palm_pad", type=mujoco.mjtGeom.mjGEOM_BOX, pos=[0.104, 0.0, -0.006], size=[0.030, 0.052, 0.018], rgba=[0.12, 0.16, 0.18, 1.0], contype=1, conaffinity=1, group=2, mass=0.04, friction=[1.9, 0.12, 0.05])
+        for idx, (name, y, z, angle) in enumerate([("thumb", -0.050, -0.018, -0.35), ("index", -0.020, 0.020, 0.10), ("middle", 0.016, 0.022, 0.02), ("ring", 0.050, 0.014, -0.08)]):
+            finger = hand.add_body(name=f"{prefix}rig_dexterous_{name}_body", pos=[0.126, y, z])
+            finger.add_geom(name=f"{prefix}rig_dexterous_{name}", type=mujoco.mjtGeom.mjGEOM_CAPSULE, fromto=[0.0, 0.0, 0.0, 0.065, 0.012 * math.sin(angle), 0.014 * math.cos(angle)], size=[0.010], rgba=[0.22, 0.25, 0.27, 1.0], contype=1, conaffinity=1, group=2, mass=0.025, friction=[2.1, 0.13, 0.05])
+            finger.add_geom(name=f"{prefix}rig_dexterous_{name}_tip", type=mujoco.mjtGeom.mjGEOM_SPHERE, pos=[0.070, 0.012 * math.sin(angle), 0.014 * math.cos(angle)], size=[0.014], rgba=[0.06, 0.07, 0.08, 1.0], contype=1, conaffinity=1, group=2, mass=0.012, friction=[2.3, 0.14, 0.05])
+    elif variant == "electromagnet":
+        hand.add_site(name=f"{prefix}rig_magnet_tool_site", pos=[0.160, 0.0, -0.004], size=[0.022], rgba=[0.40, 0.70, 1.0, 0.20])
+        hand.add_geom(name=f"{prefix}rig_electromagnet_core", type=mujoco.mjtGeom.mjGEOM_CYLINDER, pos=[0.125, 0.0, -0.004], size=[0.052, 0.018], rgba=[0.10, 0.16, 0.22, 1.0], contype=1, conaffinity=1, group=2, mass=0.12, friction=[1.4, 0.07, 0.03])
+        hand.add_geom(name=f"{prefix}rig_electromagnet_field", type=mujoco.mjtGeom.mjGEOM_CYLINDER, pos=[0.154, 0.0, -0.004], size=[0.078, 0.006], rgba=[0.20, 0.70, 1.0, 0.18], contype=0, conaffinity=0, group=2)
+    elif variant == "slide_rail":
+        hand.add_site(name=f"{prefix}rig_slide_rail_site", pos=[0.150, 0.0, -0.030], size=[0.020], rgba=[0.20, 1.0, 0.75, 0.20])
+        hand.add_geom(name=f"{prefix}rig_slide_rail_left", type=mujoco.mjtGeom.mjGEOM_BOX, pos=[0.120, 0.034, -0.030], size=[0.094, 0.006, 0.009], rgba=[0.04, 0.20, 0.18, 1.0], contype=1, conaffinity=1, group=2, mass=0.05, friction=[0.25, 0.01, 0.01])
+        hand.add_geom(name=f"{prefix}rig_slide_rail_right", type=mujoco.mjtGeom.mjGEOM_BOX, pos=[0.120, -0.034, -0.030], size=[0.094, 0.006, 0.009], rgba=[0.04, 0.20, 0.18, 1.0], contype=1, conaffinity=1, group=2, mass=0.05, friction=[0.25, 0.01, 0.01])
+        hand.add_geom(name=f"{prefix}rig_slide_rail_carriage", type=mujoco.mjtGeom.mjGEOM_BOX, pos=[0.156, 0.0, -0.018], size=[0.040, 0.050, 0.010], rgba=[0.10, 0.55, 0.45, 1.0], contype=1, conaffinity=1, group=2, mass=0.05, friction=[0.35, 0.02, 0.01])
+
+
 def add_scene_common(spec: mujoco.MjSpec, scenario: str) -> None:
     world = spec.worldbody
     add_floor_and_lights(world)
@@ -1025,6 +1120,20 @@ def add_scene_common(spec: mujoco.MjSpec, scenario: str) -> None:
         add_tile(world, "tile_sender", (-0.55, 0.0), [0.105, 0.115, 0.145, 1.0])
         add_tile(world, "tile_receiver", (0.55, 0.0), [0.085, 0.135, 0.110, 1.0])
         add_payload_box(world, "transfer_box", payload_style, (-0.63, 0.0, 0.625))
+
+    elif kind == "effector_mix":
+        for center, name, color in [
+            ((-1.25, 0.72), "tile_dexterous_fragile", [0.075, 0.105, 0.125, 1.0]),
+            ((0.00, -0.60), "tile_magnet_metal", [0.090, 0.110, 0.135, 1.0]),
+            ((1.25, 0.72), "tile_slide_rail", [0.085, 0.135, 0.120, 1.0]),
+        ]:
+            add_tile(world, name, center, color)
+        add_fragile_vial(world, "fragile_vial", (-1.02, 0.72, 0.58))
+        add_metal_puck(world, "metal_puck", (0.20, -0.60, 0.54))
+        add_rail_tote(world, "rail_tote", (1.02, 0.72, 0.50))
+        world.add_geom(name="fragile_station", type=mujoco.mjtGeom.mjGEOM_BOX, pos=[-1.02, 0.72, 0.10], size=[0.20, 0.16, 0.030], rgba=[0.20, 0.30, 0.34, 1.0], contype=1, conaffinity=1)
+        world.add_geom(name="metal_station", type=mujoco.mjtGeom.mjGEOM_BOX, pos=[0.20, -0.60, 0.10], size=[0.18, 0.18, 0.030], rgba=[0.24, 0.25, 0.27, 1.0], contype=1, conaffinity=1)
+        world.add_geom(name="rail_station", type=mujoco.mjtGeom.mjGEOM_BOX, pos=[1.02, 0.72, 0.10], size=[0.22, 0.15, 0.030], rgba=[0.18, 0.32, 0.30, 1.0], contype=1, conaffinity=1)
 
     elif kind == "fleet_physics":
         for x in (-1.5, -0.75, 0.0, 0.75, 1.5):
@@ -1077,6 +1186,13 @@ def style_model_for_video(model: mujoco.MjModel) -> None:
             or name.startswith("target_box")
             or name.startswith("transfer_box")
             or name.startswith("avoidance")
+            or name.startswith("fragile_vial")
+            or name.startswith("metal_puck")
+            or name.startswith("rail_tote")
+            or name.endswith("_station")
+            or "dexterous" in name
+            or "electromagnet" in name
+            or "slide_rail" in name
             or "basket" in name
             or "arm_" in name
             or "gripper" in name
@@ -1105,25 +1221,29 @@ def style_model_for_video(model: mujoco.MjModel) -> None:
 def build_model(urdf_path: Path, scenario: str) -> mujoco.MjModel:
     spec = build_aegis_spec(urdf_path, accessories=True)
     kind = scenario_kind(scenario)
-    if kind in {"handoff", "fleet_physics"}:
+    if kind in {"handoff", "fleet_physics", "effector_mix"}:
         receiver_frame = spec.worldbody.add_frame(name="receiver_attach_frame", pos=[0.0, 0.0, 0.0])
         receiver = build_aegis_spec(urdf_path, accessories=True)
         spec.attach(receiver, prefix="r_", frame=receiver_frame)
-    if kind == "fleet_physics":
+    if kind in {"fleet_physics", "effector_mix"}:
         traffic_frame = spec.worldbody.add_frame(name="traffic_attach_frame", pos=[0.0, 0.0, 0.0])
         traffic = build_aegis_spec(urdf_path, accessories=True)
         spec.attach(traffic, prefix="t_", frame=traffic_frame)
 
+    if kind == "effector_mix":
+        add_end_effector_variant(spec, "", "dexterous_hand")
+        add_end_effector_variant(spec, "r_", "electromagnet")
+        add_end_effector_variant(spec, "t_", "slide_rail")
     add_scene_common(spec, scenario)
     add_aegis_leg_actuators_and_sensors(spec, "")
-    if kind in {"handoff", "fleet_physics"}:
+    if kind in {"handoff", "fleet_physics", "effector_mix"}:
         add_aegis_leg_actuators_and_sensors(spec, "r_")
-    if kind == "fleet_physics":
+    if kind in {"fleet_physics", "effector_mix"}:
         add_aegis_leg_actuators_and_sensors(spec, "t_")
     add_rig_actuators_and_sensors(spec, "")
-    if kind in {"handoff", "fleet_physics"}:
+    if kind in {"handoff", "fleet_physics", "effector_mix"}:
         add_rig_actuators_and_sensors(spec, "r_")
-    if kind == "fleet_physics":
+    if kind in {"fleet_physics", "effector_mix"}:
         add_rig_actuators_and_sensors(spec, "t_")
     model = spec.compile()
     style_model_for_video(model)
@@ -1614,6 +1734,37 @@ def apply_fleet_physics(model: mujoco.MjModel, data: mujoco.MjData, time_s: floa
     mujoco.mj_forward(model, data)
 
 
+def apply_effector_mix_lab(model: mujoco.MjModel, data: mujoco.MjData, time_s: float, duration_s: float) -> None:
+    data.qpos[:] = 0.0
+    data.qvel[:] = 0.0
+    p = smoothstep(0.0, duration_s, time_s)
+    set_aegis_pose(model, data, prefix="", pos=(-1.25, 0.72, 0.345), yaw=0.04, time_s=time_s, moving=False, leg_compression=0.018, gait_speed=0.45)
+    set_aegis_pose(model, data, prefix="r_", pos=(0.00, -0.60, 0.345), yaw=0.08, time_s=time_s, moving=False, leg_compression=0.028, gait_speed=0.45)
+    set_aegis_pose(model, data, prefix="t_", pos=(1.25, 0.72, 0.345), yaw=math.pi - 0.05, time_s=time_s, moving=False, leg_compression=0.014, gait_speed=0.45)
+    dex_pose = (-0.20, -0.12, 0.78, -0.18, 0.30 * math.sin(2.4 * time_s), -0.16)
+    magnet_pose = (0.04, -0.18, 0.62, -0.10, 0.05, 0.04)
+    rail_pose = (-0.06, -0.08, 0.74, -0.16, -0.04, -0.10)
+    set_rig_arm_pose_tuple(model, data, name="sender_rig", pose=dex_pose)
+    set_rig_arm_pose_tuple(model, data, name="receiver_rig", pose=magnet_pose)
+    set_rig_arm_pose_tuple(model, data, name="third_rig", pose=rail_pose)
+    set_rig_gripper(model, data, name="sender_rig", closed=0.75 + 0.20 * smoothstep(0.10, 0.35, p))
+    set_rig_gripper(model, data, name="receiver_rig", closed=0.08)
+    set_rig_gripper(model, data, name="third_rig", closed=0.10)
+    mujoco.mj_forward(model, data)
+
+    dex_site = site_position(model, data, "rig_dexterous_tool_site")
+    magnet_site = site_position(model, data, "r_rig_magnet_tool_site")
+    rail_site = site_position(model, data, "t_rig_slide_rail_site")
+    vial_pos = (dex_site[0] + 0.008 * math.sin(4.0 * time_s), dex_site[1], dex_site[2] - 0.006)
+    puck_pos = (magnet_site[0], magnet_site[1], magnet_site[2] - 0.010 + 0.006 * math.sin(math.pi * p))
+    slide = -0.052 + 0.104 * smoothstep(0.20, 0.88, p)
+    tote_pos = (rail_site[0] + slide, rail_site[1], rail_site[2] - 0.004)
+    set_freejoint_pose_quat(model, data, "fragile_vial_freejoint", vial_pos, quat_from_yaw_pitch(0.12 * math.sin(2.8 * time_s), 0.06))
+    set_freejoint_pose_quat(model, data, "metal_puck_freejoint", puck_pos, quat_from_yaw_pitch(0.0, 0.0))
+    set_freejoint_pose_quat(model, data, "rail_tote_freejoint", tote_pos, quat_from_yaw_pitch(math.pi, 0.0))
+    mujoco.mj_forward(model, data)
+
+
 def apply_scenario_state(
     model: mujoco.MjModel,
     data: mujoco.MjData,
@@ -1639,6 +1790,8 @@ def apply_scenario_state(
         apply_loaded_walk(model, data, time_s, duration_s, style=style)
     elif kind == "fleet_physics":
         apply_fleet_physics(model, data, time_s, duration_s)
+    elif kind == "effector_mix":
+        apply_effector_mix_lab(model, data, time_s, duration_s)
     else:
         raise ValueError(f"Unknown scenario: {scenario}")
 
@@ -1666,6 +1819,11 @@ def update_camera(
         camera.distance = 1.65
         camera.azimuth = 118.0 + 4.0 * math.sin(0.7 * time_s)
         camera.elevation = -18.0
+    elif kind == "effector_mix":
+        camera.lookat[:] = [0.06, 0.22, 0.43]
+        camera.distance = 3.30
+        camera.azimuth = 105.0 + 4.0 * math.sin(0.35 * time_s)
+        camera.elevation = -20.0
     elif kind == "fleet_physics":
         camera.lookat[:] = [0.02, 0.0, 0.40]
         camera.distance = 3.10
@@ -1709,6 +1867,9 @@ def run_scenario(
         "arm_basket": 0,
         "robot_obstacle": 0,
         "box_obstacle": 0,
+        "dexterous_fragile": 0,
+        "magnet_metal": 0,
+        "rail_tote": 0,
         "total_contacts": 0,
     }
     total_frames = max(1, int(round(duration_s * fps)))
@@ -1736,6 +1897,13 @@ def run_scenario(
                 sample["traffic_base"] = body_position(model, data, "t_BASE_LINK")
                 sample["box_pos"] = body_position(model, data, "target_box")
                 sample["clearance"] = fleet_clearance_metrics(model, data)
+            elif kind == "effector_mix":
+                sample["dexterous_robot_base"] = body_position(model, data, "BASE_LINK")
+                sample["magnet_robot_base"] = body_position(model, data, "r_BASE_LINK")
+                sample["rail_robot_base"] = body_position(model, data, "t_BASE_LINK")
+                sample["fragile_vial_pos"] = body_position(model, data, "fragile_vial")
+                sample["metal_puck_pos"] = body_position(model, data, "metal_puck")
+                sample["rail_tote_pos"] = body_position(model, data, "rail_tote")
             elif kind in {"shelf_pick", "loaded_walk"}:
                 sample["box_pos"] = body_position(model, data, "target_box")
             elif scenario == "arm_showcase":
@@ -1763,7 +1931,13 @@ def run_scenario(
         "trajectory": repo_relative(trajectory_path),
         "duration_s": duration_s,
         "fps": fps,
-        "payload": None
+        "payload": {
+            "style": "heterogeneous",
+            "items": ["fragile_vial", "metal_puck", "rail_tote"],
+            "end_effectors": ["dexterous_hand", "electromagnet", "slide_rail"],
+        }
+        if kind == "effector_mix"
+        else (None
         if kind in {"rest_idle", "empty_stance", "empty_walk", "arm_showcase"}
         else {
             "style": payload_style,
@@ -1774,11 +1948,11 @@ def run_scenario(
             "grip_close_s": BOX_STYLES[payload_style]["grip_close_s"],
             "walk_speed_mps": BOX_STYLES[payload_style]["walk_speed_mps"],
             "leg_compression_m": BOX_STYLES[payload_style]["leg_compression_m"],
-        },
+        }),
         "box_styles": BOX_STYLES,
         "tile_size_m": TILE_SIZE,
         "mujoco_depth": {
-            "quadruped_leg_joints": 36 if kind == "fleet_physics" else (12 if kind != "handoff" else 24),
+            "quadruped_leg_joints": 36 if kind in {"fleet_physics", "effector_mix"} else (12 if kind != "handoff" else 24),
             "arm_dof_per_robot": 7,
             "gripper_slide_joints_per_robot": 2,
             "collision_geoms": [
@@ -1787,6 +1961,9 @@ def run_scenario(
                 "cargo basket floor and rails",
                 "pickup shelf decks",
                 "fleet corridor obstacle pillar",
+                "fragile vial cylinder",
+                "electromagnet contact plate",
+                "low-friction slide rail carriage",
             ],
             "sensors": [
                 "leg joint position",
@@ -1795,11 +1972,17 @@ def run_scenario(
                 "basket frame position",
                 "left/right finger touch",
                 "basket touch",
+                "heterogeneous end-effector contact counters",
             ],
             "actuators": "position actuators on AEGIS leg joints, seven Futurist-derived arm joints, and two finger slide joints",
         },
         "contact_totals": contact_totals,
         "fleet_physics_metrics": fleet_clearance_metrics(model, data) if kind == "fleet_physics" else None,
+        "end_effector_mix": {
+            "dexterous_hand": "fragile cylindrical vial / high-friction multi-pad contact",
+            "electromagnet": "ferrous metal puck / magnetic plate contact surrogate",
+            "slide_rail": "low-friction rail tote / guided slide contact",
+        } if kind == "effector_mix" else None,
         "physics_note": (
             "Package, shelf, basket, and gripper use MuJoCo collision geoms. "
             "During grasp and carry phases the package follows the wrist pose with "

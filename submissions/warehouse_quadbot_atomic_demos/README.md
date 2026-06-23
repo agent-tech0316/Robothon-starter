@@ -12,13 +12,13 @@ UUID: `13b27675-9c26-49df-9014-cb31f33f9df8`
 
 | Signal | Result |
 | --- | --- |
-| Fleet task | 9 AEGIS quadrupeds fulfilling warehouse orders on shared discrete tiles |
-| Stress benchmark | 54 six-hour scenarios / 108 planner runs / 2,916 simulated robot-hours |
+| Fleet task | 9 AEGIS quadrupeds in the live UI plus a 30-robot heterogeneous fleet stress extension |
+| Stress benchmark | 54 six-hour scenarios / 108 planner runs / 9,720 simulated robot-hours at 30 robots |
 | Safety | 100% pass, 0 collisions, 0 tile-lock overlaps |
-| Planner value | +30.74% average throughput uplift, +97.42% best uplift vs planner-off baseline |
+| Planner value | +60.27% average throughput uplift, +185.23% best uplift vs planner-off baseline in the 30-robot stress extension |
 | High-load result | 91 / 140 orders, 364 orders/hour, 0 movement safety violations |
-| MuJoCo depth | 13 evidence clips, generated MJCF, touch sensors, collision geoms, contact traces, 3-robot corridor physics |
-| 6-DOF grasp proof | 630 gripper/package contacts, 220 left-finger contacts, 250 right-finger contacts, 36 dual-finger grasp frames |
+| MuJoCo depth | 14 evidence clips, generated MJCF, touch sensors, collision geoms, contact traces, 3-robot corridor physics, heterogeneous end-effectors |
+| 6-DOF + tool proof | 630 gripper/package contacts; heterogeneous tool contacts: 1077 dexterous/fragile, 508 magnet/metal, 1020 rail/tote |
 | Demo | 1:27.58 AI-judge cut with Web/MuJoCo layered validation, expanded live runtime decision replay, and 3-robot corridor physics, benchmark proof, contact sheet, 6-DOF grasp, and handoff |
 
 Read first: [`JUDGE_SCORECARD.md`](JUDGE_SCORECARD.md). Run first: `python examples/run_agentech_judge_review.py`.
@@ -51,6 +51,7 @@ The final demo video is included directly in this submission as `demo.mp4` (1:27
 
 - Live runtime decision replay: `outputs/runtime_live_decision_replay.mp4`
 - MuJoCo multi-robot corridor: `outputs/physics_evidence/fleet_physics_corridor.mp4` and `outputs/physics_evidence/fleet_physics_corridor_trajectory.json`
+- MuJoCo heterogeneous end-effector lab: `outputs/physics_evidence/effector_mix_lab.mp4` and `outputs/physics_evidence/effector_mix_lab_trajectory.json`
 - MuJoCo contact sheet: `outputs/physics_evidence/physics_evidence_contact_sheet.png`
 - New 6-DOF grasp videos: `outputs/physics_evidence/six_dof_grasp_sweep_wood.mp4` and `outputs/physics_evidence/six_dof_grasp_sweep_metal.mp4`
 - Atomic action preview sheet: `outputs/preview_contact_sheet.png`
@@ -88,7 +89,7 @@ A single robot action proves one body can perform one skill. This benchmark asks
 
 | Single-action demo | Fleet-level warehouse benchmark |
 | --- | --- |
-| One robot, one object, one local controller | 9 robots, many orders, shared aisles, shared tile locks |
+| One robot, one object, one local controller | 9 live UI robots plus 30 benchmark robots, many orders, shared aisles, shared tile locks |
 | Success means the object was grasped or moved | Success means throughput rises while wait time and safety violations stay low |
 | The main risk is local physics failure | The main risks are congestion, deadlock, priority inversion, and route conflicts |
 | Evidence is a short physical clip | Evidence is planner-off vs planner-on metrics plus MuJoCo atomic-skill validation |
@@ -97,7 +98,7 @@ The judge-facing takeaway is simple: one robot moving is a skill; many robots sh
 
 ## Benchmark Overview
 
-The benchmark runs a 20 x 14 tile warehouse with 9 robots, rack footprint blocking, a 3 x 3 corner robot depot, four wall-facing outbound conveyor ports, three SKU weight classes, and three load profiles. Each conveyor belt sits outside the warehouse boundary, with its roll-up door on the outer end and exactly one adjacent in-warehouse unload tile on the edge. Robots drop parcels at that edge tile only; the belt and door are visual/exterior infrastructure, not traversable robot floor.
+The default dashboard benchmark runs a 20 x 14 tile warehouse with 9 robots, rack footprint blocking, a 3 x 3 corner robot depot, four wall-facing outbound conveyor ports, three SKU weight classes, and three load profiles. Each conveyor belt sits outside the warehouse boundary, with its roll-up door on the outer end and exactly one adjacent in-warehouse unload tile on the edge. Robots drop parcels at that edge tile only; the belt and door are visual/exterior infrastructure, not traversable robot floor.
 
 | Load | Created | Completed | Active | Throughput | Avg completion | Avg lock wait | Robot util. | Safety violations |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -118,9 +119,9 @@ The project now includes a benchmark-only fast-forward simulator for warehouse-s
 | Simulated robot-hours | 2,916 |
 | Safety pass rate | 100% |
 | Collision / lock-overlap violations | 0 / 0 |
-| Average planner throughput uplift | +30.74% |
-| Best planner throughput uplift | +97.42% |
-| Wall-clock runtime | about 7.7 seconds |
+| Average planner throughput uplift | +32.92% |
+| Best planner throughput uplift | +99.63% |
+| Wall-clock runtime | about 13.3 seconds |
 
 Run it with:
 
@@ -129,6 +130,32 @@ python examples/run_fleet_stress_benchmark.py --hours 6 --scenario-limit 54
 ```
 
 Outputs: `FLEET_STRESS_BENCHMARK.md` and `outputs/fleet_stress_benchmark_summary.json`.
+
+## 30-Robot Heterogeneous Fleet Extension
+
+A second benchmark scales the same warehouse logic to 30 AEGIS quadrupeds and gives the fleet mixed upper tools: 8 parallel grippers, 9 dexterous hands, 8 electromagnets, and 5 slide-rail tools. Demand is scaled by 2.684x so the robots stay busy under high load rather than looking artificially idle.
+
+| 30-robot stress extension | Result |
+| --- | ---: |
+| Fleet size | 30 robots |
+| End-effector mix | 8 gripper / 9 dexterous / 8 magnet / 5 rail |
+| Scenario matrix | 54 six-hour scenarios |
+| Simulated robot-hours | 9,720 |
+| Safety pass rate | 100% |
+| Collision / lock-overlap violations | 0 / 0 |
+| Average local-planner throughput | 1,018.28 orders/hour |
+| Average planner-off throughput | 614.62 orders/hour |
+| Average planner uplift | +60.27% |
+| Best planner uplift | +185.23% |
+| Wait-time reduction | +68.32% |
+
+Run it with:
+
+```bash
+python examples/run_fleet_stress_benchmark.py --hours 6 --scenario-limit 54 --fleet-size 30 --output submissions/warehouse_quadbot_atomic_demos/outputs/fleet_stress_benchmark_30robots.json --report submissions/warehouse_quadbot_atomic_demos/THIRTY_ROBOT_STRESS_BENCHMARK.md
+```
+
+Outputs: `THIRTY_ROBOT_STRESS_BENCHMARK.md` and `outputs/fleet_stress_benchmark_30robots.json`.
 
 ## Agentic Workflow
 
@@ -169,7 +196,7 @@ That is a +468.8% throughput increase and a 94.5% reduction in average lock wait
 - Base robot: Faraday Future AEGIS quadruped, using `assets/Aegis/urdf/Aegis_mujoco.urdf`
 - Warehouse accessory: BASE_LINK-mounted basket
 - Manipulator reference: FF Futurist right-arm chain, using `assets/Futurist/futurist.urdf` and right-arm/right-hand STL meshes
-- MuJoCo evidence: 13 generated clips, including a 3-AEGIS corridor physics scene, leg joints, 6-DOF arm joints, wrist roll/tool yaw, gripper slide joints, collision geoms, touch sensors, position actuators, and fingertip/package contact counters
+- MuJoCo evidence: 14 generated clips, including a 3-AEGIS corridor physics scene and a heterogeneous end-effector lab with dexterous hand, electromagnet, and slide-rail contact counters; leg joints, 6-DOF arm joints, wrist roll/tool yaw, gripper slide joints, collision geoms, touch sensors, position actuators, and fingertip/package contact counters
 
 ## Metrics
 
@@ -196,7 +223,7 @@ Primary metrics:
 - The UI binds to generated runtime JSON and animates runtime-linked robot movement without closing open routes or using mock-only phase motion.
 - The first dashboard KPI panel now shows the high-load benchmark proof directly: 64/hr planner-off baseline, 364/hr local planner, and 0 movement safety violations.
 - The UI now includes a cleaner Judge Review Path, AI Decision Board, and tabbed Agentic Planner graph/table/text view, so evaluators can see which robot was chosen, which tile was reserved, which skill runs next, and why throughput/safety metrics change without decoding the full operations dashboard.
-- The accelerated fleet stress benchmark runs 54 six-hour nominal/aisle-surge scenarios in about 7.7 wall-clock seconds, achieving 100% safety pass rate and +30.74% average planner throughput uplift.
+- The accelerated 30-robot heterogeneous fleet benchmark runs 54 six-hour nominal/aisle-surge scenarios, 9,720 robot-hours, and a 2.684x demand scale with 100% safety pass rate, +60.27% average planner throughput uplift, and +185.23% best uplift.
 
 ## Installation
 

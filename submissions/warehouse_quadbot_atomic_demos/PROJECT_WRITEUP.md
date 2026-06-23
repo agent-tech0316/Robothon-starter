@@ -12,7 +12,7 @@ Mission -> Workflow -> Skill Graph -> Runtime -> Multi-Agent Warehouse Optimizat
 
 # Judge-Facing Thesis
 
-This submission is best read as a warehouse optimization benchmark with MuJoCo-backed robot skills, not as a single action demo. A single relay or handoff proves one local physical event. This project measures whether a shared warehouse stays productive when 9 quadrupeds compete for orders, racks, tile locks, priority, and narrow aisles over long simulated horizons.
+This submission is best read as a warehouse optimization benchmark with MuJoCo-backed robot skills, not as a single action demo. A single relay or handoff proves one local physical event. This project measures whether a shared warehouse stays productive when 9 live-dashboard quadrupeds, and a 30-robot heterogeneous stress extension, compete for orders, racks, tile locks, priority, and narrow aisles over long simulated horizons.
 
 The important claim is measurable: planner-off versus local-planner baselines show throughput uplift, wait-time reduction, and zero movement safety violations across generated load profiles and the 54-scenario accelerated stress benchmark.
 
@@ -28,7 +28,7 @@ This makes the benchmark closer to warehouse traffic control than to a single ma
 
 # Robot Platform
 
-The robot platform is the Faraday Future AEGIS quadruped using `assets/Aegis/urdf/Aegis_mujoco.urdf`. The warehouse version adds a BASE_LINK-mounted basket and a Futurist-derived six-axis front manipulator with base yaw, shoulder pitch, elbow pitch, wrist pitch, wrist roll, tool yaw, and two slide-joint gripper fingers.
+The robot platform is the Faraday Future AEGIS quadruped using `assets/Aegis/urdf/Aegis_mujoco.urdf`. The warehouse version adds a BASE_LINK-mounted basket and a Futurist-derived six-axis front manipulator with base yaw, shoulder pitch, elbow pitch, wrist pitch, wrist roll, tool yaw, and two slide-joint gripper fingers. Additional MuJoCo evidence variants replace the terminal tool with a dexterous hand for fragile/shape-sensitive cargo, an electromagnet surrogate for ferrous cargo, and a slide-rail tool for guided tote transfer.
 
 # Environment
 
@@ -63,9 +63,9 @@ Three generated load profiles are included: low, medium, and high. Each run is 9
 
 ## Accelerated Fleet Stress Benchmark
 
-For long-horizon optimization evidence, the submission also includes a benchmark-only fast-forward runtime. It uses 1-minute ticks to simulate six warehouse hours per scenario without UI rendering. The 54-scenario matrix covers 3 load levels, 3 SKU weight mixes, 3 pick difficulty levels, and 2 congestion modes. Each scenario runs planner-off and local-planner modes, producing 54 paired comparisons / 108 raw runs and 2,916 simulated robot-hours in about 7.7 wall-clock seconds.
+For long-horizon optimization evidence, the submission also includes a benchmark-only fast-forward runtime. It uses 1-minute ticks to simulate six warehouse hours per scenario without UI rendering. The 54-scenario matrix covers 3 load levels, 3 SKU weight mixes, 3 pick difficulty levels, and 2 congestion modes. Each scenario runs planner-off and local-planner modes, producing 54 paired comparisons / 108 raw runs. The default 9-robot stress report covers 2,916 robot-hours; the heterogeneous 30-robot extension covers 9,720 robot-hours with 8 grippers, 9 dexterous hands, 8 electromagnets, and 5 slide-rail tools.
 
-Headline stress result: 100% safety pass rate, 0 collision violations, 0 tile-lock overlap violations, +30.74% average planner throughput uplift, and +97.42% best-case uplift under high-load congestion.
+Headline 30-robot stress result: 100% safety pass rate, 0 collision violations, 0 tile-lock overlap violations, +60.27% average planner throughput uplift, +185.23% best-case uplift, and +68.32% average wait-time reduction under scaled demand.
 
 ## Baseline Comparison
 
@@ -91,7 +91,7 @@ Tracked safety counters: blocked-tile route violations, route cardinality violat
 - Runtime snapshots, metrics, and event streams
 - Multi-wall exterior conveyor ports with explicit exterior footprints, outer door lines, and unique in-warehouse unload tiles
 - Mission-control dashboard with runtime-linked robot animation
-- MuJoCo evidence clips for walking, payload carrying, shelf pickup, handoff, and 6-DOF multi-angle shelf-to-basket grasp sweeps
+- MuJoCo evidence clips for walking, payload carrying, shelf pickup, handoff, 6-DOF multi-angle shelf-to-basket grasp sweeps, a three-robot corridor physics scene, and heterogeneous dexterous/magnetic/rail terminal tools
 
 # Technical Architecture
 
@@ -104,13 +104,13 @@ Tracked safety counters: blocked-tile route violations, route cardinality violat
 
 # Results
 
-The current medium profile completes 77 of 84 orders and reaches 308 orders/hour. High load completes 91 of 140 orders and reaches 364 orders/hour while preserving zero collision and zero lock-overlap violations. The accelerated fleet stress benchmark adds 54 six-hour nominal/aisle-surge scenarios with 100% safety pass rate and +30.74% average planner throughput uplift. MuJoCo evidence now includes 12 clips with generated MJCF, contact counters for package/gripper, package/basket, package/shelf, and handoff interactions, plus two 6-DOF grasp sweeps where the package follows wrist roll/tool yaw through an overhead arc. The heavy grasp sweep records 630 gripper/package contacts and 36 dual-finger grasp frames.
+The current medium profile completes 77 of 84 orders and reaches 308 orders/hour. High load completes 91 of 140 orders and reaches 364 orders/hour while preserving zero collision and zero lock-overlap violations. The accelerated 30-robot heterogeneous fleet stress benchmark adds 54 six-hour nominal/aisle-surge scenarios, 9,720 robot-hours, 100% safety pass rate, +60.27% average planner throughput uplift, and +185.23% best uplift. MuJoCo evidence now includes 14 clips with generated MJCF, contact counters for package/gripper, package/basket, package/shelf, handoff interactions, a three-AEGIS corridor, and a heterogeneous end-effector lab. The heavy grasp sweep records 630 gripper/package contacts and 36 dual-finger grasp frames; the heterogeneous lab records 1077 dexterous/fragile contacts, 508 magnet/metal contacts, and 1020 rail/tote contacts.
 
 # Current Limitations
 
 - Final 1-3 minute demo video is included as `demo.mp4`.
 - Route-window reservation improves planner throughput, but the next step is learning lane direction and handoff timing policies instead of using a fixed reservation factor.
-- Full fleet movement is tile-simulated; MuJoCo is used for atomic skill validation rather than continuous simulation of every warehouse robot.
+- Full fleet movement is tile-simulated; MuJoCo is used for atomic skill validation and small-fleet physical interaction evidence rather than continuous simulation of all 30 warehouse robots.
 - Optional OpenAI planner mode is not required for default judging and depends on external API credentials.
 
 # Future Work

@@ -77,8 +77,8 @@ Result summary:
 - Safety pass rate: 100%
 - Collision violations: 0
 - Tile-lock overlap violations: 0
-- Average planner throughput uplift: +30.74%
-- Best planner throughput uplift: +97.42%
+- Average planner throughput uplift: +32.92%
+- Best planner throughput uplift: +99.63%
 - Wall-clock runtime: about 3.1 seconds on the local validation machine
 
 Generated artifacts:
@@ -149,3 +149,10 @@ Final demo video was integrated after recording:
 ## Remaining Final Check
 
 Post-video audit passed locally: no video placeholder remains, no local absolute paths were found, no cache artifacts were found, and no submission file exceeds 50MB. Before opening the actual PR, confirm the staged file list matches the intended submission package.
+
+
+## 30-Robot Heterogeneous Extension Refresh
+
+Added a benchmark-only 30-robot stress extension using 8 parallel grippers, 9 dexterous hands, 8 electromagnets, and 5 slide-rail tools. The run covers 54 six-hour scenarios / 108 raw planner runs / 9,720 simulated robot-hours at 2.684x demand scale. Results: 100% safety pass rate, 0 collisions, 0 lock-overlap violations, +60.27% average throughput uplift, +185.23% best uplift, and +68.32% average wait-time reduction.
+
+Added MuJoCo heterogeneous end-effector evidence: `outputs/physics_evidence/effector_mix_lab.mp4` and `effector_mix_lab_trajectory.json`. Contact counters report 1077 dexterous-hand/fragile-vial contacts, 508 electromagnet/metal-puck contacts, 1020 slide-rail/tote contacts, and 11794 total MuJoCo contacts.

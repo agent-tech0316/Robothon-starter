@@ -66,3 +66,10 @@ python -m http.server 8765 --bind 127.0.0.1
 - [x] Latest MuJoCo shelf-pick smoke passed.
 - [x] Latest HTTP resource check passed and temporary server was stopped.
 - [x] Post-video audit passed after adding `demo.mp4`.
+
+
+## Latest Evidence Refresh
+
+- [x] 30-robot heterogeneous stress extension generated: 54 scenarios, 9,720 robot-hours, +60.27% average planner uplift, 100% safety pass.
+- [x] MuJoCo heterogeneous end-effector lab generated: dexterous hand, electromagnet, slide rail, and three payload/contact families.
+- [x] `clip_manifest.json`, README, scorecard, PR description, fast path, write-up, validation report, and manifest updated for the new evidence.

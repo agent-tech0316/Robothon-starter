@@ -63,6 +63,8 @@ Submission-local generated and hand-authored MuJoCo evidence:
 - `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/*.mp4`
 - `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/six_dof_grasp_sweep_wood.mp4`
 - `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/six_dof_grasp_sweep_metal.mp4`
+- `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/effector_mix_lab.mp4`
+- `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/effector_mix_lab_trajectory.json`
 - `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/*.json`
 - `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/clip_manifest.json`
 - `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/physics_evidence_contact_sheet.png`
@@ -82,6 +84,8 @@ Generated benchmark outputs used by the UI:
 - `submissions/warehouse_quadbot_atomic_demos/outputs/runtime_events_high.jsonl`
 - `submissions/warehouse_quadbot_atomic_demos/outputs/fleet_stress_benchmark_summary.json`
 - `submissions/warehouse_quadbot_atomic_demos/FLEET_STRESS_BENCHMARK.md`
+- `submissions/warehouse_quadbot_atomic_demos/outputs/fleet_stress_benchmark_30robots.json`
+- `submissions/warehouse_quadbot_atomic_demos/THIRTY_ROBOT_STRESS_BENCHMARK.md`
 
 ## Default Run Path
 
@@ -95,6 +99,7 @@ python examples/run_agentech_judge_review.py
 python examples/build_integrated_demo_data.py
 python examples/run_warehouse_runtime.py --load medium --planner local --ticks 900 --print-summary
 python examples/run_fleet_stress_benchmark.py --hours 6 --scenario-limit 54
+python examples/run_fleet_stress_benchmark.py --hours 6 --scenario-limit 54 --fleet-size 30 --output submissions/warehouse_quadbot_atomic_demos/outputs/fleet_stress_benchmark_30robots.json --report submissions/warehouse_quadbot_atomic_demos/THIRTY_ROBOT_STRESS_BENCHMARK.md
 python submissions/warehouse_quadbot_atomic_demos/run_quadbot_atomic_demos.py --scenario shelf_pick_metal
 python submissions/warehouse_quadbot_atomic_demos/mujoco_physics_evidence/main.py --clip all --fps 18 --width 720 --height 406
 python -m http.server 8765 --bind 127.0.0.1
@@ -112,4 +117,4 @@ No external service is required for default judging. Optional OpenAI planner mod
 
 ## Final Artifact Status
 
-The final demo video is included as `submissions/warehouse_quadbot_atomic_demos/demo.mp4`. The accelerated fleet benchmark outputs and 12 MuJoCo physics evidence clips are also included and can be regenerated with the default run path above.
+The final demo video is included as `submissions/warehouse_quadbot_atomic_demos/demo.mp4`. The accelerated fleet benchmark outputs, the 30-robot heterogeneous stress extension, and 14 MuJoCo physics evidence clips are also included and can be regenerated with the default run path above.
