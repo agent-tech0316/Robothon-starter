@@ -59,7 +59,7 @@ Safety violations include blocked tiles, non-cardinal moves, robot collisions, a
 
 Final 1-3 minute demo video: `submissions/warehouse_quadbot_atomic_demos/demo.mp4`
 
-The final video is already trimmed to 1:05.97 and follows a fast review path: identity, 9-robot warehouse runtime, locks/replans, KPI proof, and MuJoCo evidence.
+The final video is now a 1:03.37 AI-judge review cut: identity, 9-robot warehouse runtime, locks/replans, KPI proof, 54-scenario benchmark numbers, contact-sheet evidence, and 6-DOF MuJoCo grasp/handoff proof.
 
 Included evidence clips:
 
@@ -93,4 +93,4 @@ http://127.0.0.1:8765/submissions/warehouse_quadbot_atomic_demos/ui/index.html
 
 Clean-copy validation passed with Python 3.12: dependency install, runtime data generation, medium benchmark run, pytest smoke tests, MuJoCo shelf-pick smoke generation, and HTTP resource checks for UI/runtime/video artifacts.
 
-Final demo video is included as `submissions/warehouse_quadbot_atomic_demos/demo.mp4`; post-video audit passed locally.
+Final demo video is included as `submissions/warehouse_quadbot_atomic_demos/demo.mp4`; the latest 1:03.37 judge-cut video audit passed locally.

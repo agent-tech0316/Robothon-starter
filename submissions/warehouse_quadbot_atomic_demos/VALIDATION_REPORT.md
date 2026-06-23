@@ -140,10 +140,10 @@ Heavy 6-DOF grasp evidence reports 630 gripper/package contacts, 220 left-finger
 
 Final demo video was integrated after recording:
 
-- Source located from the user desktop export.
-- Compressed to submission-safe MP4.
+- Source located from the user desktop export, then replaced by a tighter AI-judge review cut.
+- Re-edited to combine UI runtime footage, benchmark title cards, MuJoCo contact sheet, 6-DOF grasp evidence, and handoff evidence.
 - Output: `submissions/warehouse_quadbot_atomic_demos/demo.mp4`
-- Properties: 1:05.97, 1280x720, H.264 video, AAC audio, approximately 9.8 MB.
+- Properties: 1:03.37, 1280x720, H.264 video, AAC audio, approximately 8.7 MB.
 - README, PR description, manifest, write-up, and checklist were updated to reference the file.
 
 ## Remaining Final Check

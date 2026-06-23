@@ -31,7 +31,7 @@ The dashboard also opens in simplified judge mode by default: the first screen s
 
 Final 1-3 minute demo video: [`demo.mp4`](demo.mp4).
 
-The final demo video is included directly in this submission as `demo.mp4` (1:05.97, 720p H.264/AAC, 9.8 MB). It is paced as a short review path: project identity, 9 robots sharing aisles, route locks/replans, KPI proof, and MuJoCo action evidence. Additional MuJoCo evidence clips are included separately for physical inspection:
+The final demo video is included directly in this submission as `demo.mp4` (1:03.37, 720p H.264/AAC, 8.7 MB). It is paced as an AI-judge review cut: project identity, 9 robots sharing aisles, runtime KPI proof, 54-scenario benchmark numbers, contact-sheet evidence, and 6-DOF MuJoCo grasp/handoff proof. Additional MuJoCo evidence clips are included separately for physical inspection:
 
 - MuJoCo contact sheet: `outputs/physics_evidence/physics_evidence_contact_sheet.png`
 - New 6-DOF grasp videos: `outputs/physics_evidence/six_dof_grasp_sweep_wood.mp4` and `outputs/physics_evidence/six_dof_grasp_sweep_metal.mp4`
