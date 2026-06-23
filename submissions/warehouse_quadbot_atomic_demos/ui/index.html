@@ -169,22 +169,23 @@
               <span id="activeLoadBadge">High Load</span>
               <span id="speedBadge">1x</span>
               <span id="runtimeLinkBadge">Mock Runtime</span>
+              <span id="humanRiskBadge">Human Risk On</span>
             </div>
           </div>
 
           <section class="judge-simple-card" aria-label="Simplified AI judge summary">
             <div class="judge-simple-copy">
               <span class="kicker">AI Judge Fast Path</span>
-              <h3>9 AEGIS robots share warehouse aisles without collisions.</h3>
-              <p>MuJoCo validates the atomic robot skills. The runtime validates fleet scheduling, tile locks, congestion recovery, and planner uplift across stress scenarios.</p>
+              <h3>9 AEGIS robots share warehouse aisles while reacting to random human intrusions.</h3>
+              <p>MuJoCo validates the atomic robot skills. The runtime validates fleet scheduling, tile locks, congestion recovery, human-aware reroutes, and planner uplift across stress scenarios.</p>
             </div>
             <div class="judge-proof-grid">
               <span><small>Stress Matrix</small><b>54 x 6h</b></span>
               <span><small>Robot-Hours</small><b>2,916</b></span>
-              <span><small>Planner Uplift</small><b>+30.74%</b></span>
+              <span><small>Planner Uplift</small><b>+60.27%</b></span>
               <span><small>Safety</small><b>0 violations</b></span>
+              <span><small>Human Stressor</small><b>random entry</b></span>
               <span><small>MuJoCo Proof</small><b>clips + contacts</b></span>
-              <span><small>Review Command</small><b>run_agentech_judge_review.py</b></span>
             </div>
             <div class="judge-planner-board" aria-label="Agentic planner graph">
               <div class="planner-tabbar" role="tablist" aria-label="Planner views">
@@ -233,6 +234,7 @@
               <button class="tool-toggle active" type="button">Routes</button>
               <button class="tool-toggle active" type="button">Orders</button>
               <button class="tool-toggle warning active" type="button">Locks</button>
+              <button id="humanModeBtn" class="tool-toggle human active" type="button">Humans On</button>
             </div>
             <canvas id="warehouseCanvas" aria-label="Animated isometric warehouse map"></canvas>
           </div>
@@ -282,8 +284,8 @@
           </section>
           <section class="thin-panel warning">
             <span class="thin-label">Uplift</span>
-            <strong>+30.7</strong>
-            <small>stress uplift percent</small>
+            <strong>+60.3</strong>
+            <small>30-robot stress uplift</small>
           </section>
           <section class="thin-panel good">
             <span class="thin-label">Safety</span>

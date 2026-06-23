@@ -1131,6 +1131,25 @@
     "collision_violations": 0,
     "lock_overlap_violations": 0
   },
+  "human_intrusion": {
+    "enabled": false,
+    "model": "continuous_random_walk_projected_to_temporary_tile_risk",
+    "random_seed": 20260623,
+    "active_count": 0,
+    "peak_count": 0,
+    "total_agents": 0,
+    "risk_tiles": [],
+    "active_agents": [],
+    "agents": [],
+    "recent_events": [],
+    "metrics": {
+      "intrusion_events": 0,
+      "risk_hold_ticks": 0,
+      "human_reroutes": 0,
+      "peak_count": 0
+    },
+    "planner_contract": "Humans move in continuous coordinates; planner receives only temporary projected risk tiles and must hold or reroute robots."
+  },
   "skill_evidence": {
     "shelf_pick": {
       "video": "../outputs/shelf_pick.mp4",

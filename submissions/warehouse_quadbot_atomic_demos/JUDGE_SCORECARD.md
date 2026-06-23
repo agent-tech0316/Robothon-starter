@@ -9,9 +9,9 @@ This is the shortest answer sheet for AI judges. The official registered project
 | Rubric Question | Evidence In This Submission |
 | --- | --- |
 | Is it runnable? | `python examples/run_agentech_judge_review.py` prints artifact readiness, runtime metrics, MuJoCo evidence, and rubric mapping. |
-| Is the task meaningful? | Warehouse order fulfillment with 9 live AEGIS quadrupeds plus a 30-robot heterogeneous stress extension sharing rack aisles, priority orders, SKU weight/difficulty, tile locks, and congestion. |
+| Is the task meaningful? | Warehouse order fulfillment with 9 live AEGIS quadrupeds plus a 30-robot heterogeneous stress extension sharing rack aisles, priority orders, SKU weight/difficulty, tile locks, congestion, and random human intrusions. |
 | Is there a baseline? | Planner-off nearest-exit baseline is compared against congestion-aware local planning. |
-| Does planning improve throughput? | The 30-robot stress extension runs 54 six-hour scenarios / 108 planner runs / 9,720 simulated robot-hours with +60.27% average planner throughput uplift and +185.23% best uplift. |
+| Does planning improve throughput? | The 30-robot stress extension runs 54 six-hour scenarios / 108 planner runs / 9,720 simulated robot-hours with +60.27% average planner throughput uplift and +185.23% best uplift. The human-intrusion runtime adds 17 high-load risk tiles, 147 hold ticks, and 17 reroutes. |
 | Is it safe? | Stress matrix reports 100% safety pass, 0 collisions, and 0 tile-lock overlaps. |
 | Is MuJoCo used deeply? | 14 generated MuJoCo clips, generated MJCF scenes, touch sensors, collision geoms, contact traces, a 6-DOF mounted arm, a three-AEGIS corridor scene, and heterogeneous dexterous/magnet/rail end-effectors. |
 | Is manipulation physically validated? | Heavy 6-DOF grasp records 630 gripper/package contacts and 36 dual-finger frames; the heterogeneous lab records 1077 dexterous/fragile, 508 magnet/metal, and 1020 rail/tote contacts. |
@@ -32,6 +32,7 @@ Required artifacts: PASS
 30-robot end-effector mix: {'parallel_gripper': 8, 'dexterous_hand': 9, 'electromagnet': 8, 'slide_rail': 5}
 Safety: 100.0% pass, collisions=0, lock_overlaps=0
 30-robot planner uplift: average +60.27%, best +185.23%
+Human-intrusion high profile: 10 total people, 7 active at snapshot, 17 temporary risk tiles, 147 hold ticks, 17 reroutes
 Evidence clips: 14
 6-DOF grasp proof: gripper/package=630, dual_finger_frames=36
 End-effector proof: dexterous/fragile=1077, magnet/metal=508, rail/tote=1020
@@ -40,7 +41,7 @@ Handoff proof: receiver_gripper/package=279
 
 ## Why It Is Hard
 
-A single robot action is local: one robot grasps one object. This benchmark is system-level: every robot route consumes future tiles, every priority order changes traffic pressure, and every blocked aisle can starve multiple orders. The runtime must improve throughput while keeping movement locks, rack obstacles, and robot separation valid.
+A single robot action is local: one robot grasps one object. This benchmark is system-level: every robot route consumes future tiles, every priority order changes traffic pressure, every blocked aisle can starve multiple orders, and random humans can temporarily invalidate otherwise-good routes. The runtime must improve throughput while keeping movement locks, rack obstacles, robot separation, and human-risk buffers valid.
 
 ## Where The Evidence Lives
 
@@ -56,4 +57,4 @@ A single robot action is local: one robot grasps one object. This benchmark is s
 
 ## Judge Takeaway
 
-This is not only nine robots moving in a UI. It is a reproducible multi-agent warehouse benchmark with planner-off comparison, long-horizon stress tests, zero movement safety violations, 30-robot heterogeneous scaling, and MuJoCo-backed physical evidence for grasping, load handling, handoff, obstacle clearance, small-fleet corridor spacing, dexterous handling, magnetic handling, and guided-rail handling.
+This is not only nine robots moving in a UI. It is a reproducible multi-agent warehouse benchmark with planner-off comparison, long-horizon stress tests, zero movement safety violations, human-intrusion rerouting, 30-robot heterogeneous scaling, and MuJoCo-backed physical evidence for grasping, load handling, handoff, obstacle clearance, small-fleet corridor spacing, dexterous handling, magnetic handling, and guided-rail handling.

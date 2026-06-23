@@ -94,6 +94,8 @@ const els = {
   orderAgingCount: document.getElementById("orderAgingCount"),
   orderIntakeList: document.getElementById("orderIntakeList"),
   runtimeLinkBadge: document.getElementById("runtimeLinkBadge"),
+  humanRiskBadge: document.getElementById("humanRiskBadge"),
+  humanModeBtn: document.getElementById("humanModeBtn"),
   runtimeControlState: document.getElementById("runtimeControlState"),
   runtimeSnapshotPort: document.getElementById("runtimeSnapshotPort"),
   robotsPort: document.getElementById("robotsPort"),
@@ -318,6 +320,8 @@ const state = {
   runtimeActiveLocks: new Map(),
   runtimeBlockedTiles: new Set(),
   runtimeOccupiedTiles: new Map(),
+  humanIntrusionEnabled: true,
+  humanScenario: null,
   orders: cloneData(orderSeed),
   ledTiles: cloneData(ledTiles),
   recording: false,
@@ -699,6 +703,114 @@ function setRuntimeActiveLock(tileId, robotId, reason, untilTick) {
   state.runtimeActiveLocks.set(id, { robotId, reason: reason || "reserved", untilTick });
 }
 
+
+function normalizeHumanScenario(snapshot) {
+  const scenario = snapshot?.human_intrusion || null;
+  if (!scenario?.enabled || !Array.isArray(scenario.agents)) return null;
+  return scenario;
+}
+
+function humanScenarioTick() {
+  return Math.floor(state.runtimeEvents.length ? state.runtimeReplayTick : state.tick || 0);
+}
+
+function interpolateHumanPath(path, progress) {
+  const points = Array.isArray(path) ? path : [];
+  if (!points.length) return { x: 0.5, y: 0.5 };
+  if (points.length === 1) return { x: Number(points[0][0] || 0.5), y: Number(points[0][1] || 0.5) };
+  const scaled = clamp(progress, 0, 1) * (points.length - 1);
+  const index = Math.min(points.length - 2, Math.floor(scaled));
+  const local = scaled - index;
+  const a = points[index] || points[0];
+  const b = points[index + 1] || a;
+  const ax = Number(a[0] || 0);
+  const ay = Number(a[1] || 0);
+  const bx = Number(b[0] || ax);
+  const by = Number(b[1] || ay);
+  return { x: ax + (bx - ax) * local, y: ay + (by - ay) * local };
+}
+
+function humanPositionAt(agent, tick) {
+  const start = Number(agent.start_tick || 0);
+  const exit = Math.max(start + 1, Number(agent.exit_tick || start + 1));
+  const activeDuration = exit - start;
+  let progress = clamp((tick - start) / activeDuration, 0, 1);
+  let mode = "walking";
+  (agent.stop_windows || []).forEach((window) => {
+    const windowStart = Number(window.start_tick ?? window.start ?? 0);
+    const windowEnd = Number(window.end_tick ?? window.end ?? 0);
+    if (tick >= windowStart && tick <= windowEnd) {
+      progress = clamp((windowStart - start) / activeDuration, 0, 1);
+      mode = "stopped";
+    }
+  });
+  (agent.burst_windows || []).forEach((window) => {
+    const windowStart = Number(window.start_tick ?? window.start ?? 0);
+    const windowEnd = Number(window.end_tick ?? window.end ?? 0);
+    if (tick >= windowStart && tick <= windowEnd) {
+      const boost = Number(window.speed_multiplier || 1.6);
+      progress = clamp(progress + ((tick - windowStart) / activeDuration) * (boost - 1), 0, 1);
+      mode = "running";
+    }
+  });
+  return { ...interpolateHumanPath(agent.path, progress), mode };
+}
+
+function riskTilesForHumanPosition(x, y, radiusTiles = 0.85) {
+  const tiles = new Set();
+  const minX = Math.max(0, Math.floor(x - radiusTiles));
+  const maxX = Math.min(grid.cols - 1, Math.floor(x + radiusTiles));
+  const minY = Math.max(0, Math.floor(y - radiusTiles));
+  const maxY = Math.min(grid.rows - 1, Math.floor(y + radiusTiles));
+  for (let ty = minY; ty <= maxY; ty += 1) {
+    for (let tx = minX; tx <= maxX; tx += 1) {
+      const distance = Math.hypot(tx + 0.5 - x, ty + 0.5 - y);
+      const tileId = pointToTileId([tx, ty]);
+      if (distance <= radiusTiles + 0.72 && !state.runtimeBlockedTiles.has(tileId)) tiles.add(tileId);
+    }
+  }
+  return tiles;
+}
+
+function activeHumanAgents() {
+  if (!state.humanIntrusionEnabled || !state.humanScenario?.enabled) return [];
+  const tick = humanScenarioTick();
+  return (state.humanScenario.agents || [])
+    .filter((agent) => tick >= Number(agent.start_tick || 0) && tick <= Number(agent.exit_tick || 0))
+    .map((agent) => {
+      const position = humanPositionAt(agent, tick);
+      const riskTiles = Array.from(riskTilesForHumanPosition(position.x, position.y, Number(agent.safety_radius_tiles || 0.85)));
+      return {
+        id: agent.human_id || "HUMAN",
+        groupId: agent.group_id || "solo",
+        profile: agent.profile || "visitor",
+        x: position.x,
+        y: position.y,
+        mode: position.mode,
+        color: agent.color || "#ffbf3d",
+        safetyRadius: Number(agent.safety_radius_tiles || 0.85),
+        riskTiles,
+      };
+    });
+}
+
+function currentHumanRiskTileIds(humans = activeHumanAgents()) {
+  const tiles = new Set();
+  humans.forEach((human) => human.riskTiles.forEach((tileId) => tiles.add(tileId)));
+  return tiles;
+}
+
+function currentHumanRiskTilePoints(humans = activeHumanAgents()) {
+  return Array.from(currentHumanRiskTileIds(humans)).map(tileIdToPoint).filter(Boolean);
+}
+
+function humanScenarioSummary(humans = activeHumanAgents()) {
+  if (!state.humanIntrusionEnabled) return "Human intrusion disabled";
+  if (!state.humanScenario?.enabled) return "Human runtime not loaded";
+  const riskCount = currentHumanRiskTileIds(humans).size;
+  return `${humans.length} humans / ${riskCount} risk tiles`;
+}
+
 function pruneRuntimeActiveLocks() {
   const now = state.runtimeReplayTick || state.tick || 0;
   Array.from(state.runtimeActiveLocks.entries()).forEach(([tileId, lock]) => {
@@ -737,6 +849,8 @@ function nextSkillForRobotStatus(status, deniedMoves) {
 function currentJudgeDecision(snapshot, runtime, movementLocks) {
   const deniedMoves = movementLocks.denied_moves || [];
   const grantedMoves = movementLocks.granted_moves || [];
+  const humans = activeHumanAgents();
+  const humanRiskTiles = currentHumanRiskTileIds(humans);
   const activeRobot = state.robots.find((robot) => {
     const status = robotStatus(robot);
     return robot.currentOrder && robot.currentOrder !== "-" && status !== "IDLE";
@@ -751,6 +865,15 @@ function currentJudgeDecision(snapshot, runtime, movementLocks) {
   const skill = nextSkillForRobotStatus(status, deniedMoves);
   const order = activeRobot.currentOrder && activeRobot.currentOrder !== "-" ? activeRobot.currentOrder : "next priority order";
   const baseText = runtime.latest_decision || state.log[state.log.length - 1] || "Planner is selecting the next safe route.";
+  if (state.humanIntrusionEnabled && humans.length) {
+    const firstRiskTile = Array.from(humanRiskTiles)[0] || lockTile;
+    return {
+      text: `Human-aware planner: ${humans.length} continuous people create ${humanRiskTiles.size} temporary risk tiles; hold or reroute ${activeRobot.id || "fleet"} before moving ${order}.`,
+      robot: activeRobot.id || "FLEET",
+      lock: compactTileLabel(firstRiskTile),
+      skill: "human_aware_reroute",
+    };
+  }
   const readableText = deniedMoves.length
     ? `Hold ${activeRobot.id || "fleet"}: ${compactTileLabel(lockTile)} is occupied, replan before moving ${order}.`
     : `${baseText} Next: ${activeRobot.id || "fleet"} reserves ${compactTileLabel(lockTile)} for ${order}.`;
@@ -917,7 +1040,7 @@ function applyRuntimeEvent(event) {
   const robot = payload.robot_id ? findRuntimeRobot(payload.robot_id) : null;
   const tick = Number(event.tick || state.runtimeReplayTick || 0);
 
-  if (["order.assigned", "skill.started", "skill.completed", "order.completed", "robot.lock_wait", "route.replanned", "planner.checked"].includes(type)) {
+  if (["order.assigned", "skill.started", "skill.completed", "order.completed", "robot.lock_wait", "route.replanned", "planner.checked"].includes(type) || type.startsWith("human.")) {
     pushRuntimeLog(message);
   }
 
@@ -1051,6 +1174,7 @@ function applyRuntimeSnapshot(snapshot, metrics) {
   state.planner = Boolean(snapshot.planner_enabled);
   state.runtimeBlockedTiles = blockedRuntimeTileSet(snapshot);
   state.runtimeOccupiedTiles = occupiedRuntimeTileMap(snapshot);
+  state.humanScenario = normalizeHumanScenario(snapshot);
   state.shelves = (snapshot.shelves || []).map(normalizeRuntimeShelf);
   state.robots = (snapshot.robots || []).map(normalizeRuntimeRobot);
   state.orders = normalizeRuntimeOrders(snapshot.order_rows || []);
@@ -1062,22 +1186,45 @@ function applyRuntimeSnapshot(snapshot, metrics) {
 }
 
 async function loadRuntimeProfile(load) {
-  const snapshotUrl = `../outputs/runtime_snapshot_${load}.json`;
-  const metricsUrl = `../outputs/benchmark_metrics_${load}.json`;
-  const eventsUrl = `../outputs/runtime_events_${load}.jsonl`;
-  const [snapshot, metrics, eventsText] = await Promise.all([
-    fetchJsonOrNull(snapshotUrl),
-    fetchJsonOrNull(metricsUrl),
-    fetchTextOrNull(eventsUrl),
+  const suffix = state.humanIntrusionEnabled ? "_humans" : "";
+  const primary = {
+    label: `${load}${suffix}`,
+    snapshotUrl: `../outputs/runtime_snapshot_${load}${suffix}.json`,
+    metricsUrl: `../outputs/benchmark_metrics_${load}${suffix}.json`,
+    eventsUrl: `../outputs/runtime_events_${load}${suffix}.jsonl`,
+  };
+  const fallback = {
+    label: load,
+    snapshotUrl: `../outputs/runtime_snapshot_${load}.json`,
+    metricsUrl: `../outputs/benchmark_metrics_${load}.json`,
+    eventsUrl: `../outputs/runtime_events_${load}.jsonl`,
+  };
+
+  let profile = primary;
+  let [snapshot, metrics, eventsText] = await Promise.all([
+    fetchJsonOrNull(primary.snapshotUrl),
+    fetchJsonOrNull(primary.metricsUrl),
+    fetchTextOrNull(primary.eventsUrl),
   ]);
+
+  if (!snapshot && suffix) {
+    profile = fallback;
+    [snapshot, metrics, eventsText] = await Promise.all([
+      fetchJsonOrNull(fallback.snapshotUrl),
+      fetchJsonOrNull(fallback.metricsUrl),
+      fetchTextOrNull(fallback.eventsUrl),
+    ]);
+  }
+
   if (snapshot) {
     applyRuntimeSnapshot(snapshot, metrics);
     applyRuntimeEvents(eventsText);
-    if (els.runtimeSnapshotPort) els.runtimeSnapshotPort.textContent = `${load}.json + events`;
-    if (els.runtimeLinkBadge) els.runtimeLinkBadge.textContent = state.runtimeEvents.length ? "Runtime Events" : "Runtime JSON";
+    if (els.runtimeSnapshotPort) els.runtimeSnapshotPort.textContent = `${profile.label}.json + events`;
+    if (els.runtimeLinkBadge) els.runtimeLinkBadge.textContent = state.humanIntrusionEnabled && state.humanScenario ? "Human Runtime" : state.runtimeEvents.length ? "Runtime Events" : "Runtime JSON";
+    const modeLabel = state.humanIntrusionEnabled && state.humanScenario ? "human-intrusion" : "standard";
     pushRuntimeLog(state.runtimeEvents.length
-      ? `Loaded runtime_snapshot_${load}.json and runtime_events_${load}.jsonl.`
-      : `Loaded runtime_snapshot_${load}.json.`);
+      ? `Loaded ${profile.label} ${modeLabel} runtime and event replay.`
+      : `Loaded ${profile.label} ${modeLabel} runtime snapshot.`);
   } else {
     state.runtimeLinked = false;
     state.runtimeSnapshot = null;
@@ -1088,6 +1235,7 @@ async function loadRuntimeProfile(load) {
     state.runtimeActiveLocks = new Map();
     state.runtimeBlockedTiles = new Set();
     state.runtimeOccupiedTiles = new Map();
+    state.humanScenario = null;
     state.orders = cloneData(orderSeed);
     state.ledTiles = cloneData(ledTiles);
     if (els.runtimeSnapshotPort) els.runtimeSnapshotPort.textContent = "mock";
@@ -2495,6 +2643,64 @@ function drawShelfGhost() {
   ctx.restore();
 }
 
+function drawHumanRiskOverlay(humans = activeHumanAgents()) {
+  const riskTiles = currentHumanRiskTilePoints(humans);
+  riskTiles.forEach(([x, y], index) => {
+    const pulse = 0.42 + Math.sin(state.simTime * 0.12 + index * 0.7) * 0.18;
+    drawIsoFootprint(x, y, 1, 1, {
+      fill: "rgba(255, 103, 61, 0.42)",
+      alpha: clamp(pulse, 0.24, 0.62),
+      expand: 0.04,
+      z: 0.032,
+    });
+    drawSprite("LED", "led_edge_congestion_red", tileAnchor(x, y), { alpha: clamp(0.36 + pulse, 0.42, 0.78) });
+  });
+}
+
+function drawHumanShadow(human) {
+  const p = project(human.x, human.y, 0.05);
+  const s = spriteScale();
+  ctx.save();
+  ctx.globalAlpha = 0.36;
+  ctx.fillStyle = "rgba(0,0,0,0.72)";
+  ctx.beginPath();
+  ctx.ellipse(p.x, p.y + 7 * s, 15 * s, 7 * s, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawHumanAgent(human) {
+  const p = project(human.x, human.y, 0.18);
+  const s = spriteScale();
+  const bob = Math.sin(state.simTime * (human.mode === "running" ? 0.24 : 0.12) + human.x) * 2 * s;
+  const color = human.mode === "running" ? "#ff6b3d" : human.color || "#ffbf3d";
+  ctx.save();
+  ctx.lineWidth = Math.max(1, 1.6 * s);
+  ctx.strokeStyle = "rgba(0,0,0,0.82)";
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.arc(p.x, p.y - 31 * s + bob, 6 * s, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = human.profile === "visitor_group" ? "#8adfff" : color;
+  ctx.fillRect(Math.round(p.x - 5 * s), Math.round(p.y - 26 * s + bob), Math.round(10 * s), Math.round(18 * s));
+  ctx.strokeRect(Math.round(p.x - 5 * s), Math.round(p.y - 26 * s + bob), Math.round(10 * s), Math.round(18 * s));
+  ctx.strokeStyle = color;
+  ctx.beginPath();
+  ctx.moveTo(p.x - 4 * s, p.y - 9 * s + bob);
+  ctx.lineTo(p.x - 10 * s, p.y + 4 * s);
+  ctx.moveTo(p.x + 4 * s, p.y - 9 * s + bob);
+  ctx.lineTo(p.x + 10 * s, p.y + 4 * s);
+  ctx.moveTo(p.x - 4 * s, p.y - 22 * s + bob);
+  ctx.lineTo(p.x - 11 * s, p.y - 15 * s);
+  ctx.moveTo(p.x + 4 * s, p.y - 22 * s + bob);
+  ctx.lineTo(p.x + 11 * s, p.y - 15 * s);
+  ctx.stroke();
+  if (human.mode === "stopped") drawWorldLabel("WAIT", p.x, p.y - 44 * s, "#ffbf3d");
+  if (human.mode === "running") drawWorldLabel("RUN", p.x, p.y - 44 * s, "#ff6b3d");
+  ctx.restore();
+}
+
 function render() {
   ctx.clearRect(0, 0, view.width, view.height);
   drawBackground();
@@ -2504,10 +2710,14 @@ function render() {
     .slice(0, state.runtimeLinked ? 5 : 3)
     .forEach((robot, index) => drawRoute(robot.route, robot.color, index === 0));
 
+  const humans = activeHumanAgents();
+  drawHumanRiskOverlay(humans);
+
   const facilities = activeFacilitySprites();
   const objects = [
     ...facilities.map((prop) => ({ type: "facility", depth: prop.depth, value: prop })),
     ...state.shelves.map((shelf) => ({ type: "rack", depth: shelf.anchorX + shelf.anchorY + shelf.length * 0.25, value: shelf })),
+    ...humans.map((human) => ({ type: "human", depth: human.x + human.y + 0.62, value: human })),
     ...state.robots.map((robot) => {
       const pos = robotDisplayPosition(robot);
       return { type: "robot", depth: pos.x + pos.y + 0.6, value: robot };
@@ -2516,11 +2726,13 @@ function render() {
 
   state.shelves.forEach((shelf) => drawRackShadow(shelf));
   facilities.forEach((prop) => drawFacilityShadow(prop));
+  humans.forEach((human) => drawHumanShadow(human));
   state.robots.forEach((robot) => drawRobotShadow(robot));
 
   objects.forEach((object, index) => {
     if (object.type === "facility") drawFacilitySprite(object.value);
     else if (object.type === "rack") drawRackSprite(object.value);
+    else if (object.type === "human") drawHumanAgent(object.value);
     else drawRobotSprite(object.value, state.robots.indexOf(object.value));
   });
 
@@ -2600,6 +2812,10 @@ function updateDom() {
   const orders = snapshot?.orders || {};
   const runtime = snapshot?.runtime || {};
   const movementLocks = snapshot?.movement_locks || {};
+  const humans = activeHumanAgents();
+  const humanRiskTiles = currentHumanRiskTileIds(humans);
+  const humanActiveCount = humans.length;
+  const humanRiskCount = humanRiskTiles.size;
 
   const fallbackCompleted = Math.round(metricValue(profile.completed, 7, 0.005));
   const fallbackQueue = Math.round(metricValue(profile.queue, 6, 0.012));
@@ -2612,10 +2828,13 @@ function updateDom() {
   const slaRisk = orders.sla_risk ?? Math.max(2, Math.round(queue * (state.load === "high" ? 0.22 : state.load === "low" ? 0.08 : 0.14)));
   const replanCount = metrics.replan_count ?? runtime.replans ?? Math.max(1, Math.round(metricValue(state.load === "high" ? 14 : state.load === "low" ? 3 : 7, 2, 0.018)));
   const deadlockCount = metrics.deadlock_count ?? runtime.deadlocks ?? Math.max(0, Math.round(metricValue(state.load === "high" ? 4 : state.load === "low" ? 0.6 : 2, 1.1, 0.015)));
-  const activeSkillCount = runtime.active_skills?.length ?? (state.load === "high" ? 16 : state.load === "low" ? 8 : 12);
+  const baseActiveSkillCount = runtime.active_skills?.length ?? (state.load === "high" ? 16 : state.load === "low" ? 8 : 12);
+  const activeSkillCount = baseActiveSkillCount + (humanActiveCount && !(runtime.active_skills || []).includes("human_aware_reroute") ? 1 : 0);
   const tileLocks = runtimeLockCount(snapshot);
   const deniedLocks = movementLocks.denied_moves?.length || 0;
-  const congestion = snapshot ? deniedLocks + state.robots.filter((robot) => robot.status === "BLOCKED" || robot.status === "WAITING").length : Math.max(0, Math.round(metricValue(profile.congestion, 5, 0.014)));
+  const congestion = snapshot
+    ? deniedLocks + humanRiskCount + state.robots.filter((robot) => robot.status === "BLOCKED" || robot.status === "WAITING").length
+    : Math.max(0, Math.round(metricValue(profile.congestion, 5, 0.014))) + humanRiskCount;
   const utilization = metrics.robot_utilization_pct ?? clamp(Math.round(metricValue(profile.utilization, 4, 0.01)), 0, 99);
   const fulfillment = orders.avg_fulfillment_min ?? Math.max(7.5, metricValue(profile.fulfill, 1.1, 0.008)).toFixed(1);
   const healthBad = (runtime.route_blocked_tile_violations || 0) + (runtime.route_cardinality_violations || 0) + (runtime.collision_violations || 0) + (runtime.lock_overlap_violations || 0);
@@ -2627,7 +2846,12 @@ function updateDom() {
   if (els.activeLoadBadge) els.activeLoadBadge.textContent = `${capitalize(state.load)} Load`;
   if (els.speedBadge) els.speedBadge.textContent = `${state.speed}x`;
   if (els.recordBadge) els.recordBadge.textContent = state.recording ? "Recording" : "Standby";
-  if (els.runtimeLinkBadge) els.runtimeLinkBadge.textContent = state.runtimeEvents.length ? "Runtime Events" : state.runtimeLinked ? "Runtime JSON" : "Mock Fallback";
+  if (els.runtimeLinkBadge) els.runtimeLinkBadge.textContent = state.humanIntrusionEnabled && state.humanScenario ? "Human Runtime" : state.runtimeEvents.length ? "Runtime Events" : state.runtimeLinked ? "Runtime JSON" : "Mock Fallback";
+  if (els.humanRiskBadge) els.humanRiskBadge.textContent = state.humanIntrusionEnabled ? humanScenarioSummary(humans) : "Human Risk Off";
+  if (els.humanModeBtn) {
+    els.humanModeBtn.textContent = state.humanIntrusionEnabled ? "Humans On" : "Humans Off";
+    els.humanModeBtn.classList.toggle("active", state.humanIntrusionEnabled);
+  }
   if (els.wallClock) els.wallClock.textContent = new Date().toLocaleTimeString("en-US", { hour12: false });
   if (els.ordersCompleted) els.ordersCompleted.textContent = `${completedOrders}`;
   if (els.throughputRate) els.throughputRate.textContent = `${Math.round(completedRate)}/hr`;
@@ -2639,7 +2863,7 @@ function updateDom() {
   if (els.topThroughput) els.topThroughput.textContent = `${Math.round(completedRate)}/hr`;
   if (els.topQueue) els.topQueue.textContent = `${queue}`;
   if (els.topSla) els.topSla.textContent = `${String(slaRisk).padStart(2, "0")}`;
-  const mediumBenchmark = { baselineThroughput: 288, localThroughput: 324, upliftPct: 12.5, stressUpliftPct: 30.7 };
+  const mediumBenchmark = { baselineThroughput: 288, localThroughput: 324, upliftPct: 12.5, stressUpliftPct: 60.3 };
   const safetyViolations = healthBad;
   if (els.throughputTrend) {
     els.throughputTrend.textContent = state.runtimeLinked ? `Stress +${mediumBenchmark.stressUpliftPct.toFixed(1)}%` : (state.load === "high" ? "+31%" : state.load === "low" ? "+09%" : "+18%");
@@ -2668,10 +2892,10 @@ function updateDom() {
   if (els.plannerMetricOrders) els.plannerMetricOrders.textContent = `${completedOrders}/${createdRate ? Math.max(completedOrders, Math.round(createdRate * 0.35)) : "140"}`;
   if (els.plannerMetricLocks) els.plannerMetricLocks.textContent = String(tileLocks).padStart(2, "0");
   if (els.plannerMetricReplans) els.plannerMetricReplans.textContent = String(replanCount).padStart(2, "0");
-  if (els.plannerTableInput) els.plannerTableInput.textContent = `${capitalize(state.load)} load / ${pendingOrders} pending / ${congestion} congestion signals`;
+  if (els.plannerTableInput) els.plannerTableInput.textContent = `${capitalize(state.load)} load / ${pendingOrders} pending / ${congestion} congestion signals / ${humanActiveCount} humans`;
   if (els.plannerTableDecision) els.plannerTableDecision.textContent = `${judgeDecision.robot} reserves ${judgeDecision.lock}, then runs ${judgeDecision.skill}`;
-  if (els.plannerTableOutput) els.plannerTableOutput.textContent = `${Math.round(completedRate)}/hr, ${safetyViolations} safety violations, ${Math.round(utilization)}% utilization`;
-  if (els.plannerTextSummary) els.plannerTextSummary.textContent = `Planner graph: mission orders become workflow steps, skill-graph actions, tile-lock reservations, and KPI updates. Current decision: ${judgeDecision.text}`;
+  if (els.plannerTableOutput) els.plannerTableOutput.textContent = `${Math.round(completedRate)}/hr, ${safetyViolations} safety violations, ${Math.round(utilization)}% utilization, ${humanRiskCount} human-risk tiles`;
+  if (els.plannerTextSummary) els.plannerTextSummary.textContent = `Planner graph: mission orders become workflow steps, human-risk projection, skill-graph actions, tile-lock reservations, and KPI updates. Current decision: ${judgeDecision.text}`;
   if (els.fleetMode) els.fleetMode.textContent = state.load === "high" ? "Surge" : state.load === "low" ? "Economy" : "Balanced";
   if (els.zoneHealth) els.zoneHealth.textContent = healthBad ? "Check" : (congestion ? "Busy" : "Clear");
   if (els.skuMix) els.skuMix.textContent = state.load === "high" ? "Heavy Mix" : state.load === "low" ? "Light Mix" : "Live Mix";
@@ -2919,6 +3143,8 @@ function stepRuntimeRobotAnimation(robot, dt) {
 }
 
 function updateRuntimeDebugAttributes() {
+  const humans = activeHumanAgents();
+  const humanRiskCount = currentHumanRiskTileIds(humans).size;
   const movingRobots = state.robots.filter((robot) => robot.motion && !robot.motion.done && robot.visualPose);
   const visualBlockedViolations = state.robots.filter((robot) => {
     if (!robot.visualPose) return false;
@@ -2931,6 +3157,9 @@ function updateRuntimeDebugAttributes() {
   document.documentElement.dataset.runtimeTick = String(Math.floor(state.tick));
   document.documentElement.dataset.runtimeMovingRobots = String(movingRobots.length);
   document.documentElement.dataset.runtimeBlockedVisualViolations = String(visualBlockedViolations.length);
+  document.documentElement.dataset.humanIntrusionEnabled = state.humanIntrusionEnabled ? "true" : "false";
+  document.documentElement.dataset.humanActiveCount = String(humans.length);
+  document.documentElement.dataset.humanRiskTiles = String(humanRiskCount);
   document.documentElement.dataset.runtimeVisualSample = state.robots
     .map((robot) => {
       const pose = robot.visualPose || staticRuntimePose(robot);
@@ -2994,6 +3223,18 @@ function setSpeed(speed) {
     button.classList.toggle("active", Number(button.dataset.speed) === state.speed);
   });
   state.log.push(`Runtime time scale set to ${state.speed}x.`);
+}
+
+async function toggleHumanIntrusion() {
+  state.humanIntrusionEnabled = !state.humanIntrusionEnabled;
+  state.log.push(state.humanIntrusionEnabled
+    ? "Human intrusion scenario enabled: planner projects continuous people into temporary risk tiles."
+    : "Human intrusion scenario disabled: standard robot-only runtime loaded.");
+  if (state.log.length > 22) state.log.shift();
+  await loadRuntimeProfile(state.load);
+  updateDom();
+  updateRuntimeDebugAttributes();
+  render();
 }
 
 async function resetSimulation() {
@@ -3184,6 +3425,8 @@ function bindEvents() {
 
   if (els.recordBtn) els.recordBtn.addEventListener("click", toggleRecording);
 
+  if (els.humanModeBtn) els.humanModeBtn.addEventListener("click", toggleHumanIntrusion);
+
   if (els.detailModeBtn) {
     els.detailModeBtn.addEventListener("click", () => {
       const simple = document.body.classList.toggle("judge-simple");
@@ -3268,6 +3511,9 @@ window.__warehouseRuntimeDebug = () => ({
   runtimeEventIndex: state.runtimeEventIndex,
   runtimeReplayTick: Number((state.runtimeReplayTick || 0).toFixed(2)),
   runtimeLockCount: currentRuntimeLockTileIds().size,
+  humanIntrusionEnabled: state.humanIntrusionEnabled,
+  humanActiveCount: activeHumanAgents().length,
+  humanRiskTiles: currentHumanRiskTileIds().size,
   load: state.load,
   speed: state.speed,
   tick: Math.floor(state.tick),

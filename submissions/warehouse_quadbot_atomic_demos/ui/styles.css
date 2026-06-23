@@ -1108,6 +1108,12 @@ meter::-webkit-meter-optimum-value {
   gap: 12px;
 }
 
+
+#humanRiskBadge {
+  border-color: rgba(255, 191, 61, 0.68);
+  color: #ffbf3d;
+}
+
 .stage-badges span {
   border: 1px solid var(--edge-hot);
   border-radius: 0;
@@ -1144,7 +1150,7 @@ meter::-webkit-meter-optimum-value {
   left: 18px;
   z-index: 2;
   display: grid;
-  grid-template-columns: repeat(4, max-content);
+  grid-template-columns: repeat(5, max-content);
   gap: 8px;
   pointer-events: auto;
 }
@@ -1175,6 +1181,12 @@ meter::-webkit-meter-optimum-value {
   border-color: var(--red);
   color: var(--red);
   background: rgba(65, 18, 16, 0.84);
+}
+
+.tool-toggle.human.active {
+  border-color: #ffbf3d;
+  color: #ffbf3d;
+  background: rgba(70, 42, 10, 0.84);
 }
 
 #warehouseCanvas {

@@ -7,6 +7,7 @@ Registration UUID: 13b27675-9c26-49df-9014-cb31f33f9df8
 | Signal | Result |
 | --- | --- |
 | Fleet task | 9 AEGIS quadrupeds in the live UI plus a 30-robot heterogeneous fleet stress extension |
+| Human intrusion stressor | Toggleable UI/runtime mode with continuous random people, stop/run bursts, group tours, 17 high-load risk tiles, 147 hold ticks, and 17 human-triggered reroutes |
 | Stress benchmark | 54 six-hour scenarios / 108 planner runs / 9,720 simulated robot-hours at 30 robots |
 | Safety | 100% pass, 0 collisions, 0 tile-lock overlaps |
 | Planner value | +60.27% average throughput uplift, +185.23% best uplift vs planner-off baseline in the 30-robot stress extension |
@@ -25,7 +26,7 @@ The core challenge is fleet-level coordination: one robot can move a parcel, but
 
 Judge-facing distinction: this is not only a multi-robot clip. It is a scalable warehouse benchmark. MuJoCo proves the atomic robot skills are physically plausible; the runtime proves that fleet decisions improve throughput under congestion, SKU-weight variation, pick difficulty, and long-horizon load.
 
-Latest judge fast path: `python examples/run_agentech_judge_review.py` prints artifact readiness, 54-scenario stress benchmark results, the 30-robot heterogeneous extension, medium/high runtime metrics, 14 MuJoCo evidence clips, 6-DOF grasp contact proof, heterogeneous end-effector contact proof, 3-robot corridor physics, and rubric mapping without requiring the dashboard UI.
+Latest judge fast path: `python examples/run_agentech_judge_review.py` prints artifact readiness, 54-scenario stress benchmark results, the 30-robot heterogeneous extension, human-intrusion runtime evidence, medium/high runtime metrics, 14 MuJoCo evidence clips, 6-DOF grasp contact proof, heterogeneous end-effector contact proof, 3-robot corridor physics, and rubric mapping without requiring the dashboard UI.
 
 # Robot Platform
 
@@ -33,7 +34,7 @@ Faraday Future AEGIS quadruped, with a BASE_LINK-mounted basket and a Futurist-r
 
 # Task Goal
 
-Fulfill warehouse outbound orders with multiple quadruped robots on a discrete tile grid while managing congestion, tile reservations, rack obstacles, SKU weight/difficulty, and throughput.
+Fulfill warehouse outbound orders with multiple quadruped robots on a discrete tile grid while managing congestion, tile reservations, rack obstacles, SKU weight/difficulty, throughput, and unpredictable human intrusions.
 
 # Agentic Workflow Design
 
@@ -46,13 +47,14 @@ The runtime uses four-direction movement, atomic source+destination locks, deadl
 - Warehouse optimization framed as a mission/workflow/skill-graph runtime rather than low-level robot control.
 - Fleet-level benchmark: 9 robots must share discrete aisles, reserve tiles, avoid deadlocks, handle priority pressure, and improve throughput together.
 - Local planner multi-port conveyor selection improves high-load throughput from 64/hr planner-off to 364/hr local (+468.8%) while preserving zero movement safety violations.
+- Added human-intrusion runtime stressor: continuous random people can enter, stop, run, leave, or arrive as a visitor group; the planner projects them into temporary risk tiles and performs hold/reroute decisions through the same lock system.
 - MuJoCo used as physical evidence for grasp/load/obstacle/small-fleet physics while the web runtime handles scalable agentic planning, congestion analysis, route optimization, and throughput benchmarks.
 - MuJoCo evidence scorecard makes physical validation inspectable: joints, actuators, sensors, contact counters, payload response, and two-robot handoff scene depth.
 - Added judge-facing MuJoCo videos beyond the main demo: `six_dof_grasp_sweep_wood.mp4`, `six_dof_grasp_sweep_metal.mp4`, and `fleet_physics_corridor.mp4`, showing six-axis parcel handling plus three-AEGIS loaded corridor avoidance.
 - Added heterogeneous MuJoCo end-effector lab: `effector_mix_lab.mp4` and trajectory JSON prove dexterous-hand/fragile, electromagnet/metal, and slide-rail/tote contact paths with 1077, 508, and 1020 contacts respectively.
 - Added 30-robot heterogeneous fleet scaling: 8 grippers, 9 dexterous hands, 8 electromagnets, and 5 slide-rail tools across 54 six-hour scenarios / 9,720 robot-hours, achieving +60.27% average throughput uplift and 100% safety pass.
 - Heavy 6-DOF grasp evidence records 630 gripper/package contacts, 220 left-finger contacts, 250 right-finger contacts, and 36 dual-finger grasp frames; the heavy handoff records 279 receiver-gripper/package contacts.
-- Runtime snapshots expose robot state, order state, movement locks, rack-blocking, congestion, conveyor door/unload tiles, and KPI metrics directly to the dashboard.
+- Runtime snapshots expose robot state, order state, movement locks, rack-blocking, congestion, conveyor door/unload tiles, human-risk tiles, and KPI metrics directly to the dashboard.
 - One-command AI judge fast path reduces review friction and directly addresses the prior UI-complexity feedback.
 - New default AI Decision Board plus tabbed Agentic Planner graph/table/text view makes scheduler intent visible: selected robot, reserved tile lock, next skill, mission/workflow/skill/runtime/KPI path, and text decision are shown above the live map.
 - Default simplified UI mode directly addresses prior judge feedback: first screen now shows throughput, safety, MuJoCo proof, Agentic Planner graph, AI decision, and the live map; dense ops panels are one click away.
@@ -69,7 +71,7 @@ The runtime uses four-direction movement, atomic source+destination locks, deadl
 | Medium | 77 / 84 | 308/hr | 30.67 ticks | 0 |
 | High | 91 / 140 | 364/hr | 38.56 ticks | 0 |
 
-Safety violations include blocked tiles, non-cardinal moves, robot collisions, and lock overlaps.
+Safety violations include blocked tiles, non-cardinal moves, robot collisions, and lock overlaps. Human-intrusion high load adds 10 stochastic continuous humans, 7 active humans at snapshot, 17 current risk tiles, 147 human-risk hold ticks, and 17 human-triggered reroutes while preserving 0 collisions and 0 lock overlaps.
 
 # Fleet Stress Benchmark
 
@@ -87,6 +89,9 @@ Included evidence clips:
 - `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/fleet_physics_corridor.mp4`
 - `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/effector_mix_lab.mp4`
 - `submissions/warehouse_quadbot_atomic_demos/outputs/fleet_stress_benchmark_30robots.json`
+- `submissions/warehouse_quadbot_atomic_demos/outputs/runtime_snapshot_high_humans.json`
+- `submissions/warehouse_quadbot_atomic_demos/outputs/benchmark_metrics_high_humans.json`
+- `submissions/warehouse_quadbot_atomic_demos/outputs/runtime_events_high_humans.jsonl`
 - `submissions/warehouse_quadbot_atomic_demos/THIRTY_ROBOT_STRESS_BENCHMARK.md`
 - `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/*.mp4`
 - `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/six_dof_grasp_sweep_wood.mp4`

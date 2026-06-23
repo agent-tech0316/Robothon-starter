@@ -10,6 +10,24 @@ warehouse:
   movement_model: four_direction_grid
   lock_model: current_and_next_tile
 
+human_intrusion:
+  random_seed: 20260623
+  model: continuous_random_walk_projected_to_temporary_tile_risk
+  planner_contract: Runtime humans move in continuous space while robots still reserve discrete warehouse tiles.
+  scenario_types:
+    - maintenance_walk
+    - safety_auditor
+    - customer_tour_group
+    - urgent_runner
+  stochastic_factors:
+    - entry_time
+    - exit_time
+    - walking_path
+    - stop_windows
+    - speed_bursts
+    - group_size
+
+
 zones:
   - zone_id: depot
     type: robot_depot

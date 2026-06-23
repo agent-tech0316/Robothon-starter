@@ -1,0 +1,1512 @@
+{
+  "tick": 900,
+  "sim_time_s": 900,
+  "load": "medium",
+  "speed": 1,
+  "planner_enabled": true,
+  "orders": {
+    "created_per_hr": 336,
+    "completed_per_hr": 260,
+    "active": 10,
+    "pending": 2,
+    "sla_risk": 0,
+    "open": 10,
+    "avg_fulfillment_min": 1.2
+  },
+  "order_rows": [
+    {
+      "id": "ORD-000000077",
+      "priority": "P1",
+      "difficulty": "normal",
+      "weight_kg": 4.0,
+      "assigned_robot": "Q-01",
+      "age_s": 69.0,
+      "status": "navigating_to_conveyor"
+    },
+    {
+      "id": "ORD-000000080",
+      "priority": "P1",
+      "difficulty": "normal",
+      "weight_kg": 4.0,
+      "assigned_robot": "Q-08",
+      "age_s": 50.0,
+      "status": "navigating_to_conveyor"
+    },
+    {
+      "id": "ORD-000000083",
+      "priority": "P1",
+      "difficulty": "hard",
+      "weight_kg": 7.5,
+      "assigned_robot": "-",
+      "age_s": 11.0,
+      "status": "inventory_reserved"
+    },
+    {
+      "id": "ORD-000000081",
+      "priority": "P2",
+      "difficulty": "easy",
+      "weight_kg": 0.8,
+      "assigned_robot": "Q-06",
+      "age_s": 44.0,
+      "status": "navigating_to_conveyor"
+    },
+    {
+      "id": "ORD-000000075",
+      "priority": "P2",
+      "difficulty": "normal",
+      "weight_kg": 4.0,
+      "assigned_robot": "Q-04",
+      "age_s": 108.0,
+      "status": "unloading_at_conveyor"
+    },
+    {
+      "id": "ORD-000000071",
+      "priority": "P2",
+      "difficulty": "hard",
+      "weight_kg": 7.5,
+      "assigned_robot": "Q-03",
+      "age_s": 166.0,
+      "status": "navigating_to_conveyor"
+    },
+    {
+      "id": "ORD-000000082",
+      "priority": "P2",
+      "difficulty": "hard",
+      "weight_kg": 7.5,
+      "assigned_robot": "-",
+      "age_s": 41.0,
+      "status": "inventory_reserved"
+    },
+    {
+      "id": "ORD-000000065",
+      "priority": "P3",
+      "difficulty": "expert",
+      "weight_kg": 2.5,
+      "assigned_robot": "Q-09",
+      "age_s": 235.0,
+      "status": "navigating_to_conveyor"
+    },
+    {
+      "id": "ORD-000000078",
+      "priority": "P3",
+      "difficulty": "expert",
+      "weight_kg": 1.2,
+      "assigned_robot": "Q-02",
+      "age_s": 58.0,
+      "status": "picking"
+    },
+    {
+      "id": "ORD-000000084",
+      "priority": "P3",
+      "difficulty": "hard",
+      "weight_kg": 5.5,
+      "assigned_robot": "Q-05",
+      "age_s": 7.0,
+      "status": "navigating_to_rack"
+    }
+  ],
+  "robots": [
+    {
+      "id": "Q-01",
+      "x": 15.0,
+      "y": 13.0,
+      "tile_id": "T_15_13",
+      "heading": "S",
+      "status": "navigating_to_conveyor",
+      "battery": 92,
+      "carrying": true,
+      "current_order": "ORD-000000077",
+      "current_target": "T_16_13",
+      "next_target": "T_16_13",
+      "movement_model": "four_direction_grid",
+      "route_closed": false,
+      "route_cardinal": true,
+      "lock_tiles": [
+        "T_15_13",
+        "T_16_13"
+      ],
+      "carried_sku": "SKU_BULK_FOAM",
+      "carried_weight_kg": 4.0,
+      "route": [
+        [
+          15.0,
+          13.0
+        ],
+        [
+          16.0,
+          13.0
+        ]
+      ],
+      "wait_ticks": 7,
+      "role": "runner"
+    },
+    {
+      "id": "Q-02",
+      "x": 13.0,
+      "y": 2.0,
+      "tile_id": "T_13_02",
+      "heading": "E",
+      "status": "picking",
+      "battery": 93,
+      "carrying": false,
+      "current_order": "ORD-000000078",
+      "current_target": "T_13_02",
+      "next_target": null,
+      "movement_model": "four_direction_grid",
+      "route_closed": false,
+      "route_cardinal": true,
+      "lock_tiles": [
+        "T_13_02"
+      ],
+      "carried_sku": null,
+      "carried_weight_kg": null,
+      "route": [
+        [
+          13.0,
+          2.0
+        ]
+      ],
+      "wait_ticks": 0,
+      "role": "runner"
+    },
+    {
+      "id": "Q-03",
+      "x": 18.0,
+      "y": 2.0,
+      "tile_id": "T_18_02",
+      "heading": "N",
+      "status": "navigating_to_conveyor",
+      "battery": 92,
+      "carrying": true,
+      "current_order": "ORD-000000071",
+      "current_target": "T_16_00",
+      "next_target": "T_18_01",
+      "movement_model": "four_direction_grid",
+      "route_closed": false,
+      "route_cardinal": true,
+      "lock_tiles": [
+        "T_18_02",
+        "T_18_01"
+      ],
+      "carried_sku": "SKU_METAL_HEAVY",
+      "carried_weight_kg": 7.5,
+      "route": [
+        [
+          18.0,
+          2.0
+        ],
+        [
+          18.0,
+          1.0
+        ],
+        [
+          18.0,
+          0.0
+        ],
+        [
+          17.0,
+          0.0
+        ],
+        [
+          16.0,
+          0.0
+        ]
+      ],
+      "wait_ticks": 0,
+      "role": "runner"
+    },
+    {
+      "id": "Q-04",
+      "x": 19.0,
+      "y": 11.0,
+      "tile_id": "T_19_11",
+      "heading": "E",
+      "status": "unloading",
+      "battery": 92,
+      "carrying": true,
+      "current_order": "ORD-000000075",
+      "current_target": "T_19_11",
+      "next_target": null,
+      "movement_model": "four_direction_grid",
+      "route_closed": false,
+      "route_cardinal": true,
+      "lock_tiles": [
+        "T_19_11"
+      ],
+      "carried_sku": "SKU_BULK_FOAM",
+      "carried_weight_kg": 4.0,
+      "route": [
+        [
+          19.0,
+          11.0
+        ]
+      ],
+      "wait_ticks": 0,
+      "role": "picker"
+    },
+    {
+      "id": "Q-05",
+      "x": 15.0,
+      "y": 10.0,
+      "tile_id": "T_15_10",
+      "heading": "W",
+      "status": "navigating_to_rack",
+      "battery": 93,
+      "carrying": false,
+      "current_order": "ORD-000000084",
+      "current_target": "T_13_06",
+      "next_target": "T_14_10",
+      "movement_model": "four_direction_grid",
+      "route_closed": false,
+      "route_cardinal": true,
+      "lock_tiles": [
+        "T_15_10",
+        "T_14_10"
+      ],
+      "carried_sku": null,
+      "carried_weight_kg": null,
+      "route": [
+        [
+          15.0,
+          10.0
+        ],
+        [
+          14.0,
+          10.0
+        ],
+        [
+          13.0,
+          10.0
+        ],
+        [
+          13.0,
+          9.0
+        ],
+        [
+          13.0,
+          8.0
+        ],
+        [
+          12.0,
+          8.0
+        ],
+        [
+          12.0,
+          7.0
+        ],
+        [
+          12.0,
+          6.0
+        ],
+        [
+          13.0,
+          6.0
+        ]
+      ],
+      "wait_ticks": 0,
+      "role": "picker"
+    },
+    {
+      "id": "Q-06",
+      "x": 3.0,
+      "y": 5.0,
+      "tile_id": "T_03_05",
+      "heading": "S",
+      "status": "navigating_to_conveyor",
+      "battery": 92,
+      "carrying": true,
+      "current_order": "ORD-000000081",
+      "current_target": "T_00_06",
+      "next_target": "T_03_06",
+      "movement_model": "four_direction_grid",
+      "route_closed": false,
+      "route_cardinal": true,
+      "lock_tiles": [
+        "T_03_05",
+        "T_03_06"
+      ],
+      "carried_sku": "SKU_CARD_SMALL",
+      "carried_weight_kg": 0.8,
+      "route": [
+        [
+          3.0,
+          5.0
+        ],
+        [
+          3.0,
+          6.0
+        ],
+        [
+          2.0,
+          6.0
+        ],
+        [
+          1.0,
+          6.0
+        ],
+        [
+          0.0,
+          6.0
+        ]
+      ],
+      "wait_ticks": 0,
+      "role": "runner"
+    },
+    {
+      "id": "Q-07",
+      "x": 0.0,
+      "y": 10.0,
+      "tile_id": "T_00_10",
+      "heading": "S",
+      "status": "relocating_to_buffer",
+      "battery": 94,
+      "carrying": false,
+      "current_order": null,
+      "current_target": "T_00_11",
+      "next_target": "T_00_11",
+      "movement_model": "four_direction_grid",
+      "route_closed": false,
+      "route_cardinal": true,
+      "lock_tiles": [
+        "T_00_10",
+        "T_00_11"
+      ],
+      "carried_sku": null,
+      "carried_weight_kg": null,
+      "route": [
+        [
+          0.0,
+          10.0
+        ],
+        [
+          0.0,
+          11.0
+        ]
+      ],
+      "wait_ticks": 0,
+      "role": "picker"
+    },
+    {
+      "id": "Q-08",
+      "x": 13.0,
+      "y": 9.0,
+      "tile_id": "T_13_09",
+      "heading": "S",
+      "status": "navigating_to_conveyor",
+      "battery": 93,
+      "carrying": true,
+      "current_order": "ORD-000000080",
+      "current_target": "T_19_11",
+      "next_target": "T_13_10",
+      "movement_model": "four_direction_grid",
+      "route_closed": false,
+      "route_cardinal": true,
+      "lock_tiles": [
+        "T_13_09",
+        "T_13_10"
+      ],
+      "carried_sku": "SKU_BULK_FOAM",
+      "carried_weight_kg": 4.0,
+      "route": [
+        [
+          13.0,
+          9.0
+        ],
+        [
+          13.0,
+          10.0
+        ],
+        [
+          14.0,
+          10.0
+        ],
+        [
+          15.0,
+          10.0
+        ],
+        [
+          16.0,
+          10.0
+        ],
+        [
+          17.0,
+          10.0
+        ],
+        [
+          18.0,
+          10.0
+        ],
+        [
+          19.0,
+          10.0
+        ],
+        [
+          19.0,
+          11.0
+        ]
+      ],
+      "wait_ticks": 0,
+      "role": "runner"
+    },
+    {
+      "id": "Q-09",
+      "x": 16.0,
+      "y": 13.0,
+      "tile_id": "T_16_13",
+      "heading": "E",
+      "status": "navigating_to_conveyor",
+      "battery": 94,
+      "carrying": true,
+      "current_order": "ORD-000000065",
+      "current_target": "T_16_13",
+      "next_target": null,
+      "movement_model": "four_direction_grid",
+      "route_closed": false,
+      "route_cardinal": true,
+      "lock_tiles": [
+        "T_16_13"
+      ],
+      "carried_sku": "SKU_MEDICAL_BIN",
+      "carried_weight_kg": 2.5,
+      "route": [
+        [
+          16.0,
+          13.0
+        ]
+      ],
+      "wait_ticks": 0,
+      "role": "runner"
+    }
+  ],
+  "warehouse": {
+    "width_tiles": 20,
+    "height_tiles": 14,
+    "tile_size_m": 2.0,
+    "nominal_robot_speed_mps": 1.0,
+    "movement_model": "four_direction_grid",
+    "lock_model": "current_and_next_tile",
+    "blocked_tiles": [
+      "T_04_02",
+      "T_04_03",
+      "T_04_04",
+      "T_04_05",
+      "T_04_06",
+      "T_04_07",
+      "T_04_08",
+      "T_04_09",
+      "T_09_02",
+      "T_09_03",
+      "T_09_04",
+      "T_09_05",
+      "T_09_06",
+      "T_09_07",
+      "T_09_08",
+      "T_09_09",
+      "T_14_02",
+      "T_14_03",
+      "T_14_04",
+      "T_14_05",
+      "T_14_06",
+      "T_14_07",
+      "T_14_08",
+      "T_14_09"
+    ],
+    "rack_tiles": [
+      "T_04_02",
+      "T_04_03",
+      "T_04_04",
+      "T_04_05",
+      "T_04_06",
+      "T_04_07",
+      "T_04_08",
+      "T_04_09",
+      "T_09_02",
+      "T_09_03",
+      "T_09_04",
+      "T_09_05",
+      "T_09_06",
+      "T_09_07",
+      "T_09_08",
+      "T_09_09",
+      "T_14_02",
+      "T_14_03",
+      "T_14_04",
+      "T_14_05",
+      "T_14_06",
+      "T_14_07",
+      "T_14_08",
+      "T_14_09"
+    ],
+    "buffer_tiles": [
+      "T_05_00",
+      "T_05_12",
+      "T_06_00",
+      "T_10_00",
+      "T_10_12",
+      "T_11_00",
+      "T_15_00",
+      "T_15_12",
+      "T_17_00"
+    ],
+    "depot_tiles": [
+      "T_00_11",
+      "T_00_12",
+      "T_00_13",
+      "T_01_11",
+      "T_01_12",
+      "T_01_13",
+      "T_02_11",
+      "T_02_12",
+      "T_02_13"
+    ],
+    "drop_tiles": [
+      "T_00_06",
+      "T_16_00",
+      "T_16_13",
+      "T_19_11"
+    ],
+    "service_tiles": [
+      "T_00_06",
+      "T_03_02",
+      "T_03_03",
+      "T_03_04",
+      "T_03_05",
+      "T_03_06",
+      "T_03_07",
+      "T_03_08",
+      "T_03_09",
+      "T_08_02",
+      "T_08_03",
+      "T_08_04",
+      "T_08_05",
+      "T_08_06",
+      "T_08_07",
+      "T_08_08",
+      "T_08_09",
+      "T_13_02",
+      "T_13_03",
+      "T_13_04",
+      "T_13_05",
+      "T_13_06",
+      "T_13_07",
+      "T_13_08",
+      "T_13_09",
+      "T_16_00",
+      "T_16_13",
+      "T_19_11"
+    ],
+    "conveyors": [
+      {
+        "conveyor_id": "CONV_EAST_01",
+        "unload_tile_id": "T_19_11",
+        "door_tile_id": null,
+        "direction": "E",
+        "wall": "east",
+        "exterior_footprint": {
+          "x": 20,
+          "y": 11,
+          "w": 2,
+          "d": 1
+        },
+        "door_line": {
+          "x1": 22,
+          "y1": 11,
+          "x2": 22,
+          "y2": 12
+        },
+        "capacity_packages": 6
+      },
+      {
+        "conveyor_id": "CONV_SOUTH_01",
+        "unload_tile_id": "T_16_13",
+        "door_tile_id": null,
+        "direction": "S",
+        "wall": "south",
+        "exterior_footprint": {
+          "x": 16,
+          "y": 14,
+          "w": 1,
+          "d": 2
+        },
+        "door_line": {
+          "x1": 16,
+          "y1": 16,
+          "x2": 17,
+          "y2": 16
+        },
+        "capacity_packages": 6
+      },
+      {
+        "conveyor_id": "CONV_NORTH_01",
+        "unload_tile_id": "T_16_00",
+        "door_tile_id": null,
+        "direction": "N",
+        "wall": "north",
+        "exterior_footprint": {
+          "x": 16,
+          "y": -2,
+          "w": 1,
+          "d": 2
+        },
+        "door_line": {
+          "x1": 16,
+          "y1": -2,
+          "x2": 17,
+          "y2": -2
+        },
+        "capacity_packages": 6
+      },
+      {
+        "conveyor_id": "CONV_WEST_01",
+        "unload_tile_id": "T_00_06",
+        "door_tile_id": null,
+        "direction": "W",
+        "wall": "west",
+        "exterior_footprint": {
+          "x": -2,
+          "y": 6,
+          "w": 2,
+          "d": 1
+        },
+        "door_line": {
+          "x1": -2,
+          "y1": 6,
+          "x2": -2,
+          "y2": 7
+        },
+        "capacity_packages": 6
+      }
+    ],
+    "occupied_tiles": [
+      {
+        "tile_id": "T_00_10",
+        "robot_id": "Q-07"
+      },
+      {
+        "tile_id": "T_03_05",
+        "robot_id": "Q-06"
+      },
+      {
+        "tile_id": "T_13_02",
+        "robot_id": "Q-02"
+      },
+      {
+        "tile_id": "T_13_09",
+        "robot_id": "Q-08"
+      },
+      {
+        "tile_id": "T_15_10",
+        "robot_id": "Q-05"
+      },
+      {
+        "tile_id": "T_15_13",
+        "robot_id": "Q-01"
+      },
+      {
+        "tile_id": "T_16_13",
+        "robot_id": "Q-09"
+      },
+      {
+        "tile_id": "T_18_02",
+        "robot_id": "Q-03"
+      },
+      {
+        "tile_id": "T_19_11",
+        "robot_id": "Q-04"
+      }
+    ]
+  },
+  "movement_locks": {
+    "model": "source_and_destination_tile_atomic",
+    "occupied_tiles": [
+      {
+        "tile_id": "T_00_10",
+        "robot_id": "Q-07"
+      },
+      {
+        "tile_id": "T_03_05",
+        "robot_id": "Q-06"
+      },
+      {
+        "tile_id": "T_13_02",
+        "robot_id": "Q-02"
+      },
+      {
+        "tile_id": "T_13_09",
+        "robot_id": "Q-08"
+      },
+      {
+        "tile_id": "T_15_10",
+        "robot_id": "Q-05"
+      },
+      {
+        "tile_id": "T_15_13",
+        "robot_id": "Q-01"
+      },
+      {
+        "tile_id": "T_16_13",
+        "robot_id": "Q-09"
+      },
+      {
+        "tile_id": "T_18_02",
+        "robot_id": "Q-03"
+      },
+      {
+        "tile_id": "T_19_11",
+        "robot_id": "Q-04"
+      }
+    ],
+    "requested_moves": [
+      {
+        "tick": 900,
+        "robot_id": "Q-01",
+        "source_tile": "T_15_13",
+        "destination_tile": "T_16_13",
+        "lock_tiles": [
+          "T_15_13",
+          "T_16_13"
+        ],
+        "priority": 95
+      },
+      {
+        "tick": 900,
+        "robot_id": "Q-02",
+        "source_tile": "T_12_02",
+        "destination_tile": "T_13_02",
+        "lock_tiles": [
+          "T_12_02",
+          "T_13_02"
+        ],
+        "priority": 25
+      },
+      {
+        "tick": 900,
+        "robot_id": "Q-03",
+        "source_tile": "T_18_03",
+        "destination_tile": "T_18_02",
+        "lock_tiles": [
+          "T_18_03",
+          "T_18_02"
+        ],
+        "priority": 58
+      },
+      {
+        "tick": 900,
+        "robot_id": "Q-05",
+        "source_tile": "T_16_10",
+        "destination_tile": "T_15_10",
+        "lock_tiles": [
+          "T_16_10",
+          "T_15_10"
+        ],
+        "priority": 25
+      },
+      {
+        "tick": 900,
+        "robot_id": "Q-08",
+        "source_tile": "T_13_08",
+        "destination_tile": "T_13_09",
+        "lock_tiles": [
+          "T_13_08",
+          "T_13_09"
+        ],
+        "priority": 83
+      }
+    ],
+    "granted_moves": [
+      {
+        "tick": 900,
+        "robot_id": "Q-08",
+        "source_tile": "T_13_08",
+        "destination_tile": "T_13_09",
+        "lock_tiles": [
+          "T_13_08",
+          "T_13_09"
+        ]
+      },
+      {
+        "tick": 900,
+        "robot_id": "Q-03",
+        "source_tile": "T_18_03",
+        "destination_tile": "T_18_02",
+        "lock_tiles": [
+          "T_18_03",
+          "T_18_02"
+        ]
+      },
+      {
+        "tick": 900,
+        "robot_id": "Q-02",
+        "source_tile": "T_12_02",
+        "destination_tile": "T_13_02",
+        "lock_tiles": [
+          "T_12_02",
+          "T_13_02"
+        ]
+      },
+      {
+        "tick": 900,
+        "robot_id": "Q-05",
+        "source_tile": "T_16_10",
+        "destination_tile": "T_15_10",
+        "lock_tiles": [
+          "T_16_10",
+          "T_15_10"
+        ]
+      }
+    ],
+    "denied_moves": [
+      {
+        "tick": 900,
+        "robot_id": "Q-01",
+        "source_tile": "T_15_13",
+        "destination_tile": "T_16_13",
+        "lock_tiles": [
+          "T_15_13",
+          "T_16_13"
+        ],
+        "reason": "destination_occupied",
+        "blocker": "Q-09"
+      }
+    ],
+    "lock_overlap_violations": []
+  },
+  "shelves": [
+    {
+      "id": "A1",
+      "x": 4.0,
+      "y": 2.0,
+      "w": 1.0,
+      "d": 3.0,
+      "h": 1.35,
+      "length": 3,
+      "direction": "ne",
+      "material": "cardboard",
+      "fill": "full",
+      "anchorX": 5,
+      "anchorY": 5,
+      "footprint_tiles": [
+        "T_04_02",
+        "T_04_03",
+        "T_04_04"
+      ],
+      "pick_tiles": [
+        "T_03_02",
+        "T_03_03",
+        "T_03_04"
+      ],
+      "blocks_robot": true
+    },
+    {
+      "id": "A2",
+      "x": 4.0,
+      "y": 5.0,
+      "w": 1.0,
+      "d": 3.0,
+      "h": 1.35,
+      "length": 3,
+      "direction": "ne",
+      "material": "wood",
+      "fill": "half",
+      "anchorX": 5,
+      "anchorY": 8,
+      "footprint_tiles": [
+        "T_04_05",
+        "T_04_06",
+        "T_04_07"
+      ],
+      "pick_tiles": [
+        "T_03_05",
+        "T_03_06",
+        "T_03_07"
+      ],
+      "blocks_robot": true
+    },
+    {
+      "id": "A3",
+      "x": 4.0,
+      "y": 8.0,
+      "w": 1.0,
+      "d": 2.0,
+      "h": 1.35,
+      "length": 2,
+      "direction": "ne",
+      "material": "cardboard",
+      "fill": "full",
+      "anchorX": 5,
+      "anchorY": 10,
+      "footprint_tiles": [
+        "T_04_08",
+        "T_04_09"
+      ],
+      "pick_tiles": [
+        "T_03_08",
+        "T_03_09"
+      ],
+      "blocks_robot": true
+    },
+    {
+      "id": "B1",
+      "x": 9.0,
+      "y": 2.0,
+      "w": 1.0,
+      "d": 3.0,
+      "h": 1.35,
+      "length": 3,
+      "direction": "ne",
+      "material": "metal",
+      "fill": "half",
+      "anchorX": 10,
+      "anchorY": 5,
+      "footprint_tiles": [
+        "T_09_02",
+        "T_09_03",
+        "T_09_04"
+      ],
+      "pick_tiles": [
+        "T_08_02",
+        "T_08_03",
+        "T_08_04"
+      ],
+      "blocks_robot": true
+    },
+    {
+      "id": "B2",
+      "x": 9.0,
+      "y": 5.0,
+      "w": 1.0,
+      "d": 3.0,
+      "h": 1.35,
+      "length": 3,
+      "direction": "ne",
+      "material": "wood",
+      "fill": "full",
+      "anchorX": 10,
+      "anchorY": 8,
+      "footprint_tiles": [
+        "T_09_05",
+        "T_09_06",
+        "T_09_07"
+      ],
+      "pick_tiles": [
+        "T_08_05",
+        "T_08_06",
+        "T_08_07"
+      ],
+      "blocks_robot": true
+    },
+    {
+      "id": "B3",
+      "x": 9.0,
+      "y": 8.0,
+      "w": 1.0,
+      "d": 2.0,
+      "h": 1.35,
+      "length": 2,
+      "direction": "ne",
+      "material": "cardboard",
+      "fill": "almost_none",
+      "anchorX": 10,
+      "anchorY": 10,
+      "footprint_tiles": [
+        "T_09_08",
+        "T_09_09"
+      ],
+      "pick_tiles": [
+        "T_08_08",
+        "T_08_09"
+      ],
+      "blocks_robot": true
+    },
+    {
+      "id": "C1",
+      "x": 14.0,
+      "y": 2.0,
+      "w": 1.0,
+      "d": 3.0,
+      "h": 1.35,
+      "length": 3,
+      "direction": "ne",
+      "material": "cardboard",
+      "fill": "full",
+      "anchorX": 15,
+      "anchorY": 5,
+      "footprint_tiles": [
+        "T_14_02",
+        "T_14_03",
+        "T_14_04"
+      ],
+      "pick_tiles": [
+        "T_13_02",
+        "T_13_03",
+        "T_13_04"
+      ],
+      "blocks_robot": true
+    },
+    {
+      "id": "C2",
+      "x": 14.0,
+      "y": 5.0,
+      "w": 1.0,
+      "d": 3.0,
+      "h": 1.35,
+      "length": 3,
+      "direction": "ne",
+      "material": "metal",
+      "fill": "half",
+      "anchorX": 15,
+      "anchorY": 8,
+      "footprint_tiles": [
+        "T_14_05",
+        "T_14_06",
+        "T_14_07"
+      ],
+      "pick_tiles": [
+        "T_13_05",
+        "T_13_06",
+        "T_13_07"
+      ],
+      "blocks_robot": true
+    },
+    {
+      "id": "C3",
+      "x": 14.0,
+      "y": 8.0,
+      "w": 1.0,
+      "d": 2.0,
+      "h": 1.35,
+      "length": 2,
+      "direction": "ne",
+      "material": "wood",
+      "fill": "empty",
+      "anchorX": 15,
+      "anchorY": 10,
+      "footprint_tiles": [
+        "T_14_08",
+        "T_14_09"
+      ],
+      "pick_tiles": [
+        "T_13_08",
+        "T_13_09"
+      ],
+      "blocks_robot": true
+    }
+  ],
+  "events": [
+    "Q-07 moved T_00_09->T_00_10.",
+    "Q-01 waits for tile T_16_13 blocked by Q-09 (destination_occupied).",
+    "Human-aware planner tracking 3 people and 12 temporary risk tiles.",
+    "Q-08 moved T_13_08->T_13_09.",
+    "Q-03 moved T_18_03->T_18_02.",
+    "Q-02 moved T_12_02->T_13_02.",
+    "Q-02 started shelf_pick for ORD-RUNTIME-000000078 (12s).",
+    "Q-05 moved T_16_10->T_15_10.",
+    "Q-01 waits for tile T_16_13 blocked by Q-09 (destination_occupied).",
+    "Replanned Q-01 because repeated_lock_denial."
+  ],
+  "runtime": {
+    "workflow": "Outbound Batch Fulfillment",
+    "active_skills": [
+      "deadlock_recovery",
+      "human_aware_reroute",
+      "move_tile",
+      "route_plan",
+      "shelf_pick",
+      "unload"
+    ],
+    "deadlocks": 23,
+    "replans": 67,
+    "latest_decision": "Human-aware planner holds/reroutes around 4 continuous human agents and 20 temporary risk tiles before normal fleet optimization.",
+    "planner_mode": "local",
+    "planner_source": "local",
+    "handoff_mode": false,
+    "ai_interval_s": 600,
+    "next_planner_check_s": 300,
+    "route_window_reservation": true,
+    "planner_movement_factor": 1.0,
+    "route_blocked_tile_violations": 0,
+    "route_cardinality_violations": 0,
+    "collision_violations": 0,
+    "lock_overlap_violations": 0
+  },
+  "human_intrusion": {
+    "enabled": true,
+    "model": "continuous_random_walk_projected_to_temporary_tile_risk",
+    "random_seed": 20260623,
+    "active_count": 3,
+    "peak_count": 5,
+    "total_agents": 5,
+    "risk_tiles": [
+      "T_14_01",
+      "T_15_01",
+      "T_15_02",
+      "T_15_03",
+      "T_15_04",
+      "T_16_01",
+      "T_16_02",
+      "T_16_03",
+      "T_16_04",
+      "T_17_02",
+      "T_17_03",
+      "T_17_04"
+    ],
+    "active_agents": [
+      {
+        "human_id": "H-03",
+        "group_id": "customer_tour",
+        "profile": "visitor_group",
+        "x": 15.641,
+        "y": 2.694,
+        "state": "walking",
+        "start_tick": 322,
+        "exit_tick": 1057,
+        "safety_radius_tiles": 1.15,
+        "risk_tiles": [
+          "T_14_01",
+          "T_15_01",
+          "T_15_02",
+          "T_15_03",
+          "T_15_04",
+          "T_16_01",
+          "T_16_02",
+          "T_16_03",
+          "T_17_02"
+        ],
+        "color": "#52a7ff"
+      },
+      {
+        "human_id": "H-04",
+        "group_id": "customer_tour",
+        "profile": "visitor_group",
+        "x": 16.423,
+        "y": 3.047,
+        "state": "walking",
+        "start_tick": 293,
+        "exit_tick": 1038,
+        "safety_radius_tiles": 1.15,
+        "risk_tiles": [
+          "T_15_01",
+          "T_15_02",
+          "T_15_03",
+          "T_15_04",
+          "T_16_01",
+          "T_16_02",
+          "T_16_03",
+          "T_16_04",
+          "T_17_02",
+          "T_17_03",
+          "T_17_04"
+        ],
+        "color": "#52a7ff"
+      },
+      {
+        "human_id": "H-05",
+        "group_id": "customer_tour",
+        "profile": "visitor_group",
+        "x": 15.565,
+        "y": 2.664,
+        "state": "walking",
+        "start_tick": 308,
+        "exit_tick": 1080,
+        "safety_radius_tiles": 1.15,
+        "risk_tiles": [
+          "T_14_01",
+          "T_15_01",
+          "T_15_02",
+          "T_15_03",
+          "T_15_04",
+          "T_16_01",
+          "T_16_02",
+          "T_16_03"
+        ],
+        "color": "#52a7ff"
+      }
+    ],
+    "agents": [
+      {
+        "human_id": "H-01",
+        "group_id": "maintenance",
+        "profile": "maintenance_walk",
+        "start_tick": 65,
+        "exit_tick": 593,
+        "path": [
+          [
+            -0.589,
+            5.834
+          ],
+          [
+            2.761,
+            5.334
+          ],
+          [
+            7.561,
+            5.934
+          ],
+          [
+            11.761,
+            5.334
+          ],
+          [
+            20.411,
+            6.734
+          ]
+        ],
+        "stop_windows": [
+          {
+            "start_tick": 297,
+            "end_tick": 355,
+            "x": 8.654,
+            "y": 5.778,
+            "reason": "inspection_pause"
+          }
+        ],
+        "burst_windows": [
+          {
+            "start_tick": 380,
+            "end_tick": 422,
+            "speed_multiplier": 1.35
+          }
+        ],
+        "safety_radius_tiles": 0.85,
+        "color": "#ffbf3d"
+      },
+      {
+        "human_id": "H-02",
+        "group_id": "audit",
+        "profile": "safety_auditor",
+        "start_tick": 231,
+        "exit_tick": 885,
+        "path": [
+          [
+            16.552,
+            -0.486
+          ],
+          [
+            16.152,
+            2.064
+          ],
+          [
+            13.152,
+            4.864
+          ],
+          [
+            8.352,
+            8.664
+          ],
+          [
+            2.952,
+            8.864
+          ],
+          [
+            -0.598,
+            7.164
+          ]
+        ],
+        "stop_windows": [
+          {
+            "start_tick": 610,
+            "end_tick": 659,
+            "x": 8.325,
+            "y": 8.665,
+            "reason": "inspection_pause"
+          }
+        ],
+        "burst_windows": [
+          {
+            "start_tick": 724,
+            "end_tick": 749,
+            "speed_multiplier": 1.35
+          }
+        ],
+        "safety_radius_tiles": 0.9,
+        "color": "#b980ff"
+      },
+      {
+        "human_id": "H-03",
+        "group_id": "customer_tour",
+        "profile": "visitor_group",
+        "start_tick": 322,
+        "exit_tick": 1057,
+        "path": [
+          [
+            -0.831,
+            1.257
+          ],
+          [
+            2.619,
+            1.557
+          ],
+          [
+            6.019,
+            3.657
+          ],
+          [
+            10.519,
+            3.957
+          ],
+          [
+            13.219,
+            2.457
+          ],
+          [
+            20.369,
+            3.157
+          ]
+        ],
+        "stop_windows": [
+          {
+            "start_tick": 689,
+            "end_tick": 773,
+            "x": 9.658,
+            "y": 3.9,
+            "reason": "tour_stop"
+          }
+        ],
+        "burst_windows": [
+          {
+            "start_tick": 789,
+            "end_tick": 839,
+            "speed_multiplier": 1.35
+          }
+        ],
+        "safety_radius_tiles": 1.15,
+        "color": "#52a7ff"
+      },
+      {
+        "human_id": "H-04",
+        "group_id": "customer_tour",
+        "profile": "visitor_group",
+        "start_tick": 293,
+        "exit_tick": 1038,
+        "path": [
+          [
+            -0.677,
+            1.548
+          ],
+          [
+            2.773,
+            1.848
+          ],
+          [
+            6.173,
+            3.948
+          ],
+          [
+            10.673,
+            4.248
+          ],
+          [
+            13.373,
+            2.748
+          ],
+          [
+            20.523,
+            3.448
+          ]
+        ],
+        "stop_windows": [
+          {
+            "start_tick": 665,
+            "end_tick": 747,
+            "x": 9.812,
+            "y": 4.191,
+            "reason": "tour_stop"
+          }
+        ],
+        "burst_windows": [
+          {
+            "start_tick": 829,
+            "end_tick": 850,
+            "speed_multiplier": 1.35
+          }
+        ],
+        "safety_radius_tiles": 1.15,
+        "color": "#52a7ff"
+      },
+      {
+        "human_id": "H-05",
+        "group_id": "customer_tour",
+        "profile": "visitor_group",
+        "start_tick": 308,
+        "exit_tick": 1080,
+        "path": [
+          [
+            -0.474,
+            1.269
+          ],
+          [
+            2.976,
+            1.569
+          ],
+          [
+            6.376,
+            3.669
+          ],
+          [
+            10.876,
+            3.969
+          ],
+          [
+            13.576,
+            2.469
+          ],
+          [
+            20.726,
+            3.169
+          ]
+        ],
+        "stop_windows": [
+          {
+            "start_tick": 694,
+            "end_tick": 760,
+            "x": 10.03,
+            "y": 3.913,
+            "reason": "tour_stop"
+          }
+        ],
+        "burst_windows": [
+          {
+            "start_tick": 861,
+            "end_tick": 887,
+            "speed_multiplier": 1.35
+          }
+        ],
+        "safety_radius_tiles": 1.15,
+        "color": "#52a7ff"
+      }
+    ],
+    "recent_events": [
+      "Human-aware planner tracking 1 people and 8 temporary risk tiles.",
+      "Human intrusion H-02 entered warehouse; planner creates continuous safety buffer.",
+      "Human intrusion H-04 entered warehouse; planner creates continuous safety buffer.",
+      "Human-aware planner tracking 3 people and 16 temporary risk tiles.",
+      "Human intrusion H-05 entered warehouse; planner creates continuous safety buffer.",
+      "Human intrusion H-03 entered warehouse; planner creates continuous safety buffer.",
+      "Human-aware planner tracking 5 people and 25 temporary risk tiles.",
+      "Human intrusion H-01 exited warehouse; temporary risk tiles released.",
+      "Human-aware planner tracking 4 people and 20 temporary risk tiles.",
+      "Human-aware planner tracking 4 people and 21 temporary risk tiles.",
+      "Human intrusion H-02 exited warehouse; temporary risk tiles released.",
+      "Human-aware planner tracking 3 people and 12 temporary risk tiles."
+    ],
+    "metrics": {
+      "intrusion_events": 5,
+      "risk_hold_ticks": 193,
+      "human_reroutes": 5,
+      "peak_count": 5
+    },
+    "planner_contract": "Humans move in continuous coordinates; planner receives only temporary projected risk tiles and must hold or reroute robots."
+  },
+  "skill_evidence": {
+    "shelf_pick": {
+      "video": "../outputs/shelf_pick.mp4",
+      "trajectory": "../outputs/shelf_pick_trajectory.json",
+      "success": true
+    },
+    "handoff": {
+      "video": "../outputs/handoff.mp4",
+      "trajectory": "../outputs/handoff_trajectory.json",
+      "success": true
+    }
+  }
+}

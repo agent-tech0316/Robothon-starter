@@ -118,3 +118,11 @@ No external service is required for default judging. Optional OpenAI planner mod
 ## Final Artifact Status
 
 The final demo video is included as `submissions/warehouse_quadbot_atomic_demos/demo.mp4`. The accelerated fleet benchmark outputs, the 30-robot heterogeneous stress extension, and 14 MuJoCo physics evidence clips are also included and can be regenerated with the default run path above.
+
+## Human Intrusion Runtime Artifacts
+
+- `outputs/runtime_snapshot_low_humans.json` / `benchmark_metrics_low_humans.json` / `runtime_events_low_humans.jsonl`
+- `outputs/runtime_snapshot_medium_humans.json` / `benchmark_metrics_medium_humans.json` / `runtime_events_medium_humans.jsonl`
+- `outputs/runtime_snapshot_high_humans.json` / `benchmark_metrics_high_humans.json` / `runtime_events_high_humans.jsonl`
+- `configs/mission_layout.yaml` defines the continuous-human-to-temporary-risk-tile planner contract.
+- `ui/index.html` exposes the `Humans On/Off` switch for judge review.

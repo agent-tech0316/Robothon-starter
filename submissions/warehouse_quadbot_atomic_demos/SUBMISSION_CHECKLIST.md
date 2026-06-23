@@ -11,6 +11,7 @@ Registration UUID: 13b27675-9c26-49df-9014-cb31f33f9df8
 - [x] AEGIS/Futurist/Master assets available in repo `assets/`
 - [x] Runtime configs, schemas, and benchmark generator included
 - [x] Runtime output JSON/JSONL generated for low/medium/high
+- [x] Human-intrusion runtime JSON/JSONL generated for low/medium/high with UI toggle support
 - [x] MuJoCo evidence MP4 clips included
 - [x] Final `demo.mp4` video file added to submission folder.
 - [x] README prepared for AI judges
@@ -73,3 +74,9 @@ python -m http.server 8765 --bind 127.0.0.1
 - [x] 30-robot heterogeneous stress extension generated: 54 scenarios, 9,720 robot-hours, +60.27% average planner uplift, 100% safety pass.
 - [x] MuJoCo heterogeneous end-effector lab generated: dexterous hand, electromagnet, slide rail, and three payload/contact families.
 - [x] `clip_manifest.json`, README, scorecard, PR description, fast path, write-up, validation report, and manifest updated for the new evidence.
+
+## Human Intrusion Refresh
+
+- [x] Human-intrusion high-load evidence generated: 10 stochastic people, 17 risk tiles, 147 hold ticks, 17 reroutes, 0 collisions, 0 lock overlaps.
+- [x] UI exposes `Humans On/Off` and AI Decision Board explains human-aware reroutes.
+- [x] Judge fast path now reports human-intrusion evidence.

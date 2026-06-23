@@ -13,6 +13,7 @@ UUID: `13b27675-9c26-49df-9014-cb31f33f9df8`
 | Signal | Result |
 | --- | --- |
 | Fleet task | 9 AEGIS quadrupeds in the live UI plus a 30-robot heterogeneous fleet stress extension |
+| Human intrusion stressor | Toggleable UI/runtime mode with continuous random people, stop/run bursts, group tours, 17 high-load risk tiles, 147 hold ticks, and 17 human-triggered reroutes |
 | Stress benchmark | 54 six-hour scenarios / 108 planner runs / 9,720 simulated robot-hours at 30 robots |
 | Safety | 100% pass, 0 collisions, 0 tile-lock overlaps |
 | Planner value | +60.27% average throughput uplift, +185.23% best uplift vs planner-off baseline in the 30-robot stress extension |
@@ -29,7 +30,7 @@ This is not a low-level robot teleoperation project. It is a warehouse-order-ful
 
 A cooperative handoff demo answers one question: can robots complete a visible physical action? This project answers the next warehouse question: can a fleet keep orders moving for hours when every robot competes for the same aisle tiles?
 
-The scoring evidence is deliberately layered: the web runtime proves agentic planning value at warehouse scale, while MuJoCo validates the physical skills and small-fleet interactions that the scalable runtime assumes.
+The scoring evidence is deliberately layered: the web runtime proves agentic planning value at warehouse scale, including random human intrusion handling, while MuJoCo validates the physical skills and small-fleet interactions that the scalable runtime assumes.
 
 ## AI Judge Fast Path
 
@@ -41,7 +42,7 @@ python examples/run_agentech_judge_review.py
 
 This prints the artifact check, fleet stress benchmark, medium/high runtime metrics, MuJoCo evidence count, and rubric mapping in one terminal summary. Details are in `JUDGE_FAST_PATH.md`.
 
-The dashboard opens in a polished judge mode by default: the first screen shows throughput, safety, MuJoCo proof, the live map, a dynamic AI Decision Board, and a tabbed Agentic Planner graph/table/text view; detailed operations panels are one click away.
+The dashboard opens in a polished judge mode by default: the first screen shows throughput, safety, MuJoCo proof, the live map, a dynamic AI Decision Board, and a tabbed Agentic Planner graph/table/text view; detailed operations panels are one click away. The map toolbar includes a `Humans On/Off` switch that loads the human-intrusion runtime profile and visualizes temporary human-risk tiles.
 
 ## Demo Video
 
@@ -157,6 +158,24 @@ python examples/run_fleet_stress_benchmark.py --hours 6 --scenario-limit 54 --fl
 
 Outputs: `THIRTY_ROBOT_STRESS_BENCHMARK.md` and `outputs/fleet_stress_benchmark_30robots.json`.
 
+## Human Intrusion Runtime Stressor
+
+Warehouses are not perfectly closed robot worlds. A maintenance worker, safety auditor, urgent runner, or customer tour can enter the floor unpredictably. The new UI toggle `Humans On/Off` switches between the standard runtime and a human-intrusion runtime profile. Humans move in continuous coordinates, not tile-by-tile like robots; the planner projects their safety radius into temporary risk tiles and then holds or reroutes robots through the same tile-lock contract.
+
+High-load human-intrusion evidence:
+
+| Signal | Result |
+| --- | ---: |
+| Total stochastic human agents | 10 |
+| Active humans at snapshot | 7 |
+| Temporary human-risk tiles | 17 |
+| Human-risk hold ticks | 147 |
+| Human-triggered reroutes | 17 |
+| Completed / created orders | 75 / 140 |
+| Movement safety violations | 0 collisions / 0 lock overlaps |
+
+Outputs: `runtime_snapshot_{low,medium,high}_humans.json`, `benchmark_metrics_{low,medium,high}_humans.json`, and `runtime_events_{low,medium,high}_humans.jsonl`.
+
 ## Agentic Workflow
 
 ```mermaid
@@ -205,6 +224,9 @@ The runtime writes JSON and JSONL outputs in `outputs/`:
 - `runtime_snapshot_{low,medium,high}.json`
 - `benchmark_metrics_{low,medium,high}.json`
 - `runtime_events_{low,medium,high}.jsonl`
+- `runtime_snapshot_{low,medium,high}_humans.json`
+- `benchmark_metrics_{low,medium,high}_humans.json`
+- `runtime_events_{low,medium,high}_humans.jsonl`
 
 Primary metrics:
 
@@ -212,12 +234,13 @@ Primary metrics:
 - Completion rate: completed / created orders
 - Wait time: average tile-lock wait ticks
 - Congestion: deadlock recoveries, replans, denied moves, active queue
-- Safety: blocked-tile, cardinal-route, collision, and lock-overlap violations
+- Safety: blocked-tile, cardinal-route, collision, lock-overlap, and human-risk hold/reroute behavior
 
 ## Results
 
 - Medium load reaches 308 orders/hour with 77 of 84 orders completed in 900 simulated seconds after local planner multi-port conveyor selection.
 - High load reaches 364 orders/hour with 91 of 140 orders completed while keeping all movement safety counters at 0 under surge pressure.
+- Human-intrusion high load keeps the same warehouse active under 10 stochastic continuous human agents, 17 current risk tiles, 147 hold ticks, and 17 human-triggered reroutes with 0 robot collisions and 0 lock overlaps.
 - MuJoCo clips show payload-dependent gait, shelf pickup, basket contact, heavy-package handoff, two 6-DOF shelf-to-basket grasp sweeps, and a three-AEGIS corridor scene with loaded obstacle avoidance and zero obstacle contacts.
 - The new heavy 6-DOF grasp sweep records 630 gripper/package contacts, 220 left-finger contacts, 250 right-finger contacts, and 36 dual-finger grasp frames.
 - The UI binds to generated runtime JSON and animates runtime-linked robot movement without closing open routes or using mock-only phase motion.

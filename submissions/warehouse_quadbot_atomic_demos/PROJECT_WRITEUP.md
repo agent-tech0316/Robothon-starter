@@ -12,7 +12,7 @@ Mission -> Workflow -> Skill Graph -> Runtime -> Multi-Agent Warehouse Optimizat
 
 # Judge-Facing Thesis
 
-This submission is best read as a warehouse optimization benchmark with MuJoCo-backed robot skills, not as a single action demo. A single relay or handoff proves one local physical event. This project measures whether a shared warehouse stays productive when 9 live-dashboard quadrupeds, and a 30-robot heterogeneous stress extension, compete for orders, racks, tile locks, priority, and narrow aisles over long simulated horizons.
+This submission is best read as a warehouse optimization benchmark with MuJoCo-backed robot skills, not as a single action demo. A single relay or handoff proves one local physical event. This project measures whether a shared warehouse stays productive when 9 live-dashboard quadrupeds, a 30-robot heterogeneous stress extension, and optional stochastic human intrusions compete for orders, racks, tile locks, priority, and narrow aisles over long simulated horizons.
 
 The important claim is measurable: planner-off versus local-planner baselines show throughput uplift, wait-time reduction, and zero movement safety violations across generated load profiles and the 54-scenario accelerated stress benchmark.
 
@@ -24,7 +24,7 @@ Warehouse throughput depends on more than one robot successfully moving a parcel
 
 The hard part is not only whether one robot can pick one parcel. The hard part is whether many robots can make simultaneous decisions inside the same constrained warehouse. Every assignment consumes a robot, every route consumes future tiles, every wait increases order age, and every shortcut can create congestion for another robot.
 
-This makes the benchmark closer to warehouse traffic control than to a single manipulation clip. The runtime must keep four things true at the same time: orders keep completing, urgent work is not starved, robots do not collide or overlap locks, and the system still improves throughput under load.
+This makes the benchmark closer to warehouse traffic control than to a single manipulation clip. The runtime must keep five things true at the same time: orders keep completing, urgent work is not starved, robots do not collide or overlap locks, human-risk buffers are respected, and the system still improves throughput under load.
 
 # Robot Platform
 
@@ -59,13 +59,15 @@ In plain terms, the agentic loop is: new orders arrive, the scheduler ranks them
 
 # Benchmark Design
 
-Three generated load profiles are included: low, medium, and high. Each run is 900 simulated ticks and writes a snapshot, metrics JSON, and JSONL event stream. The UI can switch between the generated profiles.
+Three generated load profiles are included: low, medium, and high. Each run is 900 simulated ticks and writes a snapshot, metrics JSON, and JSONL event stream. The UI can switch between the generated profiles, and the `Humans On/Off` button switches to matching human-intrusion profiles.
 
 ## Accelerated Fleet Stress Benchmark
 
 For long-horizon optimization evidence, the submission also includes a benchmark-only fast-forward runtime. It uses 1-minute ticks to simulate six warehouse hours per scenario without UI rendering. The 54-scenario matrix covers 3 load levels, 3 SKU weight mixes, 3 pick difficulty levels, and 2 congestion modes. Each scenario runs planner-off and local-planner modes, producing 54 paired comparisons / 108 raw runs. The default 9-robot stress report covers 2,916 robot-hours; the heterogeneous 30-robot extension covers 9,720 robot-hours with 8 grippers, 9 dexterous hands, 8 electromagnets, and 5 slide-rail tools.
 
 Headline 30-robot stress result: 100% safety pass rate, 0 collision violations, 0 tile-lock overlap violations, +60.27% average planner throughput uplift, +185.23% best-case uplift, and +68.32% average wait-time reduction under scaled demand.
+
+Human-intrusion benchmark evidence: high load includes 10 stochastic continuous people, 7 active at snapshot, 17 temporary risk tiles, 147 human-risk hold ticks, and 17 human-triggered reroutes while preserving 0 robot collisions and 0 lock overlaps.
 
 ## Baseline Comparison
 
@@ -88,7 +90,7 @@ Tracked safety counters: blocked-tile route violations, route cardinality violat
 - Rack footprint blocking
 - Deadlock recovery and replanning counters
 - SKU weight/difficulty model
-- Runtime snapshots, metrics, and event streams
+- Runtime snapshots, metrics, and event streams, including `_humans` profiles for random human intrusion
 - Multi-wall exterior conveyor ports with explicit exterior footprints, outer door lines, and unique in-warehouse unload tiles
 - Mission-control dashboard with runtime-linked robot animation
 - MuJoCo evidence clips for walking, payload carrying, shelf pickup, handoff, 6-DOF multi-angle shelf-to-basket grasp sweeps, a three-robot corridor physics scene, and heterogeneous dexterous/magnetic/rail terminal tools
@@ -104,7 +106,7 @@ Tracked safety counters: blocked-tile route violations, route cardinality violat
 
 # Results
 
-The current medium profile completes 77 of 84 orders and reaches 308 orders/hour. High load completes 91 of 140 orders and reaches 364 orders/hour while preserving zero collision and zero lock-overlap violations. The accelerated 30-robot heterogeneous fleet stress benchmark adds 54 six-hour nominal/aisle-surge scenarios, 9,720 robot-hours, 100% safety pass rate, +60.27% average planner throughput uplift, and +185.23% best uplift. MuJoCo evidence now includes 14 clips with generated MJCF, contact counters for package/gripper, package/basket, package/shelf, handoff interactions, a three-AEGIS corridor, and a heterogeneous end-effector lab. The heavy grasp sweep records 630 gripper/package contacts and 36 dual-finger grasp frames; the heterogeneous lab records 1077 dexterous/fragile contacts, 508 magnet/metal contacts, and 1020 rail/tote contacts.
+The current medium profile completes 77 of 84 orders and reaches 308 orders/hour. High load completes 91 of 140 orders and reaches 364 orders/hour while preserving zero collision and zero lock-overlap violations. Human-intrusion high load adds 10 stochastic people, 17 current risk tiles, 147 hold ticks, and 17 reroutes, preserving 0 collisions and 0 lock overlaps. The accelerated 30-robot heterogeneous fleet stress benchmark adds 54 six-hour nominal/aisle-surge scenarios, 9,720 robot-hours, 100% safety pass rate, +60.27% average planner throughput uplift, and +185.23% best uplift. MuJoCo evidence now includes 14 clips with generated MJCF, contact counters for package/gripper, package/basket, package/shelf, handoff interactions, a three-AEGIS corridor, and a heterogeneous end-effector lab. The heavy grasp sweep records 630 gripper/package contacts and 36 dual-finger grasp frames; the heterogeneous lab records 1077 dexterous/fragile contacts, 508 magnet/metal contacts, and 1020 rail/tote contacts.
 
 # Current Limitations
 

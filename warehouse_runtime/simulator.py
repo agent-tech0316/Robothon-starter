@@ -41,6 +41,7 @@ class RuntimeOptions:
     max_ticks: int | None = None
     output_dir: str | None = None
     run_id: str = "runtime_demo"
+    human_intrusion: bool = False
 
 
 @dataclass
@@ -144,6 +145,20 @@ class Robot:
 
 
 @dataclass
+class HumanIntruder:
+    human_id: str
+    group_id: str
+    profile: str
+    start_tick: int
+    exit_tick: int
+    path: list[list[float]]
+    stop_windows: list[dict[str, Any]] = field(default_factory=list)
+    burst_windows: list[dict[str, Any]] = field(default_factory=list)
+    safety_radius_tiles: float = 0.85
+    color: str = "#ffbf3d"
+
+
+@dataclass
 class RuntimeMetrics:
     created_orders: int = 0
     completed_orders: int = 0
@@ -155,6 +170,10 @@ class RuntimeMetrics:
     planner_checks: int = 0
     ai_planner_calls: int = 0
     local_planner_fallbacks: int = 0
+    human_intrusion_events: int = 0
+    human_risk_hold_ticks: int = 0
+    human_reroute_count: int = 0
+    human_peak_count: int = 0
 
 
 class WarehouseRuntime:
@@ -224,8 +243,17 @@ class WarehouseRuntime:
         self.last_lock_requests: list[dict[str, Any]] = []
         self.last_granted_moves: list[dict[str, Any]] = []
         self.last_denied_moves: list[dict[str, Any]] = []
+        self.human_intrusion_enabled = bool(self.options.human_intrusion)
+        self.human_random_seed = int(self.layout_config.get("human_intrusion", {}).get("random_seed", 20260623))
+        self.human_agents: list[HumanIntruder] = []
+        self.current_human_agents: list[dict[str, Any]] = []
+        self.current_human_risk_tiles: set[str] = set()
+        self.human_active_ids: set[str] = set()
+        self.human_recent_events: deque[str] = deque(maxlen=12)
 
         self._build_world()
+        if self.human_intrusion_enabled:
+            self._build_human_intrusions()
         self._emit("runtime.started", f"Runtime initialized with {self.options.load} load and {len(self.robots)} robots.")
 
     @property
@@ -242,6 +270,7 @@ class WarehouseRuntime:
         self.tick += 1
         self.wait_for = {}
         self._generate_orders()
+        self._update_human_intrusions()
         self._complete_busy_skills()
         if self.tick == 1 or self.tick % self.planner_interval_ticks == 0:
             self._planner_check()
@@ -314,6 +343,7 @@ class WarehouseRuntime:
                 "collision_violations": len(self.collision_violations()),
                 "lock_overlap_violations": len(self.lock_overlap_violations()),
             },
+            "human_intrusion": self._human_intrusion_snapshot(),
             "skill_evidence": {
                 "shelf_pick": {
                     "video": "../outputs/shelf_pick.mp4",
@@ -357,6 +387,12 @@ class WarehouseRuntime:
             "planner_checks": self.metrics.planner_checks,
             "ai_planner_calls": self.metrics.ai_planner_calls,
             "local_planner_fallbacks": self.metrics.local_planner_fallbacks,
+            "human_intrusion_enabled": self.human_intrusion_enabled,
+            "human_intrusion_events": self.metrics.human_intrusion_events,
+            "human_active_peak": self.metrics.human_peak_count,
+            "human_risk_hold_ticks": self.metrics.human_risk_hold_ticks,
+            "human_reroute_count": self.metrics.human_reroute_count,
+            "human_current_risk_tiles": len(self.current_human_risk_tiles),
             "route_blocked_tile_violations": len(self.route_violations()),
             "route_cardinality_violations": len(self.route_cardinality_violations()),
             "collision_violations": len(self.collision_violations()),
@@ -443,6 +479,233 @@ class WarehouseRuntime:
             self.robots[robot.robot_id] = robot
             self.occupancy[robot.current_tile_id] = robot.robot_id
 
+    def _build_human_intrusions(self) -> None:
+        config = self.layout_config.get("human_intrusion", {})
+        load_factor = {"low": 1, "medium": 2, "high": 3}.get(self.options.load, 2)
+        rng = random.Random(self.human_random_seed + load_factor * 101)
+        horizon = max(300, self.max_ticks)
+
+        templates = [
+            {
+                "profile": "maintenance_walk",
+                "group_id": "maintenance",
+                "count": 1,
+                "path": [[-0.55, 5.7], [2.8, 5.2], [7.6, 5.8], [11.8, 5.2], [20.45, 6.6]],
+                "color": "#ffbf3d",
+                "radius": 0.85,
+                "start": rng.randint(45, 110),
+                "duration": rng.randint(430, 620),
+                "stop_fraction": 0.44,
+            },
+            {
+                "profile": "safety_auditor",
+                "group_id": "audit",
+                "count": 1 if load_factor >= 2 else 0,
+                "path": [[16.6, -0.55], [16.2, 2.0], [13.2, 4.8], [8.4, 8.6], [3.0, 8.8], [-0.55, 7.1]],
+                "color": "#b980ff",
+                "radius": 0.9,
+                "start": rng.randint(140, 250),
+                "duration": rng.randint(470, 690),
+                "stop_fraction": 0.58,
+            },
+            {
+                "profile": "visitor_group",
+                "group_id": "customer_tour",
+                "count": 7 if load_factor >= 3 else 3 if load_factor == 2 else 0,
+                "path": [[-0.65, 1.4], [2.8, 1.7], [6.2, 3.8], [10.7, 4.1], [13.4, 2.6], [20.55, 3.3]],
+                "color": "#52a7ff",
+                "radius": 1.15,
+                "start": rng.randint(260, 360),
+                "duration": rng.randint(520, 760),
+                "stop_fraction": 0.50,
+            },
+            {
+                "profile": "urgent_runner",
+                "group_id": "runner",
+                "count": 1 if load_factor >= 3 else 0,
+                "path": [[19.4, 12.7], [15.6, 10.6], [11.4, 9.6], [5.8, 6.8], [1.0, 4.1], [-0.55, 2.9]],
+                "color": "#ff6848",
+                "radius": 0.95,
+                "start": rng.randint(390, 520),
+                "duration": rng.randint(230, 360),
+                "stop_fraction": None,
+                "runner": True,
+            },
+        ]
+
+        agents: list[HumanIntruder] = []
+        for template in templates:
+            for index in range(int(template["count"])):
+                offset_x = rng.uniform(-0.18, 0.18) + (index % 3 - 1) * 0.16
+                offset_y = rng.uniform(-0.18, 0.18) + (index // 3) * 0.12
+                start_tick = int(template["start"] + rng.randint(0, 42) + index * rng.randint(2, 8))
+                duration = int(template["duration"] + rng.randint(-55, 70))
+                exit_tick = min(horizon + 180, start_tick + max(120, duration))
+                path = [[round(x + offset_x, 3), round(y + offset_y, 3)] for x, y in template["path"]]
+                stop_windows: list[dict[str, Any]] = []
+                if template.get("stop_fraction") is not None:
+                    stop_start = start_tick + int((exit_tick - start_tick) * float(template["stop_fraction"]))
+                    stop_end = min(exit_tick - 8, stop_start + rng.randint(38, 96))
+                    stop_pos = self._interpolate_path(path, (stop_start - start_tick) / max(1, exit_tick - start_tick))
+                    stop_windows.append({
+                        "start_tick": stop_start,
+                        "end_tick": stop_end,
+                        "x": round(stop_pos[0], 3),
+                        "y": round(stop_pos[1], 3),
+                        "reason": "inspection_pause" if template["profile"] != "visitor_group" else "tour_stop",
+                    })
+                burst_start = start_tick + int((exit_tick - start_tick) * rng.uniform(0.58, 0.76))
+                burst_windows = [{
+                    "start_tick": burst_start,
+                    "end_tick": min(exit_tick, burst_start + rng.randint(20, 54)),
+                    "speed_multiplier": 1.8 if template.get("runner") else 1.35,
+                }]
+                agents.append(HumanIntruder(
+                    human_id=f"H-{len(agents) + 1:02d}",
+                    group_id=str(template["group_id"]),
+                    profile=str(template["profile"]),
+                    start_tick=start_tick,
+                    exit_tick=exit_tick,
+                    path=path,
+                    stop_windows=stop_windows,
+                    burst_windows=burst_windows,
+                    safety_radius_tiles=float(template["radius"]),
+                    color=str(template["color"]),
+                ))
+        self.human_agents = agents
+
+    def _update_human_intrusions(self) -> None:
+        if not self.human_intrusion_enabled:
+            self.current_human_agents = []
+            self.current_human_risk_tiles = set()
+            return
+        active = self._active_human_agents_at(self.tick)
+        active_ids = {agent["human_id"] for agent in active}
+        entered = sorted(active_ids - self.human_active_ids)
+        exited = sorted(self.human_active_ids - active_ids)
+        for human_id in entered:
+            self.metrics.human_intrusion_events += 1
+            message = f"Human intrusion {human_id} entered warehouse; planner creates continuous safety buffer."
+            self.human_recent_events.append(message)
+            self._emit("human.entered", message, human_id=human_id)
+        for human_id in exited:
+            message = f"Human intrusion {human_id} exited warehouse; temporary risk tiles released."
+            self.human_recent_events.append(message)
+            self._emit("human.exited", message, human_id=human_id)
+        self.human_active_ids = active_ids
+        self.current_human_agents = active
+        self.current_human_risk_tiles = self._risk_tiles_for_humans(active)
+        self.metrics.human_peak_count = max(self.metrics.human_peak_count, len(active))
+        if active and self.tick % max(30, self.planner_interval_ticks // 4) == 0:
+            message = f"Human-aware planner tracking {len(active)} people and {len(self.current_human_risk_tiles)} temporary risk tiles."
+            self.human_recent_events.append(message)
+            self._emit("human.risk_window", message, active_count=len(active), risk_tiles=sorted(self.current_human_risk_tiles))
+
+    def _active_human_agents_at(self, tick: int) -> list[dict[str, Any]]:
+        active: list[dict[str, Any]] = []
+        for agent in self.human_agents:
+            if tick < agent.start_tick or tick > agent.exit_tick:
+                continue
+            x, y, state = self._human_position(agent, tick)
+            risk_tiles = sorted(self._risk_tiles_for_point(x, y, agent.safety_radius_tiles))
+            active.append({
+                "human_id": agent.human_id,
+                "group_id": agent.group_id,
+                "profile": agent.profile,
+                "x": round(x, 3),
+                "y": round(y, 3),
+                "state": state,
+                "start_tick": agent.start_tick,
+                "exit_tick": agent.exit_tick,
+                "safety_radius_tiles": agent.safety_radius_tiles,
+                "risk_tiles": risk_tiles,
+                "color": agent.color,
+            })
+        return active
+
+    def _human_position(self, agent: HumanIntruder, tick: int) -> tuple[float, float, str]:
+        for window in agent.stop_windows:
+            if int(window["start_tick"]) <= tick <= int(window["end_tick"]):
+                return float(window["x"]), float(window["y"]), str(window.get("reason", "stopped"))
+        duration = max(1, agent.exit_tick - agent.start_tick)
+        progress = clamp_float((tick - agent.start_tick) / duration, 0.0, 1.0)
+        state = "walking"
+        for burst in agent.burst_windows:
+            if int(burst["start_tick"]) <= tick <= int(burst["end_tick"]):
+                progress = clamp_float(progress + 0.055 * float(burst.get("speed_multiplier", 1.4)), 0.0, 1.0)
+                state = "running"
+                break
+        x, y = self._interpolate_path(agent.path, progress)
+        return x, y, state
+
+    def _interpolate_path(self, path: list[list[float]], progress: float) -> tuple[float, float]:
+        if not path:
+            return 0.0, 0.0
+        if len(path) == 1:
+            return float(path[0][0]), float(path[0][1])
+        segments: list[tuple[list[float], list[float], float]] = []
+        total = 0.0
+        for a, b in zip(path, path[1:]):
+            length = math.hypot(float(b[0]) - float(a[0]), float(b[1]) - float(a[1]))
+            if length <= 0.0001:
+                continue
+            segments.append((a, b, length))
+            total += length
+        target = clamp_float(progress, 0.0, 1.0) * max(total, 0.0001)
+        for a, b, length in segments:
+            if target <= length:
+                local = target / length
+                return float(a[0]) + (float(b[0]) - float(a[0])) * local, float(a[1]) + (float(b[1]) - float(a[1])) * local
+            target -= length
+        return float(path[-1][0]), float(path[-1][1])
+
+    def _risk_tiles_for_humans(self, humans: list[dict[str, Any]]) -> set[str]:
+        risk_tiles: set[str] = set()
+        for human in humans:
+            risk_tiles.update(self._risk_tiles_for_point(float(human["x"]), float(human["y"]), float(human["safety_radius_tiles"])))
+        return risk_tiles
+
+    def _risk_tiles_for_point(self, x: float, y: float, radius_tiles: float) -> set[str]:
+        risk_tiles: set[str] = set()
+        min_x = math.floor(x - radius_tiles - 0.75)
+        max_x = math.ceil(x + radius_tiles + 0.75)
+        min_y = math.floor(y - radius_tiles - 0.75)
+        max_y = math.ceil(y + radius_tiles + 0.75)
+        for ty in range(min_y, max_y + 1):
+            for tx in range(min_x, max_x + 1):
+                tile_id = tile_id_from_xy(tx, ty)
+                tile = self.tiles.get(tile_id)
+                if not tile or not tile.traversable:
+                    continue
+                center_x, center_y = tx + 0.5, ty + 0.5
+                if math.hypot(center_x - x, center_y - y) <= radius_tiles + 0.72:
+                    risk_tiles.add(tile_id)
+        return risk_tiles
+
+    def _tile_has_human_risk(self, tile_id: str | None) -> bool:
+        return bool(self.human_intrusion_enabled and tile_id and tile_id in self.current_human_risk_tiles)
+
+    def _human_intrusion_snapshot(self) -> dict[str, Any]:
+        return {
+            "enabled": self.human_intrusion_enabled,
+            "model": "continuous_random_walk_projected_to_temporary_tile_risk",
+            "random_seed": self.human_random_seed,
+            "active_count": len(self.current_human_agents),
+            "peak_count": self.metrics.human_peak_count,
+            "total_agents": len(self.human_agents),
+            "risk_tiles": sorted(self.current_human_risk_tiles),
+            "active_agents": list(self.current_human_agents),
+            "agents": [asdict(agent) for agent in self.human_agents],
+            "recent_events": list(self.human_recent_events),
+            "metrics": {
+                "intrusion_events": self.metrics.human_intrusion_events,
+                "risk_hold_ticks": self.metrics.human_risk_hold_ticks,
+                "human_reroutes": self.metrics.human_reroute_count,
+                "peak_count": self.metrics.human_peak_count,
+            },
+            "planner_contract": "Humans move in continuous coordinates; planner receives only temporary projected risk tiles and must hold or reroute robots.",
+        }
+
     def _generate_orders(self) -> None:
         profile = self._selected_order_profile()
         rate = float(profile.get("orders_per_hour", profile.get("average_orders_per_hour", 300)))
@@ -483,6 +746,8 @@ class WarehouseRuntime:
             "deadlocks": self.metrics.deadlock_count,
             "replans": self.metrics.replan_count,
             "completed_per_hour": self._per_hour(self.metrics.completed_orders),
+            "human_active_count": len(self.current_human_agents),
+            "human_risk_tiles": len(self.current_human_risk_tiles),
         }
         fallback = local_planner_decision(summary)
         if self.options.planner_mode == "openai":
@@ -492,6 +757,12 @@ class WarehouseRuntime:
                 self.metrics.local_planner_fallbacks += 1
         else:
             decision = fallback
+        if self.human_intrusion_enabled and self.current_human_risk_tiles:
+            decision.strategy = f"human_aware_{decision.strategy}"
+            decision.latest_decision = (
+                f"Human-aware planner holds/reroutes around {len(self.current_human_agents)} continuous human agents "
+                f"and {len(self.current_human_risk_tiles)} temporary risk tiles before normal fleet optimization."
+            )
         self.metrics.planner_checks += 1
         self.last_planner_decision = decision
         self.active_handoff_mode = decision.handoff_enabled
@@ -590,6 +861,11 @@ class WarehouseRuntime:
                 self._emit("route.blocked_tile", f"{robot.robot_id} route step {next_tile} is blocked; replanning.", robot_id=robot.robot_id, tile_id=next_tile)
                 self._replan_robot(robot, "blocked_tile_on_route")
                 continue
+            if self._tile_has_human_risk(next_tile):
+                blocked_by[robot.robot_id] = ("human_intrusion", "human_intrusion_zone")
+                self._record_denied_move(robot, source_tile, next_tile, "human_intrusion_zone", blocker="human")
+                self.metrics.human_risk_hold_ticks += 1
+                continue
 
             owner = self.occupancy.get(next_tile)
             if owner and owner != robot.robot_id:
@@ -619,6 +895,11 @@ class WarehouseRuntime:
                 self._record_denied_move(robot, source_tile, next_tile, "blocked_tile_during_arbitration")
                 self._emit("route.blocked_tile", f"{robot.robot_id} destination {next_tile} is blocked during lock arbitration.", robot_id=robot.robot_id, tile_id=next_tile)
                 self._replan_robot(robot, "blocked_tile_during_arbitration")
+                continue
+            if self._tile_has_human_risk(next_tile):
+                blocked_by[robot.robot_id] = ("human_intrusion", "human_intrusion_zone")
+                self._record_denied_move(robot, source_tile, next_tile, "human_intrusion_zone", blocker="human")
+                self.metrics.human_risk_hold_ticks += 1
                 continue
             occupant = self.occupancy.get(next_tile)
             if occupant and occupant != robot.robot_id:
@@ -650,7 +931,8 @@ class WarehouseRuntime:
                 self.wait_for[robot_id] = blocker
             self._emit("robot.lock_wait", f"{robot.robot_id} waits for tile {robot.next_tile_id} blocked by {blocker} ({reason}).", robot_id=robot.robot_id, blocker=blocker, reason=reason)
             if robot.lock_denials >= self.lock_replan_threshold or robot.wait_ticks >= self.wait_replan_threshold:
-                self._replan_robot(robot, "repeated_lock_denial")
+                replan_reason = "human_intrusion_zone" if reason == "human_intrusion_zone" else "repeated_lock_denial"
+                self._replan_robot(robot, replan_reason)
 
     def _commit_move(self, robot: Robot, next_tile: str) -> None:
         if next_tile not in self.tiles or not self.tiles[next_tile].traversable:
@@ -814,6 +1096,8 @@ class WarehouseRuntime:
         if ok:
             robot.last_replan_tick = self.tick
             self.metrics.replan_count += 1
+            if reason.startswith("human"):
+                self.metrics.human_reroute_count += 1
             self._emit("route.replanned", f"Replanned {robot.robot_id} because {reason}.", robot_id=robot.robot_id, reason=reason)
         return ok
 
@@ -841,6 +1125,7 @@ class WarehouseRuntime:
         if not self.tiles[goal].traversable:
             return None
         occupied = set(self.occupancy)
+        human_risk = set(self.current_human_risk_tiles) if self.human_intrusion_enabled and self.options.planner_mode != "off" else set()
         if robot_id:
             occupied = {tile for tile in occupied if self.occupancy[tile] != robot_id}
         if goal in occupied:
@@ -855,6 +1140,8 @@ class WarehouseRuntime:
                 break
             for neighbor in self._neighbors(current):
                 if not self.tiles[neighbor].traversable:
+                    continue
+                if neighbor in human_risk and neighbor != start:
                     continue
                 if avoid_occupied and neighbor in occupied:
                     continue
@@ -1153,6 +1440,8 @@ class WarehouseRuntime:
             skills.add("shelf_pick")
         if any(robot.status == "unloading" for robot in self.robots.values()):
             skills.add("unload")
+        if self.human_intrusion_enabled and self.current_human_risk_tiles:
+            skills.add("human_aware_reroute")
         if self.active_handoff_mode:
             skills.add("handoff")
         if self.metrics.deadlock_count:
@@ -1365,6 +1654,10 @@ class WarehouseRuntime:
         }
         self.events.append(event)
         self.recent_messages.append(message)
+
+
+def clamp_float(value: float, min_value: float, max_value: float) -> float:
+    return max(min_value, min(max_value, value))
 
 
 def tile_id_from_xy(x: int, y: int) -> str:

@@ -21,6 +21,9 @@ REQUIRED_FILES = [
     SUBMISSION / "THIRTY_ROBOT_STRESS_BENCHMARK.md",
     OUTPUTS / "fleet_stress_benchmark_summary.json",
     OUTPUTS / "fleet_stress_benchmark_30robots.json",
+    OUTPUTS / "runtime_snapshot_high_humans.json",
+    OUTPUTS / "benchmark_metrics_high_humans.json",
+    OUTPUTS / "runtime_events_high_humans.jsonl",
     PHYSICS / "clip_manifest.json",
     PHYSICS / "physics_evidence_contact_sheet.png",
     PHYSICS / "effector_mix_lab.mp4",
@@ -44,6 +47,9 @@ def main() -> int:
     aggregate30 = stress30["aggregate"]
     medium = load_json(OUTPUTS / "benchmark_metrics_medium.json")
     high = load_json(OUTPUTS / "benchmark_metrics_high.json")
+    high_humans = load_json(OUTPUTS / "benchmark_metrics_high_humans.json")
+    high_human_snapshot = load_json(OUTPUTS / "runtime_snapshot_high_humans.json")
+    human_intrusion = high_human_snapshot.get("human_intrusion", {})
     clip_manifest = load_json(PHYSICS / "clip_manifest.json")
     clips = clip_manifest.get("clips", [])
 
@@ -69,6 +75,7 @@ def main() -> int:
     print("Judge scorecard")
     print("- Live fleet task: 9 AEGIS quadrupeds, shared aisle tiles, order priority, route locks")
     print("- Stress extension: 30 AEGIS quadrupeds with mixed gripper/dexterous/magnet/rail end-effectors")
+    print("- Human intrusion extension: continuous random people create temporary risk tiles for hold/reroute decisions")
     print("- Core claim: scalable warehouse decisions improve throughput while MuJoCo validates physical skills")
     print()
 
@@ -85,6 +92,9 @@ def main() -> int:
     high_throughput = high.get("throughput_orders_per_hour", high.get("throughput_orders_per_simulated_hour", 0))
     print(f"- Medium profile: {medium['completed_orders']}/{medium['created_orders']} orders, {medium_throughput}/hr")
     print(f"- High profile: {high['completed_orders']}/{high['created_orders']} orders, {high_throughput}/hr")
+    print(f"- Human-intrusion high profile: {high_humans['completed_orders']}/{high_humans['created_orders']} orders, {high_humans.get('throughput_orders_per_simulated_hour', 0)}/hr")
+    print(f"- Human stressor: total_people={human_intrusion.get('total_agents', 0)}, active_now={len(human_intrusion.get('active_agents', []))}, current_risk_tiles={len(human_intrusion.get('risk_tiles', []))}")
+    print(f"- Human-aware planner response: risk_hold_ticks={high_humans.get('human_risk_hold_ticks', 0)}, reroutes={high_humans.get('human_reroute_count', 0)}, peak_people={high_humans.get('human_active_peak', 0)}")
     print()
 
     six_dof = next((clip for clip in clips if clip.get("name") == "six_dof_grasp_sweep_metal"), {})
@@ -106,11 +116,11 @@ def main() -> int:
     print("Rubric mapping")
     print("- Runnability: one-command stdlib review plus documented install/run paths")
     print("- MuJoCo depth: 6-DOF arm, wrist/tool joints, actuators, sensors, collision geoms, fingertip and tool contact traces")
-    print("- Task design: warehouse order fulfillment under load, SKU weight, pick difficulty, congestion")
+    print("- Task design: warehouse order fulfillment under load, SKU weight, pick difficulty, congestion, and random human intrusion")
     print("- Control: congestion-aware multi-port planner versus nearest-exit planner-off baseline")
     print("- Engineering quality: runtime schemas, configs, event logs, reproducible JSON artifacts")
     print("- Presentation: short demo video plus simplified judge fast path")
-    print("- Innovation: multi-agent warehouse optimization with MuJoCo-backed atomic skills and heterogeneous robot tools")
+    print("- Innovation: multi-agent warehouse optimization with human-aware planning, MuJoCo-backed atomic skills, and heterogeneous robot tools")
     print()
 
     print("Verdict")

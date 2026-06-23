@@ -156,3 +156,16 @@ Post-video audit passed locally: no video placeholder remains, no local absolute
 Added a benchmark-only 30-robot stress extension using 8 parallel grippers, 9 dexterous hands, 8 electromagnets, and 5 slide-rail tools. The run covers 54 six-hour scenarios / 108 raw planner runs / 9,720 simulated robot-hours at 2.684x demand scale. Results: 100% safety pass rate, 0 collisions, 0 lock-overlap violations, +60.27% average throughput uplift, +185.23% best uplift, and +68.32% average wait-time reduction.
 
 Added MuJoCo heterogeneous end-effector evidence: `outputs/physics_evidence/effector_mix_lab.mp4` and `effector_mix_lab_trajectory.json`. Contact counters report 1077 dexterous-hand/fragile-vial contacts, 508 electromagnet/metal-puck contacts, 1020 slide-rail/tote contacts, and 11794 total MuJoCo contacts.
+
+## Human Intrusion Runtime Refresh
+
+Added a toggleable human-intrusion stressor to the web runtime and generated matching low/medium/high `_humans` snapshots, metrics, and JSONL event streams. Humans move in continuous coordinates rather than discrete robot tiles; the runtime projects each human safety radius into temporary risk tiles so the same planner/lock system can hold or reroute robots.
+
+High-load human-intrusion evidence: 10 total stochastic people, 7 active at snapshot, 17 current human-risk tiles, 147 human-risk hold ticks, 17 human-triggered reroutes, 75 / 140 completed orders, 0 robot collisions, and 0 lock overlaps.
+
+Validation command:
+
+```bash
+python examples/build_integrated_demo_data.py
+python examples/run_agentech_judge_review.py
+```
