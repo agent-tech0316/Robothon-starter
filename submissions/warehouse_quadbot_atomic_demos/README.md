@@ -1,19 +1,35 @@
-# Agentic Warehouse Quadbot Fulfillment Simulator
+# Agentic Warehouse Quadbot Benchmark
 
-Agentech's Robothon 2026 entry is a warehouse-order-fulfillment simulator built around a fleet of AEGIS quadruped robots. The project connects mission design, workflow, skill graph, runtime scheduling, tile-lock movement, benchmark metrics, MuJoCo low-level action evidence, and a mission-control dashboard.
+## 54-Scenario Fleet Stress Test With MuJoCo 6-DOF Grasp Validation
 
-This is not a low-level robot teleoperation project. MuJoCo is used as the physical-world validator for atomic robot actions such as walking with different payloads, shelf pickup, basket loading, and robot-to-robot handoff.
+Registered project name: `Agentic Warehouse Quadbot Fulfillment Simulator`
+
+Team: `Agentech`
+
+UUID: `13b27675-9c26-49df-9014-cb31f33f9df8`
+
+## Judge Scorecard
+
+| Signal | Result |
+| --- | --- |
+| Fleet task | 9 AEGIS quadrupeds fulfilling warehouse orders on shared discrete tiles |
+| Stress benchmark | 54 six-hour scenarios / 108 planner runs / 2,916 simulated robot-hours |
+| Safety | 100% pass, 0 collisions, 0 tile-lock overlaps |
+| Planner value | +30.74% average throughput uplift, +97.42% best uplift vs planner-off baseline |
+| High-load result | 91 / 140 orders, 364 orders/hour, 0 movement safety violations |
+| MuJoCo depth | 12 evidence clips, generated MJCF, touch sensors, collision geoms, contact traces |
+| 6-DOF grasp proof | 630 gripper/package contacts, 220 left-finger contacts, 250 right-finger contacts, 36 dual-finger grasp frames |
+| Demo | 1:03.37 AI-judge cut with runtime UI, benchmark proof, contact sheet, 6-DOF grasp, and handoff |
+
+Read first: [`JUDGE_SCORECARD.md`](JUDGE_SCORECARD.md). Run first: `python examples/run_agentech_judge_review.py`.
+
+This is not a low-level robot teleoperation project. It is a warehouse-order-fulfillment benchmark that connects mission design, workflow, skill graph, runtime scheduling, tile-lock movement, KPI benchmarking, MuJoCo low-level action evidence, and a mission-control dashboard.
 
 ## Judge Takeaway: System Benchmark, Not One Clip
 
 A cooperative handoff demo answers one question: can robots complete a visible physical action? This project answers the next warehouse question: can a fleet keep orders moving for hours when every robot competes for the same aisle tiles?
 
-The scoring evidence is deliberately system-level:
-
-- 9 AEGIS quadrupeds share rack aisles through atomic current+next tile locks.
-- Planner-off and planner-on runs are compared, so the throughput gain is measured against a baseline.
-- The 54-scenario stress benchmark varies load, SKU weight mix, pick difficulty, and aisle-surge congestion, then fast-forwards 2,916 robot-hours with 0 collision and 0 lock-overlap violations.
-- MuJoCo validates the physical atomic skills with 12 evidence clips, generated MJCF, touch sensors, and contact counters; the runtime validates warehouse-scale decision quality.
+The scoring evidence is deliberately system-level: planner-off vs planner-on metrics prove scheduling value, while MuJoCo validates the physical atomic skills that the scalable warehouse runtime assumes.
 
 ## AI Judge Fast Path
 
@@ -45,6 +61,7 @@ The final demo video is included directly in this submission as `demo.mp4` (1:03
 
 Submission support documents:
 
+- `JUDGE_SCORECARD.md`: one-screen scoring answer sheet for AI judges.
 - `SUBMISSION_MANIFEST.md`: maps the judge-facing submission to repo-root runtime/config/schema code.
 - `VALIDATION_REPORT.md`: records clean-copy validation and artifact hygiene checks.
 - `JUDGE_FAST_PATH.md`: one-command AI judge review path.

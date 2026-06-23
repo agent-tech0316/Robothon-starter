@@ -11,6 +11,7 @@ This submission is intentionally organized as a repository-level project with th
 Start here:
 
 - `submissions/warehouse_quadbot_atomic_demos/README.md`
+- `submissions/warehouse_quadbot_atomic_demos/JUDGE_SCORECARD.md`
 - `submissions/warehouse_quadbot_atomic_demos/JUDGE_FAST_PATH.md`
 - `submissions/warehouse_quadbot_atomic_demos/PROJECT_WRITEUP.md`
 - `submissions/warehouse_quadbot_atomic_demos/registration.json`

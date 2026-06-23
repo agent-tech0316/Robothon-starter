@@ -4,7 +4,7 @@ Agentic Warehouse Quadbot Fulfillment Simulator
 
 # Overview
 
-This project is a warehouse-order-fulfillment simulation built for the FFAI Robothon 2026 judging rubric. It combines a discrete multi-robot warehouse runtime with MuJoCo evidence clips for the low-level AEGIS quadruped actions that the runtime assumes.
+This project is a warehouse-order-fulfillment benchmark built for the FFAI Robothon 2026 judging rubric. It combines a discrete multi-robot warehouse runtime with MuJoCo evidence clips for the low-level AEGIS quadruped actions that the runtime assumes.
 
 The project is intentionally layered:
 

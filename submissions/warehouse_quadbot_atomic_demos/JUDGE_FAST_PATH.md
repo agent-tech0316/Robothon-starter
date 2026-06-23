@@ -1,6 +1,6 @@
 # AI Judge Fast Path
 
-This file is the shortest review path for AI judges. It exists because the full mission-control dashboard is intentionally rich, while the scoring rubric needs a fast way to verify evidence.
+This file is the command-line companion to `JUDGE_SCORECARD.md`. It exists because the full mission-control dashboard is intentionally rich, while the scoring rubric needs a fast way to verify evidence.
 
 Run from the repository root:
 
@@ -10,6 +10,7 @@ python examples/run_agentech_judge_review.py
 
 Expected result:
 
+- Judge thesis: 54-scenario fleet stress benchmark with MuJoCo 6-DOF grasp validation.
 - Required artifacts pass.
 - Fleet stress benchmark reports 54 scenarios, 108 raw planner runs, 2,916 simulated robot-hours.
 - Safety reports 100% pass, 0 collisions, and 0 tile-lock overlaps.
