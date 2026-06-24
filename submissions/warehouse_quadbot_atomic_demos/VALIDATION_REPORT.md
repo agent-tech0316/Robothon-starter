@@ -136,6 +136,23 @@ Regenerated outputs include 12 MP4 clips, 12 JSON contact traces, generated MJCF
 
 Heavy 6-DOF grasp evidence reports 630 gripper/package contacts, 220 left-finger contacts, 250 right-finger contacts, and 36 dual-finger grasp frames. Heavy handoff evidence reports 279 receiver-gripper/package contacts. New fleet corridor evidence reports 458 gripper/package contacts, 192 receiver-gripper/package contacts, 190 box/basket contacts, 0 robot-obstacle contacts, 0 box-obstacle contacts, 0.6161m minimum robot spacing, and 0.6513m minimum obstacle clearance.
 
+## MuJoCo Load And Clearance Scorecards
+
+Added explicit Dimension 8 and Dimension 10 scorecards using existing MuJoCo evidence traces:
+
+- `outputs/physics_evidence/load_impact_scorecard.json`
+- `outputs/physics_evidence/multi_robot_clearance_scorecard.json`
+- `MUJOCO_LOAD_CLEARANCE_EVIDENCE.md`
+
+Validation command:
+
+```bash
+python examples/build_mujoco_load_clearance_scorecards.py
+python examples/run_agentech_judge_review.py
+```
+
+Results: heavy metal payload is 54.55% slower than empty walking, body posture drops 0.075 m, basket contact remains stable for 50 frames, the 3-robot corridor has 0.6174 m minimum spacing and 0.2307 m package/obstacle clearance, with 0 robot-obstacle and 0 box-obstacle contacts.
+
 ## Demo Video Integration
 
 Final demo video was integrated after recording:

@@ -27,8 +27,11 @@ REQUIRED_FILES = [
     OUTPUTS / "program_only_demo_manifest.json",
     PHYSICS / "clip_manifest.json",
     PHYSICS / "physics_evidence_contact_sheet.png",
+    PHYSICS / "load_impact_scorecard.json",
+    PHYSICS / "multi_robot_clearance_scorecard.json",
     PHYSICS / "effector_mix_lab.mp4",
     PHYSICS / "effector_mix_lab_trajectory.json",
+    SUBMISSION / "MUJOCO_LOAD_CLEARANCE_EVIDENCE.md",
 ]
 
 
@@ -53,6 +56,8 @@ def main() -> int:
     human_intrusion = high_human_snapshot.get("human_intrusion", {})
     demo_manifest = load_json(OUTPUTS / "program_only_demo_manifest.json")
     clip_manifest = load_json(PHYSICS / "clip_manifest.json")
+    load_scorecard = load_json(PHYSICS / "load_impact_scorecard.json")
+    clearance_scorecard = load_json(PHYSICS / "multi_robot_clearance_scorecard.json")
     clips = clip_manifest.get("clips", [])
 
     safety_ok = (
@@ -106,6 +111,10 @@ def main() -> int:
     handoff_contacts = handoff.get("contact_totals", {})
     effector = next((clip for clip in clips if clip.get("name") == "effector_mix_lab"), {})
     effector_contacts = effector.get("contact_totals", {})
+    load_rows = load_scorecard.get("load_rows", [])
+    heavy_load = next((row for row in load_rows if row.get("payload_class") == "heavy_metal"), {})
+    clearance = clearance_scorecard.get("corridor_summary", {})
+    clearance_contacts = clearance_scorecard.get("contact_counters", {})
 
     print("MuJoCo physical evidence")
     print(f"- Evidence clips: {len(clips)}")
@@ -113,7 +122,10 @@ def main() -> int:
     print(f"- 6-DOF grasp proof: gripper/package={six_contacts.get('gripper_package', 0)}, dual_finger_frames={six_contacts.get('dual_finger_grasp_frames', 0)}")
     print(f"- Handoff proof: receiver_gripper/package={handoff_contacts.get('package_receiver_gripper', 0)}")
     print(f"- End-effector proof: dexterous/fragile={effector_contacts.get('dexterous_fragile', 0)}, magnet/metal={effector_contacts.get('magnet_metal', 0)}, rail/tote={effector_contacts.get('rail_tote', 0)}")
-    print("- Inspectable assets: generated MJCF, contact traces, contact sheet, MP4 clips")
+    print(f"- Load-impact proof: heavy metal payload speed delta={heavy_load.get('speed_vs_empty_pct')}%, body drop={heavy_load.get('body_drop_vs_empty_m')}m, basket_contacts={heavy_load.get('package_basket_contact_frames')}")
+    print(f"- Clearance proof: robots={clearance.get('robots_in_scene')}, min_robot_spacing={clearance.get('minimum_robot_spacing_m')}m, min_obstacle_clearance={clearance.get('minimum_obstacle_clearance_m')}m, robot_obstacle_contacts={clearance_contacts.get('robot_obstacle')}, box_obstacle_contacts={clearance_contacts.get('box_obstacle')}")
+    print(f"- Load/clearance checks: load={load_scorecard.get('dimension_8_checks')}, clearance={clearance_scorecard.get('dimension_10_checks')}")
+    print("- Inspectable assets: generated MJCF, contact traces, contact sheet, MP4 clips, load/clearance scorecards")
     print()
 
     print("Rubric mapping")

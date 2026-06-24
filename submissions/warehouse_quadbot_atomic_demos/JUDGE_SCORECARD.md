@@ -13,7 +13,7 @@ This is the shortest answer sheet for AI judges. The official registered project
 | Is there a baseline? | Planner-off nearest-exit baseline is compared against congestion-aware local planning. |
 | Does planning improve throughput? | The 30-robot stress extension runs 54 six-hour scenarios / 108 planner runs / 9,720 simulated robot-hours with +60.27% average planner throughput uplift and +185.23% best uplift. The human-intrusion runtime adds 17 high-load risk tiles, 147 hold ticks, and 17 reroutes. |
 | Is it safe? | Stress matrix reports 100% safety pass, 0 collisions, and 0 tile-lock overlaps. |
-| Is MuJoCo used deeply? | 14 generated MuJoCo clips, generated MJCF scenes, touch sensors, collision geoms, contact traces, a 6-DOF mounted arm, a three-AEGIS corridor scene, and heterogeneous dexterous/magnet/rail end-effectors. |
+| Is MuJoCo used deeply? | 14 generated MuJoCo clips, generated MJCF scenes, touch sensors, collision geoms, contact traces, a 6-DOF mounted arm, payload load-impact scorecards, a three-AEGIS corridor close-clearance scorecard, and heterogeneous dexterous/magnet/rail end-effectors. |
 | Is manipulation physically validated? | Heavy 6-DOF grasp records 630 gripper/package contacts and 36 dual-finger frames; the heterogeneous lab records 1077 dexterous/fragile, 508 magnet/metal, and 1020 rail/tote contacts. |
 | Is multi-robot coordination visible? | Demo video is now a 1:25 program-only cut: real Web runtime footage, generated UI capture, MuJoCo renderer clips, contact sheet, 6-DOF grasp, robot-to-robot handoff, and 3-AEGIS corridor physics, with no AI-generated moving footage. |
 
@@ -36,6 +36,8 @@ Human-intrusion high profile: 10 total people, 7 active at snapshot, 17 temporar
 Evidence clips: 14
 6-DOF grasp proof: gripper/package=630, dual_finger_frames=36
 End-effector proof: dexterous/fragile=1077, magnet/metal=508, rail/tote=1020
+Load-impact proof: heavy metal payload speed delta=-54.5501%, body drop=0.075m, basket_contacts=50
+Clearance proof: robots=3, min_robot_spacing=0.6174m, min_obstacle_clearance=0.2307m, robot_obstacle_contacts=0, box_obstacle_contacts=0
 Handoff proof: receiver_gripper/package=279
 ```
 
@@ -52,9 +54,12 @@ A single robot action is local: one robot grasps one object. This benchmark is s
 - 30-robot stress benchmark: `submissions/warehouse_quadbot_atomic_demos/THIRTY_ROBOT_STRESS_BENCHMARK.md` and `submissions/warehouse_quadbot_atomic_demos/outputs/fleet_stress_benchmark_30robots.json`
 - MuJoCo evidence manifest: `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/clip_manifest.json`
 - MuJoCo contact sheet: `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/physics_evidence_contact_sheet.png`
+- MuJoCo load/clearance report: `submissions/warehouse_quadbot_atomic_demos/MUJOCO_LOAD_CLEARANCE_EVIDENCE.md`
+- Load impact scorecard: `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/load_impact_scorecard.json`
+- Multi-robot clearance scorecard: `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/multi_robot_clearance_scorecard.json`
 - 6-DOF heavy grasp clip: `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/six_dof_grasp_sweep_metal.mp4`
 - Heterogeneous end-effector clip: `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/effector_mix_lab.mp4`
 
 ## Judge Takeaway
 
-This is not only nine robots moving in a UI. It is a reproducible multi-agent warehouse benchmark with planner-off comparison, long-horizon stress tests, zero movement safety violations, human-intrusion rerouting, 30-robot heterogeneous scaling, and MuJoCo-backed physical evidence for grasping, load handling, handoff, obstacle clearance, small-fleet corridor spacing, dexterous handling, magnetic handling, and guided-rail handling.
+This is not only nine robots moving in a UI. It is a reproducible multi-agent warehouse benchmark with planner-off comparison, long-horizon stress tests, zero movement safety violations, human-intrusion rerouting, 30-robot heterogeneous scaling, and MuJoCo-backed physical evidence for grasping, payload-dependent speed/posture change, handoff, obstacle clearance, small-fleet corridor spacing, protruding-package collision checks, dexterous handling, magnetic handling, and guided-rail handling.

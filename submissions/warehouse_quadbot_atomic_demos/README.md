@@ -18,7 +18,7 @@ UUID: `13b27675-9c26-49df-9014-cb31f33f9df8`
 | Safety | 100% pass, 0 collisions, 0 tile-lock overlaps |
 | Planner value | +60.27% average throughput uplift, +185.23% best uplift vs planner-off baseline in the 30-robot stress extension |
 | High-load result | 91 / 140 orders, 364 orders/hour, 0 movement safety violations |
-| MuJoCo depth | 14 evidence clips, generated MJCF, touch sensors, collision geoms, contact traces, 3-robot corridor physics, heterogeneous end-effectors |
+| MuJoCo depth | 14 evidence clips, generated MJCF, touch sensors, collision geoms, contact traces, load-impact scorecard, 3-robot corridor clearance scorecard, heterogeneous end-effectors |
 | 6-DOF + tool proof | 630 gripper/package contacts; heterogeneous tool contacts: 1077 dexterous/fragile, 508 magnet/metal, 1020 rail/tote |
 | Demo | 1:25 program-only cut using real Web runtime footage, MuJoCo renderer clips, generated contact sheet, benchmark text cards, and no AI-generated moving footage |
 
@@ -37,6 +37,7 @@ The scoring evidence is deliberately layered: the web runtime proves agentic pla
 For the quickest no-browser review, run:
 
 ```bash
+python examples/build_mujoco_load_clearance_scorecards.py
 python examples/run_agentech_judge_review.py
 ```
 
@@ -53,6 +54,7 @@ The final demo video is included directly in this submission as `demo.mp4` (1:25
 - Program-only demo manifest: `outputs/program_only_demo_manifest.json`
 - Live runtime decision replay: `outputs/runtime_live_decision_replay.mp4`
 - MuJoCo multi-robot corridor: `outputs/physics_evidence/fleet_physics_corridor.mp4` and `outputs/physics_evidence/fleet_physics_corridor_trajectory.json`
+- MuJoCo load/clearance scorecards: `MUJOCO_LOAD_CLEARANCE_EVIDENCE.md`, `outputs/physics_evidence/load_impact_scorecard.json`, and `outputs/physics_evidence/multi_robot_clearance_scorecard.json`
 - MuJoCo heterogeneous end-effector lab: `outputs/physics_evidence/effector_mix_lab.mp4` and `outputs/physics_evidence/effector_mix_lab_trajectory.json`
 - MuJoCo contact sheet: `outputs/physics_evidence/physics_evidence_contact_sheet.png`
 - New 6-DOF grasp videos: `outputs/physics_evidence/six_dof_grasp_sweep_wood.mp4` and `outputs/physics_evidence/six_dof_grasp_sweep_metal.mp4`
@@ -216,7 +218,7 @@ That is a +468.8% throughput increase and a 94.5% reduction in average lock wait
 - Base robot: Faraday Future AEGIS quadruped, using `assets/Aegis/urdf/Aegis_mujoco.urdf`
 - Warehouse accessory: BASE_LINK-mounted basket
 - Manipulator reference: FF Futurist right-arm chain, using `assets/Futurist/futurist.urdf` and right-arm/right-hand STL meshes
-- MuJoCo evidence: 14 generated clips, including a 3-AEGIS corridor physics scene and a heterogeneous end-effector lab with dexterous hand, electromagnet, and slide-rail contact counters; leg joints, 6-DOF arm joints, wrist roll/tool yaw, gripper slide joints, collision geoms, touch sensors, position actuators, and fingertip/package contact counters
+- MuJoCo evidence: 14 generated clips, including a 3-AEGIS corridor physics scene and a heterogeneous end-effector lab with dexterous hand, electromagnet, and slide-rail contact counters; leg joints, 6-DOF arm joints, wrist roll/tool yaw, gripper slide joints, collision geoms, touch sensors, position actuators, fingertip/package contact counters, payload-speed/body-drop scorecards, and close-clearance collision scorecards
 
 ## Metrics
 
@@ -243,6 +245,8 @@ Primary metrics:
 - High load reaches 364 orders/hour with 91 of 140 orders completed while keeping all movement safety counters at 0 under surge pressure.
 - Human-intrusion high load keeps the same warehouse active under 10 stochastic continuous human agents, 17 current risk tiles, 147 hold ticks, and 17 human-triggered reroutes with 0 robot collisions and 0 lock overlaps.
 - MuJoCo clips show payload-dependent gait, shelf pickup, basket contact, heavy-package handoff, two 6-DOF shelf-to-basket grasp sweeps, and a three-AEGIS corridor scene with loaded obstacle avoidance and zero obstacle contacts.
+- New MuJoCo load-impact scorecard proves the heavy metal payload is 54.55% slower than empty walking, drops the body by 0.075 m, keeps 50 basket-contact frames, and remains stable enough for conservative tight-turn/ramp scheduling.
+- New MuJoCo close-clearance scorecard proves a 3-robot corridor pass with 0.6174 m minimum robot spacing, 0.2307 m minimum package/obstacle clearance, 0 robot-obstacle contacts, and 0 box-obstacle contacts.
 - The new heavy 6-DOF grasp sweep records 630 gripper/package contacts, 220 left-finger contacts, 250 right-finger contacts, and 36 dual-finger grasp frames.
 - The UI binds to generated runtime JSON and animates runtime-linked robot movement without closing open routes or using mock-only phase motion.
 - The first dashboard KPI panel now shows the high-load benchmark proof directly: 64/hr planner-off baseline, 364/hr local planner, and 0 movement safety violations.

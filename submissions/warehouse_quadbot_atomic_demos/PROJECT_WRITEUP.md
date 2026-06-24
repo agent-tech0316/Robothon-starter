@@ -93,7 +93,7 @@ Tracked safety counters: blocked-tile route violations, route cardinality violat
 - Runtime snapshots, metrics, and event streams, including `_humans` profiles for random human intrusion
 - Multi-wall exterior conveyor ports with explicit exterior footprints, outer door lines, and unique in-warehouse unload tiles
 - Mission-control dashboard with runtime-linked robot animation
-- MuJoCo evidence clips for walking, payload carrying, shelf pickup, handoff, 6-DOF multi-angle shelf-to-basket grasp sweeps, a three-robot corridor physics scene, and heterogeneous dexterous/magnetic/rail terminal tools
+- MuJoCo evidence clips and scorecards for walking, payload carrying, load-driven speed/body posture change, shelf pickup, handoff, 6-DOF multi-angle shelf-to-basket grasp sweeps, a three-robot corridor physics scene, close-clearance collision checks, and heterogeneous dexterous/magnetic/rail terminal tools
 
 # Technical Architecture
 
@@ -106,7 +106,7 @@ Tracked safety counters: blocked-tile route violations, route cardinality violat
 
 # Results
 
-The current medium profile completes 77 of 84 orders and reaches 308 orders/hour. High load completes 91 of 140 orders and reaches 364 orders/hour while preserving zero collision and zero lock-overlap violations. Human-intrusion high load adds 10 stochastic people, 17 current risk tiles, 147 hold ticks, and 17 reroutes, preserving 0 collisions and 0 lock overlaps. The accelerated 30-robot heterogeneous fleet stress benchmark adds 54 six-hour nominal/aisle-surge scenarios, 9,720 robot-hours, 100% safety pass rate, +60.27% average planner throughput uplift, and +185.23% best uplift. MuJoCo evidence now includes 14 clips with generated MJCF, contact counters for package/gripper, package/basket, package/shelf, handoff interactions, a three-AEGIS corridor, and a heterogeneous end-effector lab. The heavy grasp sweep records 630 gripper/package contacts and 36 dual-finger grasp frames; the heterogeneous lab records 1077 dexterous/fragile contacts, 508 magnet/metal contacts, and 1020 rail/tote contacts.
+The current medium profile completes 77 of 84 orders and reaches 308 orders/hour. High load completes 91 of 140 orders and reaches 364 orders/hour while preserving zero collision and zero lock-overlap violations. Human-intrusion high load adds 10 stochastic people, 17 current risk tiles, 147 hold ticks, and 17 reroutes, preserving 0 collisions and 0 lock overlaps. The accelerated 30-robot heterogeneous fleet stress benchmark adds 54 six-hour nominal/aisle-surge scenarios, 9,720 robot-hours, 100% safety pass rate, +60.27% average planner throughput uplift, and +185.23% best uplift. MuJoCo evidence now includes 14 clips with generated MJCF, contact counters for package/gripper, package/basket, package/shelf, handoff interactions, a three-AEGIS corridor, and a heterogeneous end-effector lab. The heavy grasp sweep records 630 gripper/package contacts and 36 dual-finger grasp frames; the heterogeneous lab records 1077 dexterous/fragile contacts, 508 magnet/metal contacts, and 1020 rail/tote contacts. The new load-impact scorecard shows heavy metal payload walking is 54.55% slower than empty walking and lowers body posture by 0.075 m; the close-clearance scorecard shows a three-robot corridor with 0.6174 m minimum robot spacing, 0.2307 m minimum package/obstacle clearance, and zero robot/box obstacle contacts.
 
 # Current Limitations
 

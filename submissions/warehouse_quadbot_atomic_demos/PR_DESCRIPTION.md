@@ -12,7 +12,7 @@ Registration UUID: 13b27675-9c26-49df-9014-cb31f33f9df8
 | Safety | 100% pass, 0 collisions, 0 tile-lock overlaps |
 | Planner value | +60.27% average throughput uplift, +185.23% best uplift vs planner-off baseline in the 30-robot stress extension |
 | High-load result | 91 / 140 orders, 364 orders/hour, 0 movement safety violations |
-| MuJoCo depth | 14 evidence clips, generated MJCF, touch sensors, collision geoms, contact traces, 3-robot corridor physics, heterogeneous dexterous/magnet/rail end-effectors |
+| MuJoCo depth | 14 evidence clips, generated MJCF, touch sensors, collision geoms, contact traces, payload load-impact scorecard, 3-robot close-clearance scorecard, heterogeneous dexterous/magnet/rail end-effectors |
 | 6-DOF + tool proof | 630 gripper/package contacts; heterogeneous tool contacts: 1077 dexterous/fragile, 508 magnet/metal, 1020 rail/tote |
 | Demo | 1:25 program-only cut using real Web runtime footage, MuJoCo renderer clips, generated contact sheet, benchmark text cards, and no AI-generated moving footage |
 
@@ -26,11 +26,11 @@ The core challenge is fleet-level coordination: one robot can move a parcel, but
 
 Judge-facing distinction: this is not only a multi-robot clip. It is a scalable warehouse benchmark. MuJoCo proves the atomic robot skills are physically plausible; the runtime proves that fleet decisions improve throughput under congestion, SKU-weight variation, pick difficulty, and long-horizon load.
 
-Latest judge fast path: `python examples/run_agentech_judge_review.py` prints artifact readiness, 54-scenario stress benchmark results, the 30-robot heterogeneous extension, human-intrusion runtime evidence, medium/high runtime metrics, 14 MuJoCo evidence clips, 6-DOF grasp contact proof, heterogeneous end-effector contact proof, 3-robot corridor physics, and rubric mapping without requiring the dashboard UI.
+Latest judge fast path: `python examples/run_agentech_judge_review.py` prints artifact readiness, 54-scenario stress benchmark results, the 30-robot heterogeneous extension, human-intrusion runtime evidence, medium/high runtime metrics, 14 MuJoCo evidence clips, 6-DOF grasp contact proof, heterogeneous end-effector contact proof, payload load-impact proof, 3-robot close-clearance proof, and rubric mapping without requiring the dashboard UI.
 
 # Robot Platform
 
-Faraday Future AEGIS quadruped, with a BASE_LINK-mounted basket and a Futurist-right-arm-derived six-axis front manipulator. MuJoCo evidence clips validate walking, payload carrying, shelf pickup, basket contact, robot-to-robot handoff, 6-DOF overhead grasp sweeps, a three-AEGIS corridor scene with loaded obstacle avoidance, and mixed end-effectors: dexterous hand for fragile/shape-sensitive payloads, electromagnet for metal payloads, and slide rail for guided tote transfer.
+Faraday Future AEGIS quadruped, with a BASE_LINK-mounted basket and a Futurist-right-arm-derived six-axis front manipulator. MuJoCo evidence clips validate walking, payload carrying, shelf pickup, basket contact, robot-to-robot handoff, 6-DOF overhead grasp sweeps, a three-AEGIS corridor scene with loaded obstacle avoidance, and mixed end-effectors: dexterous hand for fragile/shape-sensitive payloads, electromagnet for metal payloads, and slide rail for guided tote transfer. New load and clearance scorecards quantify that heavy payloads slow and lower the robot, while close corridor passing preserves robot/body and protruding-package clearance.
 
 # Task Goal
 
@@ -51,6 +51,7 @@ The runtime uses four-direction movement, atomic source+destination locks, deadl
 - MuJoCo used as physical evidence for grasp/load/obstacle/small-fleet physics while the web runtime handles scalable agentic planning, congestion analysis, route optimization, and throughput benchmarks.
 - MuJoCo evidence scorecard makes physical validation inspectable: joints, actuators, sensors, contact counters, payload response, and two-robot handoff scene depth.
 - Added judge-facing MuJoCo videos beyond the main demo: `six_dof_grasp_sweep_wood.mp4`, `six_dof_grasp_sweep_metal.mp4`, and `fleet_physics_corridor.mp4`, showing six-axis parcel handling plus three-AEGIS loaded corridor avoidance.
+- Added MuJoCo load-impact and close-clearance scorecards: heavy metal payload is 54.55% slower than empty walking, body height drops 0.075 m, basket contact remains stable, three-robot corridor minimum spacing is 0.6174 m, package/obstacle clearance is 0.2307 m, and robot/box obstacle contacts stay at 0.
 - Added heterogeneous MuJoCo end-effector lab: `effector_mix_lab.mp4` and trajectory JSON prove dexterous-hand/fragile, electromagnet/metal, and slide-rail/tote contact paths with 1077, 508, and 1020 contacts respectively.
 - Added 30-robot heterogeneous fleet scaling: 8 grippers, 9 dexterous hands, 8 electromagnets, and 5 slide-rail tools across 54 six-hour scenarios / 9,720 robot-hours, achieving +60.27% average throughput uplift and 100% safety pass.
 - Heavy 6-DOF grasp evidence records 630 gripper/package contacts, 220 left-finger contacts, 250 right-finger contacts, and 36 dual-finger grasp frames; the heavy handoff records 279 receiver-gripper/package contacts.
@@ -88,6 +89,9 @@ Included evidence clips:
 - `submissions/warehouse_quadbot_atomic_demos/outputs/program_only_demo_manifest.json`
 - `submissions/warehouse_quadbot_atomic_demos/outputs/runtime_live_decision_replay.mp4`
 - `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/fleet_physics_corridor.mp4`
+- `submissions/warehouse_quadbot_atomic_demos/MUJOCO_LOAD_CLEARANCE_EVIDENCE.md`
+- `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/load_impact_scorecard.json`
+- `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/multi_robot_clearance_scorecard.json`
 - `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/effector_mix_lab.mp4`
 - `submissions/warehouse_quadbot_atomic_demos/outputs/fleet_stress_benchmark_30robots.json`
 - `submissions/warehouse_quadbot_atomic_demos/outputs/runtime_snapshot_high_humans.json`

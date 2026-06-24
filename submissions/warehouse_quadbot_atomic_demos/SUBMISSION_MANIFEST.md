@@ -65,6 +65,9 @@ Submission-local generated and hand-authored MuJoCo evidence:
 - `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/six_dof_grasp_sweep_metal.mp4`
 - `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/effector_mix_lab.mp4`
 - `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/effector_mix_lab_trajectory.json`
+- `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/load_impact_scorecard.json`
+- `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/multi_robot_clearance_scorecard.json`
+- `submissions/warehouse_quadbot_atomic_demos/MUJOCO_LOAD_CLEARANCE_EVIDENCE.md`
 - `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/*.json`
 - `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/clip_manifest.json`
 - `submissions/warehouse_quadbot_atomic_demos/outputs/physics_evidence/physics_evidence_contact_sheet.png`
@@ -102,6 +105,7 @@ python examples/run_fleet_stress_benchmark.py --hours 6 --scenario-limit 54
 python examples/run_fleet_stress_benchmark.py --hours 6 --scenario-limit 54 --fleet-size 30 --output submissions/warehouse_quadbot_atomic_demos/outputs/fleet_stress_benchmark_30robots.json --report submissions/warehouse_quadbot_atomic_demos/THIRTY_ROBOT_STRESS_BENCHMARK.md
 python submissions/warehouse_quadbot_atomic_demos/run_quadbot_atomic_demos.py --scenario shelf_pick_metal
 python submissions/warehouse_quadbot_atomic_demos/mujoco_physics_evidence/main.py --clip all --fps 18 --width 720 --height 406
+python examples/build_mujoco_load_clearance_scorecards.py
 python -m http.server 8765 --bind 127.0.0.1
 ```
 

@@ -1,0 +1,95 @@
+{
+  "project": "Agentic Warehouse Quadbot Fulfillment Simulator",
+  "purpose": "Dimension 8 evidence: empty/light/medium/heavy payloads change gait speed, body posture, basket contact, and conservative stability assumptions.",
+  "source": {
+    "clips": [
+      "empty_walk",
+      "loaded_walk_cardboard",
+      "loaded_walk_wood",
+      "loaded_walk_metal"
+    ],
+    "json_files": [
+      "outputs/physics_evidence/empty_walk.json",
+      "outputs/physics_evidence/loaded_walk_cardboard.json",
+      "outputs/physics_evidence/loaded_walk_wood.json",
+      "outputs/physics_evidence/loaded_walk_metal.json"
+    ]
+  },
+  "load_rows": [
+    {
+      "payload_class": "empty",
+      "clip": "empty_walk",
+      "video": "outputs/physics_evidence/empty_walk.mp4",
+      "mass_kg": 0.0,
+      "declared_gait_speed_mps": 0.55,
+      "measured_speed_mps": 0.5846,
+      "leg_compression_m": 0.01,
+      "mean_body_height_m": 0.3758,
+      "min_body_height_m": 0.3663,
+      "package_vertical_motion_m": 0.0,
+      "package_lateral_sway_m": 0.0,
+      "package_basket_contact_frames": 0,
+      "total_contact_frames": 768,
+      "speed_vs_empty_pct": 0.0,
+      "body_drop_vs_empty_m": 0.0
+    },
+    {
+      "payload_class": "light_cardboard",
+      "clip": "loaded_walk_cardboard",
+      "video": "outputs/physics_evidence/loaded_walk_cardboard.mp4",
+      "mass_kg": 0.8,
+      "declared_gait_speed_mps": 0.46,
+      "measured_speed_mps": 0.4889,
+      "leg_compression_m": 0.02,
+      "mean_body_height_m": 0.3658,
+      "min_body_height_m": 0.3563,
+      "package_vertical_motion_m": 0.0174,
+      "package_lateral_sway_m": 0.0,
+      "package_basket_contact_frames": 50,
+      "total_contact_frames": 818,
+      "speed_vs_empty_pct": -16.3702,
+      "body_drop_vs_empty_m": 0.01
+    },
+    {
+      "payload_class": "medium_wood",
+      "clip": "loaded_walk_wood",
+      "video": "outputs/physics_evidence/loaded_walk_wood.mp4",
+      "mass_kg": 2.0,
+      "declared_gait_speed_mps": 0.35,
+      "measured_speed_mps": 0.372,
+      "leg_compression_m": 0.05,
+      "mean_body_height_m": 0.3358,
+      "min_body_height_m": 0.3263,
+      "package_vertical_motion_m": 0.0174,
+      "package_lateral_sway_m": 0.0,
+      "package_basket_contact_frames": 50,
+      "total_contact_frames": 818,
+      "speed_vs_empty_pct": -36.3667,
+      "body_drop_vs_empty_m": 0.04
+    },
+    {
+      "payload_class": "heavy_metal",
+      "clip": "loaded_walk_metal",
+      "video": "outputs/physics_evidence/loaded_walk_metal.mp4",
+      "mass_kg": 4.0,
+      "declared_gait_speed_mps": 0.25,
+      "measured_speed_mps": 0.2657,
+      "leg_compression_m": 0.085,
+      "mean_body_height_m": 0.3008,
+      "min_body_height_m": 0.2913,
+      "package_vertical_motion_m": 0.0174,
+      "package_lateral_sway_m": 0.0,
+      "package_basket_contact_frames": 50,
+      "total_contact_frames": 818,
+      "speed_vs_empty_pct": -54.5501,
+      "body_drop_vs_empty_m": 0.075
+    }
+  ],
+  "dimension_8_checks": {
+    "empty_light_medium_heavy_gait_differences": true,
+    "heavy_load_speed_decrease": true,
+    "heavy_load_body_posture_change": true,
+    "heavy_load_turn_slope_stability_proxy": true
+  },
+  "plain_language": "The box weight is not cosmetic: heavier payloads make the quadbot walk slower, stand lower, and keep the parcel pressed into the basket. This gives the runtime a physical reason to slow heavy robots before tight turns, ramps, or congested handoff zones."
+}

@@ -18,13 +18,15 @@ Expected result:
 - Human-intrusion runtime reports 10 stochastic people under high load, 17 current risk tiles, 147 hold ticks, and 17 human-triggered reroutes.
 - MuJoCo evidence reports 14 generated clips, generated MJCF, contact traces, contact sheet, loaded walk, shelf pickup, basket contact, robot-to-robot handoff, two 6-DOF grasp sweeps, a three-AEGIS corridor physics clip, and a heterogeneous end-effector lab.
 - The heavy 6-DOF sweep records 630 gripper/package contacts and 36 dual-finger grasp frames; the heterogeneous lab records 1077 dexterous/fragile, 508 magnet/metal, and 1020 rail/tote contacts.
+- The new load-impact scorecard reports heavy metal at -54.55% speed versus empty walking, 0.075 m body drop, and 50 basket-contact frames.
+- The new clearance scorecard reports 3 robots in a corridor, 0.6174 m minimum robot spacing, 0.2307 m package/obstacle clearance, 0 robot-obstacle contacts, and 0 box-obstacle contacts.
 
 ## Why This Helps Review
 
 The project has two layers:
 
 - The warehouse runtime proves multi-agent decision quality: route locks, congestion, random human-risk projection, planner-off baseline, local multi-port conveyor planning uplift, throughput, wait time, and safety counters.
-- MuJoCo proves low-level physical plausibility: quadruped joints, mounted 6-DOF arm, wrist roll/tool yaw, actuated two-finger gripper, collision geoms, touch sensors, package orientation tracking, payload-dependent motion evidence, and mixed dexterous/magnetic/rail terminal tools.
+- MuJoCo proves low-level physical plausibility: quadruped joints, mounted 6-DOF arm, wrist roll/tool yaw, actuated two-finger gripper, collision geoms, touch sensors, package orientation tracking, payload-dependent speed/body-drop evidence, close-clearance collision counters, and mixed dexterous/magnetic/rail terminal tools.
 
 The dashboard remains available at:
 

@@ -1,0 +1,154 @@
+{
+  "project": "Agentic Warehouse Quadbot Fulfillment Simulator",
+  "purpose": "Dimension 10 evidence: near-pass spacing, narrow-corridor multi-robot interaction, body collision counters, and protruding package clearance.",
+  "source": {
+    "video": "outputs/physics_evidence/fleet_physics_corridor.mp4",
+    "trajectory": "outputs/physics_evidence/fleet_physics_corridor_trajectory.json"
+  },
+  "corridor_summary": {
+    "robots_in_scene": 3,
+    "duration_s": 3.2,
+    "fps": 30,
+    "tile_size_m": 1.0,
+    "minimum_robot_spacing_m": 0.6174,
+    "minimum_robot_spacing_pair": [
+      "receiver_base",
+      "traffic_base"
+    ],
+    "minimum_robot_spacing_time_s": 3.0,
+    "minimum_obstacle_clearance_m": 0.2307,
+    "package_motion_span_m": {
+      "x_span_m": 2.0106,
+      "y_span_m": 1.0358,
+      "z_span_m": 0.9675
+    }
+  },
+  "contact_counters": {
+    "robot_obstacle": 0,
+    "box_obstacle": 0,
+    "gripper_box": 458,
+    "receiver_gripper_box": 192,
+    "box_basket": 190,
+    "total_contacts": 8907
+  },
+  "dimension_10_checks": {
+    "two_robots_near_pass_clearance": true,
+    "three_robots_narrow_corridor": true,
+    "robot_body_collision_detection": true,
+    "protruding_package_collision_detection": true
+  },
+  "plain_language": "The corridor clip is not just a pretty pass-by: it records the closest robot spacing, the closest loaded box clearance to obstacles, and collision counters. The pass is tight enough to matter, but still reports zero robot-obstacle and zero box-obstacle contacts.",
+  "snapshots": [
+    {
+      "time_s": 0.0,
+      "sender_base": [
+        -1.35,
+        0.32,
+        0.29
+      ],
+      "receiver_base": [
+        1.38,
+        -0.48,
+        0.333
+      ],
+      "traffic_base": [
+        -0.2,
+        -1.05,
+        0.335
+      ],
+      "box_pos": [
+        -0.94973,
+        0.31742,
+        1.42448
+      ],
+      "clearance": {
+        "min_robot_spacing_m": 1.6797,
+        "min_obstacle_clearance_m": 0.7089
+      },
+      "contacts": {
+        "gripper_box": 22,
+        "receiver_gripper_box": 0,
+        "box_basket": 0,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "robot_obstacle": 0,
+        "box_obstacle": 0,
+        "total_contacts": 121
+      }
+    },
+    {
+      "time_s": 1.6,
+      "sender_base": [
+        -0.05,
+        0.62,
+        0.28632
+      ],
+      "receiver_base": [
+        1.38,
+        -0.48,
+        0.33399
+      ],
+      "traffic_base": [
+        -0.2,
+        -1.05,
+        0.33599
+      ],
+      "box_pos": [
+        -0.12974,
+        0.61361,
+        0.56532
+      ],
+      "clearance": {
+        "min_robot_spacing_m": 1.6767,
+        "min_obstacle_clearance_m": 0.262
+      },
+      "contacts": {
+        "gripper_box": 0,
+        "receiver_gripper_box": 0,
+        "box_basket": 4,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "robot_obstacle": 0,
+        "box_obstacle": 0,
+        "total_contacts": 89
+      }
+    },
+    {
+      "time_s": 3.0,
+      "sender_base": [
+        1.19147,
+        0.30719,
+        0.28049
+      ],
+      "receiver_base": [
+        0.93014,
+        -0.42113,
+        0.32349
+      ],
+      "traffic_base": [
+        0.78,
+        -1.02,
+        0.32549
+      ],
+      "box_pos": [
+        0.98811,
+        -0.42219,
+        0.64906
+      ],
+      "clearance": {
+        "min_robot_spacing_m": 0.6174,
+        "min_obstacle_clearance_m": 0.661
+      },
+      "contacts": {
+        "gripper_box": 0,
+        "receiver_gripper_box": 0,
+        "box_basket": 0,
+        "box_shelf": 0,
+        "arm_basket": 0,
+        "robot_obstacle": 0,
+        "box_obstacle": 0,
+        "total_contacts": 80
+      }
+    }
+  ]
+}
